@@ -27,31 +27,62 @@ export default function DashboardScreen() {
   const usedConnections = 23;
   const remainingConnections = totalConnections - usedConnections;
   
-  // Zeitraum-Daten für verschiedene Zeiträume
+  // Hilfsfunktion zum Generieren realistischer Daten mit erkennbarem Verlauf
+  const generateRealisticData = (count, startValue, endValue, volatility = 1.5) => {
+    const data = [startValue];
+    let currentValue = startValue;
+    const targetChange = (endValue - startValue) / count;
+    
+    for (let i = 1; i < count; i++) {
+      // Trend zum Zielwert + moderate Schwankung für erkennbaren Verlauf
+      const trendChange = targetChange + (Math.random() - 0.5) * volatility;
+      currentValue = Math.max(75, Math.min(92, currentValue + trendChange));
+      data.push(Math.round(currentValue * 10) / 10);
+    }
+    return data;
+  };
+
+  // Zeitraum-Daten - ECHTE Intervalle mit realistischem Verlauf!
   const timeframeData = {
     '14days': {
-      labels: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
-      data: [85, 87, 84, 89, 86, 88, 90, 87, 89, 85, 88, 87, 89, 87]
+      labels: Array.from({length: 14}, (_, i) => `${i+1}.`),
+      data: generateRealisticData(14, 85, 87, 1.2)
     },
     '30days': {
-      labels: ['W1', 'W2', 'W3', 'W4', 'W5'],
-      data: [84, 86, 88, 87, 89]
+      labels: Array.from({length: 30}, (_, i) => `${i+1}.`),
+      data: generateRealisticData(30, 84, 87, 1.5)
     },
     '90days': {
-      labels: ['Jan', 'Feb', 'Mär'],
-      data: [82, 85, 87]
+      labels: Array.from({length: 90}, (_, i) => `${i+1}.`),
+      data: generateRealisticData(90, 82, 87, 1.8)
     },
     '6months': {
-      labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun'],
-      data: [82, 85, 83, 87, 89, 87]
+      labels: Array.from({length: 182}, (_, i) => {
+        const monthNames = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun'];
+        const monthIndex = Math.floor(i / 30);
+        const dayInMonth = (i % 30) + 1;
+        return `${dayInMonth}. ${monthNames[Math.min(monthIndex, 5)]}`;
+      }),
+      data: generateRealisticData(182, 80, 87, 2.0)
     },
     'year': {
-      labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-      data: [83, 87, 85, 89]
+      labels: Array.from({length: 365}, (_, i) => {
+        const monthNames = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+        const monthIndex = Math.floor(i / 30);
+        const dayInMonth = (i % 30) + 1;
+        return `${dayInMonth}. ${monthNames[Math.min(monthIndex, 11)]}`;
+      }),
+      data: generateRealisticData(365, 78, 87, 2.2)
     },
     'max': {
-      labels: ['2022', '2023', '2024'],
-      data: [78, 85, 87]
+      labels: Array.from({length: 1825}, (_, i) => { // 5 Jahre = ~1825 Tage
+        const year = 2020 + Math.floor(i / 365);
+        const dayOfYear = i % 365;
+        const monthIndex = Math.floor(dayOfYear / 30);
+        const monthNames = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+        return `${monthNames[Math.min(monthIndex, 11)]} ${year}`;
+      }),
+      data: generateRealisticData(1825, 75, 87, 2.5)
     }
   };
   
@@ -92,7 +123,10 @@ export default function DashboardScreen() {
 
         {/* RateScale - AUSSERHALB der Card */}
         <View style={styles.rateScaleSection}>
-          <Text style={styles.sectionTitle}>Erfolgsquote</Text>
+          <View style={styles.rateScaleTitleContainer}>
+            <Text style={styles.rateScaleTitle}>Erfolgsquote </Text>
+            <Text style={styles.rateScaleSubtitle}>(aus {totalRatings} Projekten)</Text>
+          </View>
           <RateScale rate={successRate} size="medium" showLabel={false} />
         </View>
 
@@ -236,15 +270,25 @@ const styles = StyleSheet.create({
     color: '#666666',
     fontWeight: '500',
   },
-  sectionTitle: {
+  rateScaleSection: {
+    marginBottom: 32,
+  },
+  rateScaleTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: 4,
+  },
+  rateScaleTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: '#000000',
-    marginBottom: 16,
     letterSpacing: -0.3,
   },
-  rateScaleSection: {
-    marginBottom: 32,
+  rateScaleSubtitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#999999',
+    letterSpacing: -0.2,
   },
   ratingsCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',

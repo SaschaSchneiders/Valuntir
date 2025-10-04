@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
+import Svg, { Path, Line, Text as SvgText } from 'react-native-svg';
 
 /**
  * ChartCard - Wiederverwendbare Chart-Kachel mit Zeitraum-Auswahl
@@ -66,39 +66,137 @@ export default function ChartCard({
         </View>
       </View>
 
-      {/* Clean Line Chart */}
+      {/* Custom SVG Chart - Volle Kontrolle */}
       <View style={styles.chartArea}>
-        <LineChart
-          data={{
-            labels: timeframeData[selectedTimeframe]?.labels || [],
-            datasets: [{
-              data: timeframeData[selectedTimeframe]?.data || [0]
-            }]
-          }}
-          width={screenWidth - 80}
-          height={160}
-          chartConfig={{
-            backgroundColor: '#FFFFFF',
-            backgroundGradientFrom: '#FFFFFF',
-            backgroundGradientTo: '#FFFFFF',
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(153, 153, 153, ${opacity})`,
-            strokeWidth: 2.5,
-            propsForBackgroundLines: {
-              stroke: 'rgba(0, 0, 0, 0.05)'
+        {(() => {
+          const currentData = timeframeData[selectedTimeframe] || { data: [82, 85, 83, 87, 89, 87], labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'] };
+          const data = currentData.data;
+          const xLabels = currentData.labels || [];
+          
+          const width = screenWidth - 48;
+          const height = 200;
+          const padding = { top: 20, right: 0, bottom: 40, left: 32 };
+          const chartWidth = width - padding.left - padding.right;
+          const chartHeight = height - padding.top - padding.bottom;
+          
+          // Skalierung
+          const minY = Math.min(...data) - 2;
+          const maxY = Math.max(...data) + 2;
+          const yScale = (value) => {
+            return chartHeight - ((value - minY) / (maxY - minY)) * chartHeight;
+          };
+          const xScale = (index) => {
+            return (index / (data.length - 1)) * chartWidth;
+          };
+          
+          // Smooth Bezier Curve erstellen - ELEGANT & MODERN
+          const pathData = (() => {
+            if (data.length === 0) return '';
+            
+            const points = data.map((value, index) => ({
+              x: xScale(index),
+              y: yScale(value)
+            }));
+            
+            if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
+            
+            let path = `M ${points[0].x} ${points[0].y}`;
+            
+            for (let i = 0; i < points.length - 1; i++) {
+              const current = points[i];
+              const next = points[i + 1];
+              
+              // Control points für smooth curve
+              const xMid = (current.x + next.x) / 2;
+              const yMid = (current.y + next.y) / 2;
+              const cpX1 = (xMid + current.x) / 2;
+              const cpX2 = (xMid + next.x) / 2;
+              
+              path += ` Q ${cpX1} ${current.y}, ${xMid} ${yMid}`;
+              path += ` Q ${cpX2} ${next.y}, ${next.x} ${next.y}`;
             }
-          }}
-          bezier
-          style={styles.chart}
-          withDots={false}
-          withInnerLines={true}
-          withOuterLines={false}
-          withVerticalLines={false}
-          withHorizontalLines={true}
-          withVerticalLabels={false}
-          withShadow={false}
-        />
+            
+            return path;
+          })();
+          
+          // Grid Lines
+          const gridLines = [0, 0.25, 0.5, 0.75, 1].map((percent) => {
+            const y = chartHeight * percent;
+            return { y, value: Math.round(maxY - (maxY - minY) * percent) };
+          });
+          
+          // X-Achsen Labels - intelligente Auswahl je nach Datenmenge
+          const xLabelsToShow = xLabels.filter((_, i) => {
+            if (data.length <= 7) return true; // Alle anzeigen
+            if (data.length <= 14) return i % 2 === 0; // Jeden 2. bei 14 Tagen
+            if (data.length <= 30) return i % 5 === 0 || i === data.length - 1; // Jeden 5. bei 30 Tagen
+            if (data.length <= 90) return i % 15 === 0 || i === data.length - 1; // Jeden 15. bei 90 Tagen
+            if (data.length <= 182) return i % 30 === 0 || i === data.length - 1; // Jeden Monat bei 6 Monaten
+            if (data.length <= 365) return i % 60 === 0 || i === data.length - 1; // Alle 2 Monate bei 1 Jahr
+            return i % 365 === 0 || i === data.length - 1; // Jährlich bei Max
+          }).map((label, originalIndex) => {
+            const actualIndex = xLabels.indexOf(label);
+            return { label, index: actualIndex };
+          });
+          
+          return (
+            <Svg width={width} height={height}>
+              {/* Grid Lines */}
+              {gridLines.map((line, i) => (
+                <Line
+                  key={i}
+                  x1={padding.left}
+                  y1={padding.top + line.y}
+                  x2={padding.left + chartWidth}
+                  y2={padding.top + line.y}
+                  stroke="rgba(0, 0, 0, 0.05)"
+                  strokeWidth="1"
+                />
+              ))}
+              
+              {/* Y-Axis Labels - AUSSEN links */}
+              {gridLines.map((line, i) => (
+                <SvgText
+                  key={i}
+                  x={padding.left - 8}
+                  y={padding.top + line.y + 4}
+                  fontSize="11"
+                  fill="#999999"
+                  textAnchor="end"
+                  fontWeight="500"
+                >
+                  {line.value}
+                </SvgText>
+              ))}
+              
+              {/* X-Axis Labels */}
+              {xLabelsToShow.map(({ label, index }) => (
+                <SvgText
+                  key={index}
+                  x={padding.left + xScale(index)}
+                  y={height - padding.bottom + 20}
+                  fontSize="10"
+                  fill="#999999"
+                  textAnchor="middle"
+                  fontWeight="500"
+                >
+                  {label}
+                </SvgText>
+              ))}
+              
+              {/* Smooth Bezier Line - ELEGANT */}
+              <Path
+                d={pathData}
+                stroke="#000000"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                transform={`translate(${padding.left}, ${padding.top})`}
+              />
+            </Svg>
+          );
+        })()}
       </View>
 
       {/* Stats Grid - Dynamisch aus props */}
@@ -118,15 +216,7 @@ export default function ChartCard({
 
 const styles = StyleSheet.create({
   successCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 24,
     marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.08,
-    shadowRadius: 40,
-    elevation: 16,
   },
   successHeader: {
     marginBottom: 24,
@@ -146,10 +236,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: 'rgba(245, 245, 245, 0.6)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
   },
   pillActive: {
     backgroundColor: '#000000',
+    borderColor: '#000000',
   },
   pillText: {
     fontSize: 12,
@@ -160,11 +253,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   chartArea: {
-    marginHorizontal: -16,
-    marginBottom: 24,
-  },
-  chart: {
-    marginVertical: 8,
+    marginBottom: 20,
   },
   statsRow: {
     flexDirection: 'row',

@@ -21,22 +21,16 @@ export default function RateScale({ rate = 0, size = 'medium', showLabel = true 
       barHeight: 32,
       rateSize: 16,
       labelSize: 10,
-      boxWidth: 60,
-      boxPadding: 12,
     },
     medium: {
       barHeight: 48,
       rateSize: 22,
       labelSize: 12,
-      boxWidth: 70,
-      boxPadding: 14,
     },
     large: {
       barHeight: 64,
       rateSize: 28,
       labelSize: 14,
-      boxWidth: 85,
-      boxPadding: 16,
     }
   };
   
@@ -175,7 +169,7 @@ const styles = StyleSheet.create({
   scaleWrapper: {
     width: '100%',
     position: 'relative',
-    paddingTop: 20,
+    paddingTop: 4,
     paddingBottom: 28,
   },
   barContainer: {
@@ -243,12 +237,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 10,
     elevation: 6,
-  },
-  bubbleGradient: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 16,
   },
   bubbleTextContainer: {
     position: 'absolute',
