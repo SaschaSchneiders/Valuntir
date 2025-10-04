@@ -1,0 +1,645 @@
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { LineChart } from 'react-native-chart-kit';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
+import RateScale from '../shared/RateScale';
+
+export default function DashboardScreen() {
+  const [selectedTimeframe, setSelectedTimeframe] = React.useState('6months');
+  
+  // Mock-Daten für die Demo
+  const successRate = 87;
+  const connectionsSent = 23;
+  const pendingConnections = 3;
+  const totalRatings = 20;
+  const profileViews = 156;
+  const profileViewsChange = '+12%'; // Entwicklung der Profilaufrufe
+  
+  // Abo-Informationen
+  const currentPlan = 'Professional';
+  const totalConnections = 50;
+  const usedConnections = 23;
+  const remainingConnections = totalConnections - usedConnections;
+  
+  // Zeitraum-Daten für verschiedene Zeiträume
+  const timeframeData = {
+    '14days': {
+      labels: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
+      data: [85, 87, 84, 89, 86, 88, 90, 87, 89, 85, 88, 87, 89, 87]
+    },
+    '30days': {
+      labels: ['W1', 'W2', 'W3', 'W4', 'W5'],
+      data: [84, 86, 88, 87, 89]
+    },
+    '90days': {
+      labels: ['Jan', 'Feb', 'Mär'],
+      data: [82, 85, 87]
+    },
+    '6months': {
+      labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun'],
+      data: [82, 85, 83, 87, 89, 87]
+    },
+    'year': {
+      labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+      data: [83, 87, 85, 89]
+    },
+    'max': {
+      labels: ['2022', '2023', '2024'],
+      data: [78, 85, 87]
+    }
+  };
+  
+  const screenWidth = Dimensions.get('window').width; // Volle Breite!
+  
+  const chartData = {
+    labels: timeframeData[selectedTimeframe].labels,
+    datasets: [
+      {
+        data: timeframeData[selectedTimeframe].data,
+        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Schwarze Linie
+        strokeWidth: 3
+      }
+    ]
+  };
+  
+  // Bewertungslevel aus dem Doc
+  const ratingLevels = {
+    sehrZufrieden: 15,
+    zufrieden: 3,
+    neutral: 1,
+    unzufrieden: 1
+  };
+
+  return (
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <SafeAreaView style={styles.safeArea}>
+          <ScrollView contentContainerStyle={styles.content}>
+              <View style={styles.header}>
+                <Text style={styles.title}>Valuntir Dashboard</Text>
+                <Text style={styles.subtitle}>Top Tier Value</Text>
+              </View>
+
+        {/* RateScale - AUSSERHALB der Card */}
+        <View style={styles.rateScaleSection}>
+          <Text style={styles.sectionTitle}>Erfolgsquote</Text>
+          <RateScale rate={successRate} size="medium" showLabel={false} />
+        </View>
+        
+        {/* MODERNE Erfolgsquote Card mit allem drin */}
+        <View style={styles.successCard}>
+          {/* Header mit Titel und Tabs */}
+          <View style={styles.successHeader}>
+            <Text style={styles.cardTitle}>Verlauf & Statistiken</Text>
+            
+            {/* Kompakte Tab-Pills */}
+            <View style={styles.timeframePills}>
+              <TouchableOpacity 
+                style={[styles.pill, selectedTimeframe === '14days' && styles.pillActive]}
+                onPress={() => setSelectedTimeframe('14days')}
+              >
+                <Text style={[styles.pillText, selectedTimeframe === '14days' && styles.pillTextActive]}>14T</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.pill, selectedTimeframe === '30days' && styles.pillActive]}
+                onPress={() => setSelectedTimeframe('30days')}
+              >
+                <Text style={[styles.pillText, selectedTimeframe === '30days' && styles.pillTextActive]}>30T</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.pill, selectedTimeframe === '90days' && styles.pillActive]}
+                onPress={() => setSelectedTimeframe('90days')}
+              >
+                <Text style={[styles.pillText, selectedTimeframe === '90days' && styles.pillTextActive]}>90T</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.pill, selectedTimeframe === '6months' && styles.pillActive]}
+                onPress={() => setSelectedTimeframe('6months')}
+              >
+                <Text style={[styles.pillText, selectedTimeframe === '6months' && styles.pillTextActive]}>6M</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.pill, selectedTimeframe === 'year' && styles.pillActive]}
+                onPress={() => setSelectedTimeframe('year')}
+              >
+                <Text style={[styles.pillText, selectedTimeframe === 'year' && styles.pillTextActive]}>1J</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.pill, selectedTimeframe === 'max' && styles.pillActive]}
+                onPress={() => setSelectedTimeframe('max')}
+              >
+                <Text style={[styles.pillText, selectedTimeframe === 'max' && styles.pillTextActive]}>Max</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Clean Line Chart */}
+          <View style={styles.chartArea}>
+            <LineChart
+              data={{
+                labels: timeframeData[selectedTimeframe].labels,
+                datasets: [{
+                  data: timeframeData[selectedTimeframe].data
+                }]
+              }}
+              width={screenWidth - 80}
+              height={160}
+              chartConfig={{
+                backgroundColor: '#FFFFFF',
+                backgroundGradientFrom: '#FFFFFF',
+                backgroundGradientTo: '#FFFFFF',
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(153, 153, 153, ${opacity})`,
+                strokeWidth: 2.5,
+                propsForBackgroundLines: {
+                  stroke: 'rgba(0, 0, 0, 0.05)'
+                }
+              }}
+              bezier
+              style={styles.chart}
+              withDots={false}
+              withInnerLines={true}
+              withOuterLines={false}
+              withVerticalLines={false}
+              withHorizontalLines={true}
+              withVerticalLabels={false}
+              withShadow={false}
+            />
+          </View>
+
+          {/* Stats Grid - 3er Grid */}
+          <View style={styles.statsRow}>
+            <View style={styles.miniStat}>
+              <Text style={styles.miniStatNumber}>{connectionsSent}</Text>
+              <Text style={styles.miniStatLabel}>Versendet</Text>
+            </View>
+            <View style={styles.miniStat}>
+              <Text style={styles.miniStatNumber}>{pendingConnections}</Text>
+              <Text style={styles.miniStatLabel}>Ausstehend</Text>
+            </View>
+            <View style={styles.miniStat}>
+              <Text style={styles.miniStatNumber}>{totalRatings}</Text>
+              <Text style={styles.miniStatLabel}>Bewertet</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Bewertungslevel Card */}
+        <View style={styles.ratingsCard}>
+          <Text style={styles.cardTitle}>Bewertungsverteilung</Text>
+          
+          <View style={styles.ratingItem}>
+            <View style={styles.ratingIcon}>
+              <Ionicons name="checkmark-circle" size={22} color="#000000" />
+            </View>
+            <Text style={styles.ratingLabel}>Sehr zufrieden</Text>
+            <Text style={styles.ratingCount}>{ratingLevels.sehrZufrieden}</Text>
+          </View>
+
+          <View style={styles.ratingItem}>
+            <View style={styles.ratingIcon}>
+              <Ionicons name="happy" size={22} color="#000000" />
+            </View>
+            <Text style={styles.ratingLabel}>Zufrieden</Text>
+            <Text style={styles.ratingCount}>{ratingLevels.zufrieden}</Text>
+          </View>
+
+          <View style={styles.ratingItem}>
+            <View style={styles.ratingIcon}>
+              <Ionicons name="remove-circle" size={22} color="#000000" />
+            </View>
+            <Text style={styles.ratingLabel}>Neutral</Text>
+            <Text style={styles.ratingCount}>{ratingLevels.neutral}</Text>
+          </View>
+
+          <View style={styles.ratingItem}>
+            <View style={styles.ratingIcon}>
+              <Ionicons name="close-circle" size={22} color="#000000" />
+            </View>
+            <Text style={styles.ratingLabel}>Unzufrieden</Text>
+            <Text style={styles.ratingCount}>{ratingLevels.unzufrieden}</Text>
+          </View>
+        </View>
+
+        {/* Profilaufrufe Card */}
+        <View style={styles.profileViewsCard}>
+          <View style={styles.profileViewsHeader}>
+            <Text style={styles.profileViewsTitle}>Profilaufrufe</Text>
+            <View style={styles.profileViewsChange}>
+              <Text style={styles.profileViewsChangeText}>{profileViewsChange}</Text>
+            </View>
+          </View>
+          <Text style={styles.profileViewsNumber}>{profileViews}</Text>
+          <Text style={styles.profileViewsSubtitle}>Gesamtaufrufe</Text>
+        </View>
+
+        {/* Abo-Informationen Card - Vollständige Version */}
+        <View style={styles.subscriptionCard}>
+          <View style={styles.subscriptionHeader}>
+            <Text style={styles.subscriptionTitle}>Aktuelles Abo</Text>
+            <TouchableOpacity style={styles.upgradeButton}>
+              <Text style={styles.upgradeButtonText}>Upgrade</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.subscriptionPlan}>
+            <Text style={styles.planName}>{currentPlan}</Text>
+            <Text style={styles.planDetails}>{totalConnections} Connections/Monat</Text>
+          </View>
+
+          <View style={styles.connectionUsage}>
+            <View style={styles.usageBar}>
+              <View style={[styles.usageFill, { width: `${(usedConnections / totalConnections) * 100}%` }]} />
+            </View>
+            <View style={styles.usageStats}>
+              <Text style={styles.usageText}>
+                {usedConnections} von {totalConnections} verwendet
+              </Text>
+              <Text style={styles.remainingText}>
+                {remainingConnections} verbleibend
+              </Text>
+            </View>
+          </View>
+        </View>
+
+
+        {/* Recent Activity */}
+        <View style={styles.activityCard}>
+          <Text style={styles.cardTitle}>Letzte Aktivität</Text>
+          
+          <View style={styles.activityItem}>
+            <View style={styles.activityIcon}>
+              <Ionicons name="star" size={22} color="#000000" />
+            </View>
+            <View style={styles.activityContent}>
+              <Text style={styles.activityTitle}>Neue Bewertung erhalten</Text>
+              <Text style={styles.activitySubtitle}>Vor 2 Stunden</Text>
+            </View>
+          </View>
+
+          <View style={styles.activityItem}>
+            <View style={styles.activityIcon}>
+              <Ionicons name="mail" size={22} color="#000000" />
+            </View>
+            <View style={styles.activityContent}>
+              <Text style={styles.activityTitle}>Connection gesendet</Text>
+              <Text style={styles.activitySubtitle}>Gestern</Text>
+            </View>
+          </View>
+        </View>
+          </ScrollView>
+        </SafeAreaView>
+      </LinearGradient>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  gradient: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  content: {
+    padding: 20,
+    paddingBottom: 100,
+  },
+  header: {
+    marginBottom: 32,
+    paddingTop: 8,
+  },
+  title: {
+    fontSize: 34,
+    fontWeight: '800',
+    color: '#000000',
+    letterSpacing: -0.5,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666666',
+    fontWeight: '500',
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000000',
+    marginBottom: 16,
+    letterSpacing: -0.3,
+  },
+  rateScaleSection: {
+    marginBottom: 32,
+  },
+  successCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 0.08,
+    shadowRadius: 40,
+    elevation: 16,
+  },
+  successHeader: {
+    marginBottom: 24,
+  },
+  cardTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#000000',
+    marginBottom: 16,
+    letterSpacing: -0.5,
+  },
+  timeframePills: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  pill: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: '#F5F5F5',
+  },
+  pillActive: {
+    backgroundColor: '#000000',
+  },
+  pillText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#999999',
+  },
+  pillTextActive: {
+    color: '#FFFFFF',
+  },
+  chartArea: {
+    marginHorizontal: -16,
+    marginBottom: 24,
+  },
+  chart: {
+    marginVertical: 8,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    marginBottom: 12,
+    gap: 12,
+  },
+  miniStat: {
+    flex: 1,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+  },
+  miniStatNumber: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#000000',
+    marginBottom: 4,
+    letterSpacing: -1,
+  },
+  miniStatLabel: {
+    fontSize: 12,
+    color: '#666666',
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  ratingsCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 32,
+    elevation: 12,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 16,
+  },
+  ratingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  ratingIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
+  },
+  ratingLabel: {
+    flex: 1,
+    fontSize: 15,
+    color: '#333333',
+    fontWeight: '500',
+  },
+  ratingCount: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#000000',
+  },
+  profileViewsCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 32,
+    elevation: 12,
+  },
+  profileViewsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  profileViewsTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000000',
+    letterSpacing: -0.3,
+  },
+  profileViewsChange: {
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  profileViewsChangeText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#000000',
+  },
+  profileViewsNumber: {
+    fontSize: 48,
+    fontWeight: '900',
+    color: '#000000',
+    marginBottom: 4,
+    letterSpacing: -1,
+  },
+  profileViewsSubtitle: {
+    fontSize: 14,
+    color: '#666666',
+    fontWeight: '500',
+  },
+  activityCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 32,
+    elevation: 12,
+  },
+  activityItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  activityIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
+  },
+  activityContent: {
+    flex: 1,
+  },
+  activityTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 4,
+  },
+  activitySubtitle: {
+    fontSize: 13,
+    color: '#999999',
+    fontWeight: '500',
+  },
+  subscriptionCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 32,
+    elevation: 12,
+  },
+  subscriptionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  subscriptionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000000',
+    letterSpacing: -0.3,
+  },
+  upgradeButton: {
+    backgroundColor: '#000000',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  upgradeButtonText: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  subscriptionPlan: {
+    marginBottom: 20,
+  },
+  planName: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#000000',
+    marginBottom: 6,
+    letterSpacing: -0.5,
+  },
+  planDetails: {
+    fontSize: 15,
+    color: '#666666',
+    fontWeight: '500',
+  },
+  connectionUsage: {
+    marginTop: 8,
+  },
+  usageBar: {
+    height: 10,
+    backgroundColor: '#F0F0F0',
+    borderRadius: 6,
+    marginBottom: 12,
+    overflow: 'hidden',
+  },
+  usageFill: {
+    height: '100%',
+    backgroundColor: '#000000',
+    borderRadius: 6,
+  },
+  usageStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  usageText: {
+    fontSize: 15,
+    color: '#333333',
+    fontWeight: '600',
+  },
+  remainingText: {
+    fontSize: 15,
+    color: '#666666',
+    fontWeight: '500',
+  },
+});
