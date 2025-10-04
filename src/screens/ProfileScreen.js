@@ -8,22 +8,18 @@ import {
   TouchableOpacity,
   Switch,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
+  const navigation = useNavigation();
   const [isPublicView, setIsPublicView] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>🏢</Text>
-          </View>
-          <Text style={styles.companyName}>Beratungszentrum Nord GmbH</Text>
-          <Text style={styles.username}>@beratungszentrum_nord</Text>
-          <Text style={styles.branch}>Unternehmensberatung</Text>
-          
-          {/* Toggle oben rechts */}
+          {/* Toggle diskret oben links */}
           <View style={styles.toggleContainer}>
             <Text style={styles.toggleLabel}>
               {isPublicView ? 'Öffentlich' : 'Anbieter'}
@@ -33,8 +29,24 @@ export default function ProfileScreen() {
               onValueChange={setIsPublicView}
               trackColor={{ false: '#767577', true: '#000000' }}
               thumbColor={isPublicView ? '#fff' : '#f4f3f4'}
+              style={{ transform: [{ scale: 0.8 }] }}
             />
           </View>
+          
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>🏢</Text>
+          </View>
+          <Text style={styles.companyName}>Beratungszentrum Nord GmbH</Text>
+          <Text style={styles.username}>@beratungszentrum_nord</Text>
+          <Text style={styles.branch}>Unternehmensberatung</Text>
+          
+          {/* Einstellungs-Button oben rechts */}
+          <TouchableOpacity 
+            style={styles.settingsButton}
+            onPress={() => navigation.navigate('Settings')}
+          >
+            <Ionicons name="settings-outline" size={24} color="#000" />
+          </TouchableOpacity>
         </View>
 
         {/* Öffentliches Profil - nur sichtbar wenn Toggle aktiviert */}
@@ -152,22 +164,43 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-  toggleContainer: {
+  settingsButton: {
     position: 'absolute',
     top: 0,
     right: 0,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 24,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  toggleContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
     borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   toggleLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#666',
-    marginRight: 8,
-    fontWeight: '500',
+    marginRight: 4,
+    fontWeight: '600',
   },
   publicProfileCard: {
     backgroundColor: '#fff',

@@ -126,17 +126,20 @@ export default function ChartCard({
           });
           
           // X-Achsen Labels - intelligente Auswahl je nach Datenmenge
-          const xLabelsToShow = xLabels.filter((_, i) => {
-            if (data.length <= 7) return true; // Alle anzeigen
-            if (data.length <= 14) return i % 2 === 0; // Jeden 2. bei 14 Tagen
-            if (data.length <= 30) return i % 5 === 0 || i === data.length - 1; // Jeden 5. bei 30 Tagen
-            if (data.length <= 90) return i % 15 === 0 || i === data.length - 1; // Jeden 15. bei 90 Tagen
-            if (data.length <= 182) return i % 30 === 0 || i === data.length - 1; // Jeden Monat bei 6 Monaten
-            if (data.length <= 365) return i % 60 === 0 || i === data.length - 1; // Alle 2 Monate bei 1 Jahr
-            return i % 365 === 0 || i === data.length - 1; // Jährlich bei Max
-          }).map((label, originalIndex) => {
-            const actualIndex = xLabels.indexOf(label);
-            return { label, index: actualIndex };
+          const xLabelsToShow = [];
+          xLabels.forEach((label, i) => {
+            let shouldShow = false;
+            if (data.length <= 7) shouldShow = true; // Alle anzeigen
+            else if (data.length <= 14) shouldShow = i % 2 === 0; // Jeden 2. bei 14 Tagen
+            else if (data.length <= 30) shouldShow = i % 5 === 0 || i === data.length - 1; // Jeden 5. bei 30 Tagen
+            else if (data.length <= 90) shouldShow = i % 15 === 0 || i === data.length - 1; // Jeden 15. bei 90 Tagen
+            else if (data.length <= 182) shouldShow = i % 30 === 0 || i === data.length - 1; // Jeden Monat bei 6 Monaten
+            else if (data.length <= 365) shouldShow = i % 60 === 0 || i === data.length - 1; // Alle 2 Monate bei 1 Jahr
+            else shouldShow = i % 365 === 0 || i === data.length - 1; // Jährlich bei Max
+            
+            if (shouldShow) {
+              xLabelsToShow.push({ label, index: i });
+            }
           });
           
           return (
@@ -233,12 +236,14 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   pill: {
+    flex: 1,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
     backgroundColor: 'rgba(245, 245, 245, 0.6)',
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.05)',
+    alignItems: 'center',
   },
   pillActive: {
     backgroundColor: '#000000',

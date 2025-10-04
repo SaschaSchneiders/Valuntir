@@ -105,7 +105,7 @@ export default function DashboardScreen() {
         <SafeAreaView style={styles.safeArea}>
           <ScrollView contentContainerStyle={styles.content}>
               <View style={styles.header}>
-                <Text style={styles.title}>Valuntir Dashboard</Text>
+                <Text style={styles.title}>Valuntir</Text>
                 <Text style={styles.subtitle}>Top Tier Value</Text>
               </View>
 

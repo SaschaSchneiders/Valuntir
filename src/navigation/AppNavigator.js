@@ -32,10 +32,10 @@ function TabNavigator() {
         }}
       />
       <Tab.Screen 
-        name="Connections" 
-        component={ConnectionsScreen}
+        name="NewConnection" 
+        component={ProfileScreen} // Placeholder - wird später ersetzt
         options={{
-          tabBarLabel: 'Connections',
+          tabBarLabel: 'Neu',
         }}
       />
       <Tab.Screen 
@@ -43,20 +43,6 @@ function TabNavigator() {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profil',
-        }}
-      />
-      <Tab.Screen 
-        name="Settings" 
-        component={SettingsScreen}
-        options={{
-          tabBarLabel: 'Einstellungen',
-        }}
-      />
-      <Tab.Screen 
-        name="NewConnection" 
-        component={ProfileScreen} // Placeholder - wird später ersetzt
-        options={{
-          tabBarLabel: 'Neu',
         }}
       />
     </Tab.Navigator>
@@ -68,6 +54,8 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Main" component={TabNavigator} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="Connections" component={ConnectionsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

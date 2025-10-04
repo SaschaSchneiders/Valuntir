@@ -8,8 +8,11 @@ import {
   ScrollView,
   Switch,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SettingsScreen() {
+  const navigation = useNavigation();
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = React.useState(false);
 
@@ -17,7 +20,30 @@ export default function SettingsScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
           <Text style={styles.title}>Einstellungen</Text>
+        </View>
+        
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Connections</Text>
+          
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('Connections')}
+          >
+            <Text style={styles.menuText}>Connections verwalten</Text>
+            <Text style={styles.menuArrow}>›</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.menuItem}>
+            <Text style={styles.menuText}>Connection-Vorlagen</Text>
+            <Text style={styles.menuArrow}>›</Text>
+          </TouchableOpacity>
         </View>
         
         <View style={styles.section}>
@@ -155,6 +181,12 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    marginRight: 16,
+    padding: 8,
   },
   title: {
     fontSize: 28,
