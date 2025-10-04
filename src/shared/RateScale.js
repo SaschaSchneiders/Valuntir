@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
 
 /**
  * RateScale - Horizontaler Farbverlaufs-Streifen für Erfolgsquote
@@ -97,36 +98,49 @@ export default function RateScale({ rate = 0, size = 'medium', showLabel = true 
                 }
               ]}
             >
-              {/* Bubble mit 3D-Glanz */}
+              {/* Echter 3D-Effekt - Radialer Gradient */}
               <View
                 style={[
                   styles.bubble,
                   {
-                    backgroundColor: currentColor,
                     width: config.barHeight * 1.5,
-                    height: config.barHeight * 1.0,
+                    height: config.barHeight * 0.9,
                   }
                 ]}
               >
-                {/* Glanz-Overlay für Bubble-Effekt */}
-                <View style={styles.bubbleShine} />
+                <Svg
+                  width="100%"
+                  height="100%"
+                  style={StyleSheet.absoluteFillObject}
+                >
+                  <Defs>
+                    <RadialGradient
+                      id="bubbleGradient"
+                      cx="50%"
+                      cy="35%"
+                      r="80%"
+                      fx="50%"
+                      fy="35%"
+                    >
+                      <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.4" />
+                      <Stop offset="40%" stopColor={currentColor} stopOpacity="1" />
+                      <Stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
+                    </RadialGradient>
+                  </Defs>
+                  <Rect
+                    width="100%"
+                    height="100%"
+                    rx="16"
+                    ry="16"
+                    fill="url(#bubbleGradient)"
+                  />
+                </Svg>
                 
-                {/* Innerer Glanz-Gradient */}
-                <LinearGradient
-                  colors={[
-                    'rgba(255, 255, 255, 0.5)',
-                    'rgba(255, 255, 255, 0.2)',
-                    'rgba(255, 255, 255, 0)',
-                    'rgba(0, 0, 0, 0.1)'
-                  ]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.bubbleGradient}
-                />
-                
-                <Text style={[styles.bubbleText, { fontSize: config.rateSize }]}>
-                  {normalizedRate}%
-                </Text>
+                <View style={styles.bubbleTextContainer}>
+                  <Text style={[styles.bubbleText, { fontSize: config.rateSize }]}>
+                    {normalizedRate}%
+                  </Text>
+                </View>
               </View>
             </View>
           </LinearGradient>
@@ -221,48 +235,38 @@ const styles = StyleSheet.create({
     transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
   },
   bubble: {
-    borderRadius: 100, // Oval/Abgerundet
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 12,
-    borderWidth: 4,
-    borderColor: 'rgba(255, 255, 255, 0.4)',
-    position: 'relative',
+    borderRadius: 16,
     overflow: 'hidden',
-  },
-  bubbleShine: {
-    position: 'absolute',
-    top: '15%',
-    left: '20%',
-    width: '35%',
-    height: '35%',
-    borderRadius: 1000,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    shadowColor: 'rgba(255, 255, 255, 0.8)',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 8,
+    // Eleganter Schwebeffekt
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
   },
   bubbleGradient: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 16,
+  },
+  bubbleTextContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    borderRadius: 1000,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
   },
   bubbleText: {
     color: '#FFFFFF',
-    fontWeight: '900',
-    letterSpacing: -1,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 6,
-    zIndex: 2,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
 });
 

@@ -6,17 +6,13 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { LineChart } from 'react-native-chart-kit';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import RateScale from '../shared/RateScale';
+import ChartCard from '../shared/ChartCard';
 
 export default function DashboardScreen() {
-  const [selectedTimeframe, setSelectedTimeframe] = React.useState('6months');
-  
   // Mock-Daten für die Demo
   const successRate = 87;
   const connectionsSent = 23;
@@ -59,19 +55,6 @@ export default function DashboardScreen() {
     }
   };
   
-  const screenWidth = Dimensions.get('window').width; // Volle Breite!
-  
-  const chartData = {
-    labels: timeframeData[selectedTimeframe].labels,
-    datasets: [
-      {
-        data: timeframeData[selectedTimeframe].data,
-        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Schwarze Linie
-        strokeWidth: 3
-      }
-    ]
-  };
-  
   // Bewertungslevel aus dem Doc
   const ratingLevels = {
     sehrZufrieden: 15,
@@ -95,109 +78,22 @@ export default function DashboardScreen() {
                 <Text style={styles.subtitle}>Top Tier Value</Text>
               </View>
 
+        {/* Chart Card - Wiederverwendbare Komponente */}
+        <ChartCard
+          timeframeData={timeframeData}
+          stats={[
+            { value: connectionsSent, label: 'Versendet' },
+            { value: pendingConnections, label: 'Ausstehend' },
+            { value: totalRatings, label: 'Bewertet' },
+          ]}
+          title="Verlauf & Statistiken"
+          defaultTimeframe="6months"
+        />
+
         {/* RateScale - AUSSERHALB der Card */}
         <View style={styles.rateScaleSection}>
           <Text style={styles.sectionTitle}>Erfolgsquote</Text>
           <RateScale rate={successRate} size="medium" showLabel={false} />
-        </View>
-        
-        {/* MODERNE Erfolgsquote Card mit allem drin */}
-        <View style={styles.successCard}>
-          {/* Header mit Titel und Tabs */}
-          <View style={styles.successHeader}>
-            <Text style={styles.cardTitle}>Verlauf & Statistiken</Text>
-            
-            {/* Kompakte Tab-Pills */}
-            <View style={styles.timeframePills}>
-              <TouchableOpacity 
-                style={[styles.pill, selectedTimeframe === '14days' && styles.pillActive]}
-                onPress={() => setSelectedTimeframe('14days')}
-              >
-                <Text style={[styles.pillText, selectedTimeframe === '14days' && styles.pillTextActive]}>14T</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.pill, selectedTimeframe === '30days' && styles.pillActive]}
-                onPress={() => setSelectedTimeframe('30days')}
-              >
-                <Text style={[styles.pillText, selectedTimeframe === '30days' && styles.pillTextActive]}>30T</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.pill, selectedTimeframe === '90days' && styles.pillActive]}
-                onPress={() => setSelectedTimeframe('90days')}
-              >
-                <Text style={[styles.pillText, selectedTimeframe === '90days' && styles.pillTextActive]}>90T</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.pill, selectedTimeframe === '6months' && styles.pillActive]}
-                onPress={() => setSelectedTimeframe('6months')}
-              >
-                <Text style={[styles.pillText, selectedTimeframe === '6months' && styles.pillTextActive]}>6M</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.pill, selectedTimeframe === 'year' && styles.pillActive]}
-                onPress={() => setSelectedTimeframe('year')}
-              >
-                <Text style={[styles.pillText, selectedTimeframe === 'year' && styles.pillTextActive]}>1J</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.pill, selectedTimeframe === 'max' && styles.pillActive]}
-                onPress={() => setSelectedTimeframe('max')}
-              >
-                <Text style={[styles.pillText, selectedTimeframe === 'max' && styles.pillTextActive]}>Max</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Clean Line Chart */}
-          <View style={styles.chartArea}>
-            <LineChart
-              data={{
-                labels: timeframeData[selectedTimeframe].labels,
-                datasets: [{
-                  data: timeframeData[selectedTimeframe].data
-                }]
-              }}
-              width={screenWidth - 80}
-              height={160}
-              chartConfig={{
-                backgroundColor: '#FFFFFF',
-                backgroundGradientFrom: '#FFFFFF',
-                backgroundGradientTo: '#FFFFFF',
-                decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(153, 153, 153, ${opacity})`,
-                strokeWidth: 2.5,
-                propsForBackgroundLines: {
-                  stroke: 'rgba(0, 0, 0, 0.05)'
-                }
-              }}
-              bezier
-              style={styles.chart}
-              withDots={false}
-              withInnerLines={true}
-              withOuterLines={false}
-              withVerticalLines={false}
-              withHorizontalLines={true}
-              withVerticalLabels={false}
-              withShadow={false}
-            />
-          </View>
-
-          {/* Stats Grid - 3er Grid */}
-          <View style={styles.statsRow}>
-            <View style={styles.miniStat}>
-              <Text style={styles.miniStatNumber}>{connectionsSent}</Text>
-              <Text style={styles.miniStatLabel}>Versendet</Text>
-            </View>
-            <View style={styles.miniStat}>
-              <Text style={styles.miniStatNumber}>{pendingConnections}</Text>
-              <Text style={styles.miniStatLabel}>Ausstehend</Text>
-            </View>
-            <View style={styles.miniStat}>
-              <Text style={styles.miniStatNumber}>{totalRatings}</Text>
-              <Text style={styles.miniStatLabel}>Bewertet</Text>
-            </View>
-          </View>
         </View>
 
         {/* Bewertungslevel Card */}
@@ -349,80 +245,6 @@ const styles = StyleSheet.create({
   },
   rateScaleSection: {
     marginBottom: 32,
-  },
-  successCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.08,
-    shadowRadius: 40,
-    elevation: 16,
-  },
-  successHeader: {
-    marginBottom: 24,
-  },
-  cardTitle: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#000000',
-    marginBottom: 16,
-    letterSpacing: -0.5,
-  },
-  timeframePills: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  pill: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    backgroundColor: '#F5F5F5',
-  },
-  pillActive: {
-    backgroundColor: '#000000',
-  },
-  pillText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#999999',
-  },
-  pillTextActive: {
-    color: '#FFFFFF',
-  },
-  chartArea: {
-    marginHorizontal: -16,
-    marginBottom: 24,
-  },
-  chart: {
-    marginVertical: 8,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    marginBottom: 12,
-    gap: 12,
-  },
-  miniStat: {
-    flex: 1,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
-  },
-  miniStatNumber: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#000000',
-    marginBottom: 4,
-    letterSpacing: -1,
-  },
-  miniStatLabel: {
-    fontSize: 12,
-    color: '#666666',
-    fontWeight: '500',
-    textAlign: 'center',
   },
   ratingsCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
