@@ -18,6 +18,7 @@ export default function SearchScreen() {
   const [locationQuery, setLocationQuery] = useState('');
   const [radius, setRadius] = useState(50); // in km
   const [showFilters, setShowFilters] = useState(false);
+  const [isLocationFocused, setIsLocationFocused] = useState(false);
 
   // Mock-Daten für Anbieter
   const providers = [
@@ -57,7 +58,7 @@ export default function SearchScreen() {
       username: '@ra_mueller',
       category: 'Rechtsberatung',
       location: 'Frankfurt',
-      successRate: null, // Kein aktives Abo
+      successRate: null,
       reviewCount: 12,
       hasActivePlan: false,
     },
@@ -85,23 +86,18 @@ export default function SearchScreen() {
   const filterProviders = () => {
     let filtered = providers;
 
-    // Nach Kategorie filtern
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(p => 
         p.category.toLowerCase().includes(selectedCategory.toLowerCase())
       );
     }
 
-    // Nach Standort filtern
     if (locationQuery.trim()) {
       filtered = filtered.filter(p =>
         p.location.toLowerCase().includes(locationQuery.toLowerCase())
       );
-      // Hinweis: In einer echten App würde hier eine Geocoding-API genutzt werden
-      // um echte Distanzberechnungen mit dem Radius durchzuführen
     }
 
-    // Nach Suchbegriff filtern (Name oder Branche)
     if (searchQuery.trim()) {
       filtered = filtered.filter(p =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -121,6 +117,68 @@ export default function SearchScreen() {
     if (rate >= 70) return '#EF4444';
     return '#999999';
   };
+
+  const ProviderCard = ({ provider }) => (
+    <TouchableOpacity style={styles.providerCard}>
+      <View style={styles.providerHeader}>
+        <View style={styles.providerIcon}>
+          <Ionicons name="briefcase" size={24} color="#000" />
+        </View>
+        <View style={styles.providerInfo}>
+          <Text style={styles.providerName}>{provider.name}</Text>
+          <Text style={styles.providerUsername}>{provider.username}</Text>
+        </View>
+      </View>
+
+      <View style={styles.providerDetails}>
+        <View style={styles.providerMeta}>
+          <View style={styles.metaItem}>
+            <Ionicons name="location-outline" size={14} color="#666" />
+            <Text style={styles.metaText}>{provider.location}</Text>
+          </View>
+          <View style={styles.metaItem}>
+            <Ionicons name="pricetag-outline" size={14} color="#666" />
+            <Text style={styles.metaText}>{provider.category}</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.providerStats}>
+        <View style={styles.statItem}>
+          <Text style={styles.statLabel}>Bewertungen</Text>
+          <Text style={styles.statValue}>{provider.reviewCount}</Text>
+        </View>
+        
+        <View style={styles.statDivider} />
+        
+        <View style={styles.statItem}>
+          <Text style={styles.statLabel}>Erfolgsquote</Text>
+          {provider.hasActivePlan ? (
+            <Text 
+              style={[
+                styles.statValue, 
+                { color: getSuccessRateColor(provider.successRate) }
+              ]}
+            >
+              {provider.successRate}%
+            </Text>
+          ) : (
+            <View style={styles.lockedBadge}>
+              <Ionicons name="lock-closed" size={12} color="#999" />
+              <Text style={styles.lockedText}>Nicht aktiviert</Text>
+            </View>
+          )}
+        </View>
+      </View>
+
+      {provider.hasActivePlan && (
+        <TouchableOpacity style={styles.viewProfileButton}>
+          <Text style={styles.viewProfileText}>Profil ansehen</Text>
+          <Ionicons name="arrow-forward" size={16} color="#000" />
+        </TouchableOpacity>
+      )}
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -178,98 +236,6 @@ export default function SearchScreen() {
               />
             </TouchableOpacity>
 
-            {/* Expandierbare Filter */}
-            {showFilters && (
-              <View style={styles.filtersContainer}>
-                {/* Standort-Filter */}
-                <View style={styles.filterSection}>
-                  <Text style={styles.filterSectionTitle}>Standort</Text>
-                  <View style={styles.locationInputContainer}>
-                    <Ionicons name="location-outline" size={20} color="#999" style={styles.locationIcon} />
-                    <TextInput
-                      style={styles.locationInput}
-                      placeholder="Stadt oder PLZ..."
-                      placeholderTextColor="#999"
-                      value={locationQuery}
-                      onChangeText={setLocationQuery}
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                    />
-                    {locationQuery.length > 0 && (
-                      <TouchableOpacity onPress={() => setLocationQuery('')}>
-                        <Ionicons name="close-circle" size={20} color="#999" />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-
-                  {/* Radius Slider */}
-                  {locationQuery.length > 0 && (
-                    <View style={styles.radiusContainer}>
-                      <View style={styles.radiusHeader}>
-                        <Text style={styles.radiusLabel}>Umkreis</Text>
-                        <Text style={styles.radiusValue}>{radius} km</Text>
-                      </View>
-                      <Slider
-                        style={styles.slider}
-                        minimumValue={5}
-                        maximumValue={200}
-                        step={5}
-                        value={radius}
-                        onValueChange={setRadius}
-                        minimumTrackTintColor="#000000"
-                        maximumTrackTintColor="#E5E5E5"
-                        thumbTintColor="#000000"
-                      />
-                      <View style={styles.radiusMarkers}>
-                        <Text style={styles.radiusMarker}>5 km</Text>
-                        <Text style={styles.radiusMarker}>200 km</Text>
-                      </View>
-                    </View>
-                  )}
-                </View>
-
-                {/* Kategorie Filter */}
-                <View style={styles.filterSection}>
-                  <Text style={styles.filterSectionTitle}>Branche</Text>
-                  <View style={styles.categoryContainer}>
-                    {categories.map((cat) => (
-                      <TouchableOpacity
-                        key={cat.key}
-                        style={[
-                          styles.categoryTab,
-                          selectedCategory === cat.key && styles.categoryTabActive
-                        ]}
-                        onPress={() => setSelectedCategory(cat.key)}
-                      >
-                        <Text
-                          style={[
-                            styles.categoryTabText,
-                            selectedCategory === cat.key && styles.categoryTabTextActive
-                          ]}
-                        >
-                          {cat.label}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </View>
-
-                {/* Filter Reset */}
-                {(locationQuery || selectedCategory !== 'all') && (
-                  <TouchableOpacity 
-                    style={styles.resetButton}
-                    onPress={() => {
-                      setLocationQuery('');
-                      setSelectedCategory('all');
-                      setRadius(50);
-                    }}
-                  >
-                    <Text style={styles.resetButtonText}>Filter zurücksetzen</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            )}
-
             {/* Anbieter Liste */}
             <View style={styles.providersList}>
               {filteredProviders.length === 0 ? (
@@ -281,68 +247,7 @@ export default function SearchScreen() {
                 </View>
               ) : (
                 filteredProviders.map((provider) => (
-                  <TouchableOpacity
-                    key={provider.id}
-                    style={styles.providerCard}
-                  >
-                    <View style={styles.providerHeader}>
-                      <View style={styles.providerIcon}>
-                        <Ionicons name="briefcase" size={24} color="#000" />
-                      </View>
-                      <View style={styles.providerInfo}>
-                        <Text style={styles.providerName}>{provider.name}</Text>
-                        <Text style={styles.providerUsername}>{provider.username}</Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.providerDetails}>
-                      <View style={styles.providerMeta}>
-                        <View style={styles.metaItem}>
-                          <Ionicons name="location-outline" size={14} color="#666" />
-                          <Text style={styles.metaText}>{provider.location}</Text>
-                        </View>
-                        <View style={styles.metaItem}>
-                          <Ionicons name="pricetag-outline" size={14} color="#666" />
-                          <Text style={styles.metaText}>{provider.category}</Text>
-                        </View>
-                      </View>
-                    </View>
-
-                    <View style={styles.providerStats}>
-                      <View style={styles.statItem}>
-                        <Text style={styles.statLabel}>Bewertungen</Text>
-                        <Text style={styles.statValue}>{provider.reviewCount}</Text>
-                      </View>
-                      
-                      <View style={styles.statDivider} />
-                      
-                      <View style={styles.statItem}>
-                        <Text style={styles.statLabel}>Erfolgsquote</Text>
-                        {provider.hasActivePlan ? (
-                          <Text 
-                            style={[
-                              styles.statValue, 
-                              { color: getSuccessRateColor(provider.successRate) }
-                            ]}
-                          >
-                            {provider.successRate}%
-                          </Text>
-                        ) : (
-                          <View style={styles.lockedBadge}>
-                            <Ionicons name="lock-closed" size={12} color="#999" />
-                            <Text style={styles.lockedText}>Nicht aktiviert</Text>
-                          </View>
-                        )}
-                      </View>
-                    </View>
-
-                    {provider.hasActivePlan && (
-                      <TouchableOpacity style={styles.viewProfileButton}>
-                        <Text style={styles.viewProfileText}>Profil ansehen</Text>
-                        <Ionicons name="arrow-forward" size={16} color="#000" />
-                      </TouchableOpacity>
-                    )}
-                  </TouchableOpacity>
+                  <ProviderCard key={provider.id} provider={provider} />
                 ))
               )}
             </View>
@@ -357,6 +262,116 @@ export default function SearchScreen() {
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
+
+      {/* Filter Overlay */}
+      {showFilters && (
+        <View style={styles.filterOverlay}>
+          <View style={styles.filtersContainer}>
+            {/* Standort-Filter */}
+            <View style={styles.filterSection}>
+              <Text style={styles.filterSectionTitle}>Standort</Text>
+              <View style={styles.locationInputContainer}>
+                <Ionicons name="location-outline" size={20} color="#999" style={styles.locationIcon} />
+                <TextInput
+                  style={styles.locationInput}
+                  placeholder="Stadt oder PLZ..."
+                  placeholderTextColor="#999"
+                  value={locationQuery}
+                  onChangeText={setLocationQuery}
+                  onFocus={() => setIsLocationFocused(true)}
+                  onBlur={() => setIsLocationFocused(false)}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                {locationQuery.length > 0 && (
+                  <TouchableOpacity onPress={() => setLocationQuery('')}>
+                    <Ionicons name="close-circle" size={20} color="#999" />
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              {/* Radius Slider */}
+              {(locationQuery.length > 0 || isLocationFocused) && (
+                <View style={styles.radiusContainer}>
+                  <View style={styles.radiusHeader}>
+                    <Text style={styles.radiusLabel}>Umkreis</Text>
+                    <Text style={styles.radiusValue}>{radius} km</Text>
+                  </View>
+                  <Slider
+                    style={styles.slider}
+                    minimumValue={5}
+                    maximumValue={200}
+                    step={5}
+                    value={radius}
+                    onValueChange={setRadius}
+                    minimumTrackTintColor="#000000"
+                    maximumTrackTintColor="#E5E5E5"
+                    thumbTintColor="#000000"
+                  />
+                  <View style={styles.radiusMarkers}>
+                    <Text style={styles.radiusMarker}>5 km</Text>
+                    <Text style={styles.radiusMarker}>200 km</Text>
+                  </View>
+                </View>
+              )}
+            </View>
+
+            {/* Kategorie Filter */}
+            <View style={[styles.filterSection, { marginBottom: 0 }]}>
+              <Text style={styles.filterSectionTitle}>Branche</Text>
+              <View style={styles.categoryContainer}>
+                {categories.map((cat) => (
+                  <TouchableOpacity
+                    key={cat.key}
+                    style={[
+                      styles.categoryTab,
+                      selectedCategory === cat.key && styles.categoryTabActive
+                    ]}
+                    onPress={() => setSelectedCategory(cat.key)}
+                  >
+                    <Text
+                      style={[
+                        styles.categoryTabText,
+                        selectedCategory === cat.key && styles.categoryTabTextActive
+                      ]}
+                    >
+                      {cat.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* Action Buttons */}
+            <View style={styles.actionButtons}>
+              {(locationQuery || selectedCategory !== 'all') && (
+                <TouchableOpacity 
+                  style={styles.resetButtonInline}
+                  onPress={() => {
+                    setLocationQuery('');
+                    setSelectedCategory('all');
+                    setRadius(50);
+                  }}
+                >
+                  <Text style={styles.resetButtonText}>Zurücksetzen</Text>
+                </TouchableOpacity>
+              )}
+              
+              <TouchableOpacity 
+                style={[
+                  styles.applyButton,
+                  !(locationQuery || selectedCategory !== 'all') && styles.applyButtonFull
+                ]}
+                onPress={() => setShowFilters(false)}
+              >
+                <Text style={styles.applyButtonText}>
+                  Anzeigen ({filteredProviders.length})
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -443,21 +458,27 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
   },
+  filterOverlay: {
+    position: 'absolute',
+    top: 220,
+    left: 20,
+    right: 20,
+    zIndex: 1000,
+  },
   filtersContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    padding: 20,
-    marginBottom: 24,
+    padding: 18,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
+    borderColor: 'rgba(0, 0, 0, 0.1)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 10,
   },
   filterSection: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   filterSectionTitle: {
     fontSize: 16,
@@ -472,6 +493,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
   },
   locationIcon: {
     marginRight: 10,
@@ -484,9 +507,11 @@ const styles = StyleSheet.create({
   },
   radiusContainer: {
     marginTop: 16,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#FAFAFA',
     borderRadius: 12,
     padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
   },
   radiusHeader: {
     flexDirection: 'row',
@@ -529,10 +554,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#F5F5F5',
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: 'rgba(0, 0, 0, 0.06)',
   },
   categoryTabActive: {
     backgroundColor: '#000000',
+    borderColor: '#000000',
   },
   categoryTabText: {
     fontSize: 14,
@@ -542,17 +568,45 @@ const styles = StyleSheet.create({
   categoryTabTextActive: {
     color: '#FFFFFF',
   },
-  resetButton: {
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 20,
+  },
+  resetButtonInline: {
+    flex: 1,
     backgroundColor: '#F5F5F5',
     borderRadius: 12,
     padding: 14,
     alignItems: 'center',
-    marginTop: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.08)',
   },
   resetButtonText: {
     fontSize: 14,
     fontWeight: '700',
     color: '#666',
+  },
+  applyButton: {
+    flex: 2,
+    backgroundColor: '#000000',
+    borderRadius: 12,
+    padding: 14,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  applyButtonFull: {
+    flex: 1,
+  },
+  applyButtonText: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: -0.3,
   },
   providersList: {
     gap: 16,
@@ -700,4 +754,3 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 });
-
