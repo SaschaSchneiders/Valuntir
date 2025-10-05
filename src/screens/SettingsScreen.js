@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,11 +10,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
-  const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = React.useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
 
   const tabs = [
     { name: 'Home', icon: 'home-outline' },
@@ -24,216 +25,187 @@ export default function SettingsScreen() {
   ];
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Ionicons name="arrow-back" size={24} color="#000" />
-          </TouchableOpacity>
-          <Text style={styles.title}>Einstellungen</Text>
-        </View>
-        
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Connections</Text>
-          
-          <TouchableOpacity 
-            style={styles.menuItem}
-            onPress={() => navigation.navigate('Connections')}
-          >
-            <Text style={styles.menuText}>Connections verwalten</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Connection-Vorlagen</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Allgemein</Text>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Sprache</Text>
-            <Text style={styles.menuValue}>Deutsch</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Region</Text>
-            <Text style={styles.menuValue}>Deutschland</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Benachrichtigungen</Text>
-          
-          <View style={styles.menuItem}>
-            <Text style={styles.menuText}>Push-Benachrichtigungen</Text>
-            <Switch
-              value={notificationsEnabled}
-              onValueChange={setNotificationsEnabled}
-              trackColor={{ false: '#767577', true: '#000000' }}
-              thumbColor={notificationsEnabled ? '#fff' : '#f4f3f4'}
-            />
-          </View>
-        </View>
-        
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Erscheinungsbild</Text>
-          
-          <View style={styles.menuItem}>
-            <Text style={styles.menuText}>Dunkler Modus</Text>
-            <Switch
-              value={darkModeEnabled}
-              onValueChange={setDarkModeEnabled}
-              trackColor={{ false: '#767577', true: '#000000' }}
-              thumbColor={darkModeEnabled ? '#fff' : '#f4f3f4'}
-            />
-          </View>
-        </View>
-        
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sicherheit</Text>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Passwort ändern</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Zwei-Faktor-Authentifizierung</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Datenschutz</Text>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Datenschutzeinstellungen</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Daten exportieren</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Abo & Billing</Text>
-          
-          <View style={styles.subscriptionInfo}>
-            <Text style={styles.subscriptionTitle}>Aktuelles Paket</Text>
-            <Text style={styles.subscriptionPlan}>Professional</Text>
-            <Text style={styles.subscriptionDetails}>50 Connections/Monat</Text>
-          </View>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Abo verwalten</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Rechnungen</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Zahlungsmethoden</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Über</Text>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Version</Text>
-            <Text style={styles.menuValue}>1.0.0</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Lizenz</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Impressum</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.section}>
-          <TouchableOpacity style={styles.logoutButton}>
-            <Text style={styles.logoutText}>Abmelden</Text>
-          </TouchableOpacity>
-        </View>
-        
-        {/* Platz für die schwebende TabBar */}
-        <View style={{ height: 100 }} />
-      </ScrollView>
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <SafeAreaView style={styles.safeArea} edges={['top']}>
+          <ScrollView contentContainerStyle={styles.content}>
+            {/* Header */}
+            <View style={styles.header}>
+              <TouchableOpacity 
+                style={styles.backButton}
+                onPress={() => navigation.goBack()}
+              >
+                <Ionicons name="arrow-back" size={24} color="#000" />
+              </TouchableOpacity>
+              <Text style={styles.title}>⚙️ Einstellungen</Text>
+            </View>
+            
+            {/* App Section */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>App</Text>
+              
+              <View style={styles.menuItem}>
+                <View style={styles.menuLeft}>
+                  <Ionicons name="notifications-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Push-Benachrichtigungen</Text>
+                </View>
+                <Switch
+                  value={notificationsEnabled}
+                  onValueChange={setNotificationsEnabled}
+                  trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
+              
+              <TouchableOpacity style={styles.menuItem}>
+                <View style={styles.menuLeft}>
+                  <Ionicons name="globe-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Sprache</Text>
+                </View>
+                <View style={styles.menuRight}>
+                  <Text style={styles.menuValue}>Deutsch</Text>
+                  <Ionicons name="chevron-forward" size={20} color="#999" />
+                </View>
+              </TouchableOpacity>
+              
+              <View style={[styles.menuItem, styles.menuItemLast]}>
+                <View style={styles.menuLeft}>
+                  <Ionicons name="moon-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Dark Mode</Text>
+                </View>
+                <Switch
+                  value={darkModeEnabled}
+                  onValueChange={setDarkModeEnabled}
+                  trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
+            </View>
+            
+            {/* Konto Section */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Konto</Text>
+              
+              <TouchableOpacity style={styles.menuItem}>
+                <View style={styles.menuLeft}>
+                  <Ionicons name="card-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Bankverbindung</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.menuItem}>
+                <View style={styles.menuLeft}>
+                  <Ionicons name="receipt-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Mein Abo</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
+                <View style={styles.menuLeft}>
+                  <Ionicons name="log-out-outline" size={22} color="#EF4444" />
+                  <Text style={[styles.menuText, styles.logoutText]}>Logout</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+            </View>
+            
+            {/* Rechtliches Section (diskret) */}
+            <View style={styles.legalSection}>
+              <TouchableOpacity>
+                <Text style={styles.legalText}>Datenschutz</Text>
+              </TouchableOpacity>
+              
+              <Text style={styles.legalSeparator}>•</Text>
+              
+              <TouchableOpacity>
+                <Text style={styles.legalText}>AGB</Text>
+              </TouchableOpacity>
+              
+              <Text style={styles.legalSeparator}>•</Text>
+              
+              <TouchableOpacity>
+                <Text style={styles.legalText}>Impressum</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {/* Platz für TabBar */}
+            <View style={{ height: 100 }} />
+          </ScrollView>
+        </SafeAreaView>
 
-      {/* Schwebende TabBar */}
-      <View style={styles.floatingTabBarContainer}>
-        <View style={styles.floatingTabBar}>
-          {tabs.map((tab) => (
-            <TouchableOpacity
-              key={tab.name}
-              style={styles.tabButton}
-              onPress={() => navigation.navigate('Main', { screen: tab.name })}
-            >
-              <Ionicons name={tab.icon} size={24} color="#666666" />
-            </TouchableOpacity>
-          ))}
+        {/* Schwebende TabBar */}
+        <View style={styles.floatingTabBarContainer}>
+          <View style={styles.floatingTabBar}>
+            {tabs.map((tab) => (
+              <TouchableOpacity
+                key={tab.name}
+                style={styles.tabButton}
+                onPress={() => navigation.navigate('Main', { screen: tab.name })}
+              >
+                <Ionicons name={tab.icon} size={24} color="#666666" />
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+  },
+  gradient: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
   },
   content: {
     padding: 20,
-    paddingBottom: 100, // Platz für FloatingTabBar
   },
   header: {
-    marginBottom: 24,
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 24,
   },
   backButton: {
-    marginRight: 16,
+    marginRight: 12,
     padding: 8,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#000',
   },
   section: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 16,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#666',
+    textTransform: 'uppercase',
+    marginBottom: 12,
+    letterSpacing: 0.5,
   },
   menuItem: {
     flexDirection: 'row',
@@ -241,53 +213,49 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#F5F5F5',
+  },
+  menuItemLast: {
+    borderBottomWidth: 0,
+  },
+  menuLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  menuRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   menuText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  menuValue: {
-    fontSize: 16,
-    color: '#666',
-  },
-  menuArrow: {
-    fontSize: 18,
-    color: '#ccc',
-  },
-  logoutButton: {
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  logoutText: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 15,
+    color: '#000',
     fontWeight: '500',
   },
-  subscriptionInfo: {
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
-    padding: 12,
+  menuValue: {
+    fontSize: 15,
+    color: '#999',
+  },
+  logoutText: {
+    color: '#EF4444',
+  },
+  legalSection: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 16,
     marginBottom: 16,
+    gap: 12,
   },
-  subscriptionTitle: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
+  legalText: {
+    fontSize: 12,
+    color: '#AAA',
+    fontWeight: '400',
   },
-  subscriptionPlan: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 2,
-  },
-  subscriptionDetails: {
-    fontSize: 14,
-    color: '#666',
+  legalSeparator: {
+    fontSize: 12,
+    color: '#DDD',
   },
   floatingTabBarContainer: {
     position: 'absolute',
@@ -298,27 +266,22 @@ const styles = StyleSheet.create({
   },
   floatingTabBar: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 25,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 8,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
+    borderColor: '#F0F0F0',
   },
   tabButton: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 20,
   },
 });
