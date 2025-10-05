@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import PrimaryButton from '../shared/PrimaryButton';
 import InfoPopup from '../shared/InfoPopup';
 import ProfileCard from '../shared/ProfileCard';
@@ -157,7 +158,7 @@ export default function ProfileScreen() {
         end={{ x: 1, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
-          <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content}>
             {/* Profil Card */}
             <ProfileCard
               isPublicView={isPublicView}
@@ -172,8 +173,33 @@ export default function ProfileScreen() {
               <>
                 {/* Kurzbeschreibung */}
                 {showDescription && descriptionValue && (
-                  <View style={styles.publicSection}>
+                  <View style={[styles.publicSection, { marginBottom: 16 }]}>
                     <Text style={styles.publicDescription}>{descriptionValue}</Text>
+                  </View>
+                )}
+
+                {/* Quick Action Tabs - Webseite & Termin */}
+                {((showWebsite && websiteValue) || (showCalendar && calendarValue)) && (
+                  <View style={styles.quickActionTabs}>
+                    {showWebsite && websiteValue && (
+                      <TouchableOpacity 
+                        style={styles.quickActionTab}
+                        onPress={() => console.log('Open Website:', websiteValue)}
+                      >
+                        <Ionicons name="globe-outline" size={20} color="#000" />
+                        <Text style={styles.quickActionTabText}>Webseite</Text>
+                      </TouchableOpacity>
+                    )}
+                    
+                    {showCalendar && calendarValue && (
+                      <TouchableOpacity 
+                        style={styles.quickActionTab}
+                        onPress={() => console.log('Open Calendar:', calendarValue)}
+                      >
+                        <Ionicons name="calendar-outline" size={20} color="#000" />
+                        <Text style={styles.quickActionTabText}>Termin buchen</Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
                 )}
 
@@ -186,13 +212,15 @@ export default function ProfileScreen() {
                 />
 
                 {/* Erfolgsquote Scale */}
-                <RateScale 
-                  rate={87} 
-                  size="medium" 
-                  showLabel={false}
-                  title="Erfolgsquote"
-                  totalRatings={124}
-                />
+                <View style={{ marginBottom: 32 }}>
+                  <RateScale 
+                    rate={87} 
+                    size="medium" 
+                    showLabel={false}
+                    title="Erfolgsquote"
+                    totalRatings={124}
+                  />
+                </View>
 
                 {/* Kontaktmöglichkeiten */}
                 {(showEmail && emailValue) || (showPhone && phoneValue) || (showWhatsApp && whatsAppValue) ? (
@@ -222,29 +250,6 @@ export default function ProfileScreen() {
                   </View>
                 ) : null}
 
-                {/* Links */}
-                {(showWebsite && websiteValue) || (showCalendar && calendarValue) ? (
-                  <View style={styles.publicSection}>
-                    <Text style={styles.publicSectionTitle}>Links</Text>
-                    
-                    {showWebsite && websiteValue && (
-                      <TouchableOpacity style={styles.publicLinkItem}>
-                        <Ionicons name="globe-outline" size={20} color="#000" />
-                        <Text style={styles.publicLinkText}>Webseite</Text>
-                        <Ionicons name="chevron-forward" size={20} color="#CCC" />
-                      </TouchableOpacity>
-                    )}
-                    
-                    {showCalendar && calendarValue && (
-                      <TouchableOpacity style={styles.publicLinkItem}>
-                        <Ionicons name="calendar-outline" size={20} color="#000" />
-                        <Text style={styles.publicLinkText}>Termin buchen</Text>
-                        <Ionicons name="chevron-forward" size={20} color="#CCC" />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                ) : null}
-
                 {/* Social Media */}
                 {(showLinkedIn && linkedInValue) || (showInstagram && instagramValue) ? (
                   <View style={styles.publicSection}>
@@ -262,8 +267,8 @@ export default function ProfileScreen() {
                           <Ionicons name="logo-instagram" size={28} color="#E4405F" />
                         </TouchableOpacity>
                       )}
-                    </View>
-                  </View>
+          </View>
+        </View>
                 ) : null}
               </>
             )}
@@ -280,8 +285,8 @@ export default function ProfileScreen() {
                     >
                       <Ionicons name="pencil-outline" size={20} color="#666" />
                     </TouchableOpacity>
-                  </View>
-                  
+              </View>
+              
                   {/* Read-Only Felder - bereits von Plattform definiert */}
                   <View style={styles.infoItem}>
                     <View style={styles.menuLeft}>
@@ -292,9 +297,9 @@ export default function ProfileScreen() {
                         <Text style={styles.infoLabel}>Firmenname</Text>
                         <Text style={styles.infoValue}>Beratungszentrum Nord GmbH</Text>
                       </View>
-                    </View>
-                  </View>
-
+              </View>
+            </View>
+            
                   <View style={styles.infoItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
@@ -304,20 +309,20 @@ export default function ProfileScreen() {
                         <Text style={styles.infoLabel}>Branche</Text>
                         <Text style={styles.infoValue}>Unternehmensberatung</Text>
                       </View>
-                    </View>
-                  </View>
+              </View>
+              </View>
 
                   <View style={styles.infoItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="location-outline" size={20} color="#000" />
-                      </View>
+              </View>
                       <View>
                         <Text style={styles.infoLabel}>Standort</Text>
                         <Text style={styles.infoValue}>Hamburg, Deutschland</Text>
-                      </View>
-                    </View>
-                  </View>
+              </View>
+            </View>
+          </View>
 
                   {/* Editierbare Felder */}
                   <View style={styles.toggleItem}>
@@ -353,7 +358,7 @@ export default function ProfileScreen() {
                       <Text style={styles.menuText}>Logo hochladen</Text>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+          </TouchableOpacity>
                 </View>
 
                 {/* Keywords */}
@@ -371,9 +376,9 @@ export default function ProfileScreen() {
                       </View>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
-                </View>
-
+          </TouchableOpacity>
+        </View>
+        
                 {/* Kontaktinformationen */}
                 <View style={styles.menuCard}>
                   <Text style={styles.cardTitle}>Kontakt</Text>
@@ -516,13 +521,13 @@ export default function ProfileScreen() {
                     />
                   </View>
                 </View>
-              </>
-            )}
+          </>
+        )}
 
             {/* Platz für TabBar */}
             <View style={{ height: 100 }} />
-          </ScrollView>
-        </SafeAreaView>
+      </ScrollView>
+    </SafeAreaView>
       </LinearGradient>
 
       {/* Input Modal */}
@@ -568,6 +573,39 @@ export default function ProfileScreen() {
         onSave={saveValue}
         onChangeText={setInputValue}
       />
+
+      {/* Floating Action Button - NUR in öffentlicher Ansicht */}
+      {isPublicView && (
+        <TouchableOpacity 
+          style={styles.fab}
+          activeOpacity={0.9}
+          onPress={() => {
+            // Bevorzugte Kontaktmöglichkeit: WhatsApp > Telefon > Email
+            if (showWhatsApp && whatsAppValue) {
+              // WhatsApp öffnen
+              console.log('WhatsApp:', whatsAppValue);
+            } else if (showPhone && phoneValue) {
+              // Telefon öffnen
+              console.log('Telefon:', phoneValue);
+            } else if (showEmail && emailValue) {
+              // Email öffnen
+              console.log('Email:', emailValue);
+            }
+          }}
+        >
+          <BlurView intensity={30} tint="dark" style={styles.fabBlur}>
+            <Ionicons 
+              name={
+                showWhatsApp && whatsAppValue ? 'logo-whatsapp' :
+                showPhone && phoneValue ? 'call' :
+                'mail'
+              } 
+              size={28} 
+              color="#FFFFFF" 
+            />
+          </BlurView>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -747,7 +785,34 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     color: '#333',
-    marginBottom: 8,
+  },
+  quickActionTabs: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 24,
+  },
+  quickActionTab: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  quickActionTabText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#000',
   },
   publicSectionTitle: {
     fontSize: 14,
@@ -767,20 +832,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#333',
   },
-  publicLinkItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  publicLinkText: {
-    flex: 1,
-    fontSize: 15,
-    color: '#000',
-    fontWeight: '500',
-  },
   publicSocialRow: {
     flexDirection: 'row',
     gap: 12,
@@ -797,5 +848,31 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  // Floating Action Button
+  fab: {
+    position: 'absolute',
+    bottom: 112, // Tab-Bar (72px Höhe + 20px Position) + 20px Abstand = gleich wie right (20px)
+    right: 20,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Semi-transparent für Glassmorphism
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+    zIndex: 999,
+  },
+  fabBlur: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 32,
   },
 });

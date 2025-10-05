@@ -74,8 +74,8 @@ export default function ChartCard({
           const xLabels = currentData.labels || [];
           
           const width = screenWidth - 48;
-          const height = 200;
-          const padding = { top: 20, right: 0, bottom: 40, left: 32 };
+          const height = 220;
+          const padding = { top: 30, right: 0, bottom: 40, left: 32 };
           const chartWidth = width - padding.left - padding.right;
           const chartHeight = height - padding.top - padding.bottom;
           
