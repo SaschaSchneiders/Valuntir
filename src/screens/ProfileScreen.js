@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import PrimaryButton from '../shared/PrimaryButton';
 import InfoPopup from '../shared/InfoPopup';
+import ProfileCard from '../shared/ProfileCard';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
@@ -39,6 +40,7 @@ export default function ProfileScreen() {
   const [calendarValue, setCalendarValue] = useState('');
   const [linkedInValue, setLinkedInValue] = useState('');
   const [instagramValue, setInstagramValue] = useState('');
+  const [changeRequestMessage, setChangeRequestMessage] = useState('');
   
   // Modal Handler
   const openModal = (type, currentValue = '') => {
@@ -74,6 +76,12 @@ export default function ProfileScreen() {
       case 'instagram':
         setInstagramValue(inputValue);
         break;
+      case 'changeRequest':
+        setChangeRequestMessage(inputValue);
+        // Hier würde die Nachricht an den Valuntir Support gesendet werden
+        console.log('Support-Anfrage für Unternehmensdaten-Änderung:', inputValue);
+        // TODO: Backend API Call
+        break;
     }
     closeModal();
   };
@@ -98,41 +106,13 @@ export default function ProfileScreen() {
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <ScrollView contentContainerStyle={styles.content}>
             {/* Profil Card */}
-            <View style={styles.profileCard}>
-              {/* Toggle - Absolut positioniert */}
-              <View style={styles.toggleContainer}>
-                <Switch
-                  value={isPublicView}
-                  onValueChange={setIsPublicView}
-                  trackColor={{ false: '#D1D5DB', true: '#000000' }}
-                  thumbColor="#FFFFFF"
-                  style={{ transform: [{ scale: 0.65 }] }}
-                />
-                <Text style={styles.toggleLabel}>
-                  {isPublicView ? 'Öffentlich' : 'Anbieter'}
-                </Text>
-              </View>
-
-              {/* Settings Button - Absolut positioniert */}
-              <TouchableOpacity 
-                style={styles.settingsButton}
-                onPress={() => navigation.navigate('Settings')}
-              >
-                <Ionicons name="settings-outline" size={20} color="#666" />
-              </TouchableOpacity>
-
-              <View style={styles.avatarContainer}>
-                <View style={styles.avatar}>
-                  <Ionicons name="business" size={48} color="#FFFFFF" />
-                </View>
-              </View>
-
-              <Text style={styles.companyName}>Beratungszentrum Nord GmbH</Text>
-              <View style={styles.branchBadge}>
-                <Ionicons name="briefcase-outline" size={14} color="#666" />
-                <Text style={styles.branchText}>Unternehmensberatung</Text>
-              </View>
-            </View>
+            <ProfileCard
+              isPublicView={isPublicView}
+              onToggleChange={setIsPublicView}
+              onSettingsPress={() => navigation.navigate('Settings')}
+              companyName="Beratungszentrum Nord GmbH"
+              branch="Unternehmensberatung"
+            />
 
             {/* Öffentliche Stats - nur im öffentlichen Modus */}
             {isPublicView && (
@@ -196,9 +176,12 @@ export default function ProfileScreen() {
                 <View style={styles.menuCard}>
                   <View style={styles.cardTitleRow}>
                     <Text style={styles.cardTitle}>Firmenprofil</Text>
-                    <View style={styles.requiredBadge}>
-                      <Text style={styles.requiredText}>Erforderlich</Text>
-                    </View>
+                    <TouchableOpacity 
+                      style={styles.editIconButton}
+                      onPress={() => openModal('changeRequest', changeRequestMessage)}
+                    >
+                      <Ionicons name="pencil-outline" size={20} color="#666" />
+                    </TouchableOpacity>
                   </View>
                   
                   {/* Read-Only Felder - bereits von Plattform definiert */}
@@ -272,7 +255,10 @@ export default function ProfileScreen() {
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="globe-outline" size={20} color="#000" />
                       </View>
-                      <Text style={styles.menuText}>Webseite</Text>
+                      <View style={styles.menuTextContainer}>
+                        <Text style={styles.menuText}>Webseite</Text>
+                        {websiteValue ? <Text style={styles.menuSubtext}>{websiteValue}</Text> : null}
+                      </View>
                     </View>
                     <Switch
                       value={showWebsite}
@@ -288,7 +274,10 @@ export default function ProfileScreen() {
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="mail-outline" size={20} color="#000" />
                       </View>
-                      <Text style={styles.menuText}>E-Mail</Text>
+                      <View style={styles.menuTextContainer}>
+                        <Text style={styles.menuText}>E-Mail</Text>
+                        {emailValue ? <Text style={styles.menuSubtext}>{emailValue}</Text> : null}
+                      </View>
                     </View>
                     <Switch
                       value={showEmail}
@@ -304,7 +293,10 @@ export default function ProfileScreen() {
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="call-outline" size={20} color="#000" />
                       </View>
-                      <Text style={styles.menuText}>Telefon</Text>
+                      <View style={styles.menuTextContainer}>
+                        <Text style={styles.menuText}>Telefon</Text>
+                        {phoneValue ? <Text style={styles.menuSubtext}>{phoneValue}</Text> : null}
+                      </View>
                     </View>
                     <Switch
                       value={showPhone}
@@ -320,7 +312,10 @@ export default function ProfileScreen() {
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="logo-whatsapp" size={20} color="#000" />
                       </View>
-                      <Text style={styles.menuText}>WhatsApp</Text>
+                      <View style={styles.menuTextContainer}>
+                        <Text style={styles.menuText}>WhatsApp</Text>
+                        {whatsAppValue ? <Text style={styles.menuSubtext}>{whatsAppValue}</Text> : null}
+                      </View>
                     </View>
                     <Switch
                       value={showWhatsApp}
@@ -336,7 +331,10 @@ export default function ProfileScreen() {
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="calendar-outline" size={20} color="#000" />
                       </View>
-                      <Text style={styles.menuText}>Kalender-Link</Text>
+                      <View style={styles.menuTextContainer}>
+                        <Text style={styles.menuText}>Kalender-Link</Text>
+                        {calendarValue ? <Text style={styles.menuSubtext}>{calendarValue}</Text> : null}
+                      </View>
                     </View>
                     <Switch
                       value={showCalendar}
@@ -357,7 +355,10 @@ export default function ProfileScreen() {
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="logo-linkedin" size={20} color="#000" />
                       </View>
-                      <Text style={styles.menuText}>LinkedIn</Text>
+                      <View style={styles.menuTextContainer}>
+                        <Text style={styles.menuText}>LinkedIn</Text>
+                        {linkedInValue ? <Text style={styles.menuSubtext}>{linkedInValue}</Text> : null}
+                      </View>
                     </View>
                     <Switch
                       value={showLinkedIn}
@@ -373,7 +374,10 @@ export default function ProfileScreen() {
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="logo-instagram" size={20} color="#000" />
                       </View>
-                      <Text style={styles.menuText}>Instagram</Text>
+                      <View style={styles.menuTextContainer}>
+                        <Text style={styles.menuText}>Instagram</Text>
+                        {instagramValue ? <Text style={styles.menuSubtext}>{instagramValue}</Text> : null}
+                      </View>
                     </View>
                     <Switch
                       value={showInstagram}
@@ -422,6 +426,7 @@ export default function ProfileScreen() {
           activeModal === 'calendar' ? 'Kalender-Link' :
           activeModal === 'linkedin' ? 'LinkedIn' :
           activeModal === 'instagram' ? 'Instagram' :
+          activeModal === 'changeRequest' ? 'Unternehmensdaten ändern' :
           ''
         }
         value={inputValue}
@@ -433,13 +438,18 @@ export default function ProfileScreen() {
           activeModal === 'calendar' ? 'https://calendly.com/...' :
           activeModal === 'linkedin' ? 'https://linkedin.com/in/...' :
           activeModal === 'instagram' ? 'https://instagram.com/...' :
+          activeModal === 'changeRequest' ? 'Beschreibe, welche Daten du ändern möchtest (Firmenname, Branche, Standort)...' :
           'https://...'
         }
         keyboardType={
           activeModal === 'email' ? 'email-address' :
           activeModal === 'phone' ? 'phone-pad' :
+          activeModal === 'changeRequest' ? 'default' :
           'url'
         }
+        multiline={activeModal === 'changeRequest'}
+        numberOfLines={activeModal === 'changeRequest' ? 5 : 1}
+        saveButtonText={activeModal === 'changeRequest' ? 'Support kontaktieren' : 'Speichern'}
         onClose={closeModal}
         onSave={saveValue}
         onChangeText={setInputValue}
@@ -460,87 +470,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-  },
-  profileCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 12,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-  },
-  toggleContainer: {
-    position: 'absolute',
-    top: 12,
-    left: 12,
-    flexDirection: 'column',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    paddingHorizontal: 6,
-    paddingVertical: 4,
-    zIndex: 10,
-  },
-  toggleLabel: {
-    fontSize: 9,
-    color: '#666',
-    marginTop: 2,
-    fontWeight: '600',
-  },
-  settingsButton: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  avatarContainer: {
-    marginBottom: 12,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#000000',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  companyName: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#000000',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  branchBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    gap: 6,
-  },
-  branchText: {
-    fontSize: 13,
-    color: '#666',
-    fontWeight: '600',
   },
   publicStatsCard: {
     backgroundColor: '#FFFFFF',
@@ -604,16 +533,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
-  requiredBadge: {
-    backgroundColor: '#FEF3C7',
+  editIconButton: {
+    backgroundColor: '#F5F5F5',
     borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  requiredText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#D97706',
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   ratingItem: {
     flexDirection: 'row',
@@ -684,7 +610,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#F5F5F5',
   },
@@ -692,9 +618,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   menuLeft: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    marginRight: 12,
   },
   menuIconContainer: {
     width: 36,
@@ -703,6 +631,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  menuTextContainer: {
+    flex: 1,
   },
   menuText: {
     fontSize: 15,

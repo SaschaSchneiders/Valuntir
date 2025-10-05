@@ -17,6 +17,9 @@ export default function InfoPopup({
   value,
   placeholder,
   keyboardType = 'default',
+  multiline = false,
+  numberOfLines = 1,
+  saveButtonText = 'Speichern',
   onClose,
   onSave,
   onChangeText,
@@ -50,31 +53,26 @@ export default function InfoPopup({
             </View>
 
             <TextInput
-              style={styles.modalInput}
+              style={[styles.modalInput, multiline && styles.modalInputMultiline]}
               value={value}
               onChangeText={onChangeText}
               placeholder={placeholder}
               autoFocus
               keyboardType={keyboardType}
-              returnKeyType="done"
-              onSubmitEditing={onSave}
+              returnKeyType={multiline ? 'default' : 'done'}
+              onSubmitEditing={multiline ? undefined : onSave}
               blurOnSubmit={false}
+              multiline={multiline}
+              numberOfLines={numberOfLines}
+              textAlignVertical={multiline ? 'top' : 'center'}
             />
 
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={styles.modalButtonCancel}
-                onPress={onClose}
-              >
-                <Text style={styles.modalButtonCancelText}>Abbrechen</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.modalButtonSave}
-                onPress={onSave}
-              >
-                <Text style={styles.modalButtonSaveText}>Speichern</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity 
+              style={styles.modalButtonSave}
+              onPress={onSave}
+            >
+              <Text style={styles.modalButtonSaveText}>{saveButtonText}</Text>
+            </TouchableOpacity>
           </TouchableOpacity>
         </KeyboardAvoidingView>
       </TouchableOpacity>
@@ -120,24 +118,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E5E5',
   },
-  modalButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  modalButtonCancel: {
-    flex: 1,
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#F5F5F5',
-    alignItems: 'center',
-  },
-  modalButtonCancelText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#666',
+  modalInputMultiline: {
+    minHeight: 120,
+    paddingTop: 16,
   },
   modalButtonSave: {
-    flex: 1,
+    width: '100%',
     padding: 16,
     borderRadius: 12,
     backgroundColor: '#000000',
