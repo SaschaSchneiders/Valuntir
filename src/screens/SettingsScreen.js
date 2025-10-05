@@ -184,7 +184,7 @@ export default function SettingsScreen() {
             <TouchableOpacity
               key={tab.name}
               style={styles.tabButton}
-              onPress={() => navigation.navigate(tab.name)}
+              onPress={() => navigation.navigate('Main', { screen: tab.name })}
             >
               <Ionicons name={tab.icon} size={24} color="#666666" />
             </TouchableOpacity>
