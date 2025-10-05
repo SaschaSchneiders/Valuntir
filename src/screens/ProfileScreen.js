@@ -14,34 +14,82 @@ import { LinearGradient } from 'expo-linear-gradient';
 import PrimaryButton from '../shared/PrimaryButton';
 import InfoPopup from '../shared/InfoPopup';
 import ProfileCard from '../shared/ProfileCard';
+import ChartCard from '../shared/ChartCard';
+import RateScale from '../shared/RateScale';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const [isPublicView, setIsPublicView] = useState(false);
   
+  // Chart Daten für öffentliche Ansicht
+  const generateRealisticData = (numPoints, baseValue = 87) => {
+    const data = [];
+    let currentValue = baseValue;
+    
+    for (let i = 0; i < numPoints; i++) {
+      const change = (Math.random() - 0.5) * 4;
+      currentValue = Math.max(75, Math.min(95, currentValue + change));
+      data.push(Math.round(currentValue * 10) / 10);
+    }
+    return data;
+  };
+
+  const timeframeData = {
+    '14days': {
+      data: generateRealisticData(14, 87),
+      labels: Array.from({length: 14}, (_, i) => `T${i+1}`)
+    },
+    '30days': {
+      data: generateRealisticData(30, 87),
+      labels: Array.from({length: 30}, (_, i) => `T${i+1}`)
+    },
+    '90days': {
+      data: generateRealisticData(90, 87),
+      labels: Array.from({length: 90}, (_, i) => i % 7 === 0 ? `W${Math.floor(i/7)+1}` : '')
+    },
+    '6months': {
+      data: generateRealisticData(182, 87),
+      labels: Array.from({length: 182}, (_, i) => i % 30 === 0 ? `M${Math.floor(i/30)+1}` : '')
+    },
+    'year': {
+      data: generateRealisticData(365, 87),
+      labels: Array.from({length: 365}, (_, i) => i % 30 === 0 ? `M${Math.floor(i/30)+1}` : '')
+    },
+    'max': {
+      data: generateRealisticData(730, 87),
+      labels: Array.from({length: 730}, (_, i) => i % 182 === 0 ? `H${Math.floor(i/182)+1}` : '')
+    }
+  };
+
+  const stats = [
+    { value: '124', label: 'Projekte' },
+    { value: '87%', label: 'Erfolgsquote' },
+    { value: '4.8', label: 'Bewertung' },
+  ];
+  
   // Toggle States für Kontaktoptionen
-  const [showDescription, setShowDescription] = useState(false);
-  const [showWebsite, setShowWebsite] = useState(false);
-  const [showEmail, setShowEmail] = useState(false);
-  const [showPhone, setShowPhone] = useState(false);
-  const [showWhatsApp, setShowWhatsApp] = useState(false);
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [showLinkedIn, setShowLinkedIn] = useState(false);
-  const [showInstagram, setShowInstagram] = useState(false);
+  const [showDescription, setShowDescription] = useState(true);
+  const [showWebsite, setShowWebsite] = useState(true);
+  const [showEmail, setShowEmail] = useState(true);
+  const [showPhone, setShowPhone] = useState(true);
+  const [showWhatsApp, setShowWhatsApp] = useState(true);
+  const [showCalendar, setShowCalendar] = useState(true);
+  const [showLinkedIn, setShowLinkedIn] = useState(true);
+  const [showInstagram, setShowInstagram] = useState(true);
   
   // Modal States
   const [activeModal, setActiveModal] = useState(null);
   const [inputValue, setInputValue] = useState('');
   
   // Gespeicherte Werte
-  const [descriptionValue, setDescriptionValue] = useState('');
-  const [websiteValue, setWebsiteValue] = useState('');
-  const [emailValue, setEmailValue] = useState('');
-  const [phoneValue, setPhoneValue] = useState('');
-  const [whatsAppValue, setWhatsAppValue] = useState('');
-  const [calendarValue, setCalendarValue] = useState('');
-  const [linkedInValue, setLinkedInValue] = useState('');
-  const [instagramValue, setInstagramValue] = useState('');
+  const [descriptionValue, setDescriptionValue] = useState('Wir sind Ihr kompetenter Partner für strategische Unternehmensberatung. Mit über 15 Jahren Erfahrung unterstützen wir mittelständische Unternehmen bei der digitalen Transformation und Prozessoptimierung.');
+  const [websiteValue, setWebsiteValue] = useState('https://beratungszentrum-nord.de');
+  const [emailValue, setEmailValue] = useState('kontakt@beratungszentrum-nord.de');
+  const [phoneValue, setPhoneValue] = useState('+49 40 123456789');
+  const [whatsAppValue, setWhatsAppValue] = useState('+49 40 123456789');
+  const [calendarValue, setCalendarValue] = useState('https://calendly.com/beratungszentrum-nord');
+  const [linkedInValue, setLinkedInValue] = useState('https://linkedin.com/company/beratungszentrum-nord');
+  const [instagramValue, setInstagramValue] = useState('https://instagram.com/beratungszentrum.nord');
   const [changeRequestMessage, setChangeRequestMessage] = useState('');
   
   // Modal Handler
@@ -119,59 +167,104 @@ export default function ProfileScreen() {
               branch="Unternehmensberatung"
             />
 
-            {/* Öffentliche Stats - nur im öffentlichen Modus */}
+            {/* Öffentliche Ansicht */}
             {isPublicView && (
               <>
-                <View style={styles.publicStatsCard}>
-                  <View style={styles.publicStatRow}>
-                    <View style={styles.publicStatItem}>
-                      <Text style={styles.publicStatNumber}>23</Text>
-                      <Text style={styles.publicStatLabel}>Projekte</Text>
-                    </View>
-                    <View style={styles.publicStatDivider} />
-                    <View style={styles.publicStatItem}>
-                      <Text style={styles.publicStatNumber}>87%</Text>
-                      <Text style={styles.publicStatLabel}>Erfolgsquote</Text>
-                    </View>
+                {/* Kurzbeschreibung */}
+                {showDescription && descriptionValue && (
+                  <View style={styles.publicSection}>
+                    <Text style={styles.publicDescription}>{descriptionValue}</Text>
                   </View>
-                </View>
+                )}
 
-                {/* Bewertungsverteilung */}
-                <View style={styles.ratingCard}>
-                  <Text style={styles.cardTitle}>Bewertungsverteilung</Text>
-                  
-                  <View style={styles.ratingItem}>
-                    <View style={styles.ratingLeft}>
-                      <Ionicons name="happy" size={20} color="#22C55E" />
-                      <Text style={styles.ratingLabel}>Sehr zufrieden</Text>
-                    </View>
-                    <Text style={styles.ratingValue}>15</Text>
-                  </View>
+                {/* Chart & Statistiken */}
+                <ChartCard 
+                  timeframeData={timeframeData}
+                  stats={stats}
+                  title="Verlauf der Erfolgsquote"
+                  defaultTimeframe="6months"
+                />
 
-                  <View style={styles.ratingItem}>
-                    <View style={styles.ratingLeft}>
-                      <Ionicons name="happy-outline" size={20} color="#84CC16" />
-                      <Text style={styles.ratingLabel}>Zufrieden</Text>
-                    </View>
-                    <Text style={styles.ratingValue}>3</Text>
-                  </View>
+                {/* Erfolgsquote Scale */}
+                <RateScale 
+                  rate={87} 
+                  size="medium" 
+                  showLabel={false}
+                  title="Erfolgsquote"
+                  totalRatings={124}
+                />
 
-                  <View style={styles.ratingItem}>
-                    <View style={styles.ratingLeft}>
-                      <Ionicons name="remove-circle-outline" size={20} color="#F59E0B" />
-                      <Text style={styles.ratingLabel}>Neutral</Text>
-                    </View>
-                    <Text style={styles.ratingValue}>1</Text>
+                {/* Kontaktmöglichkeiten */}
+                {(showEmail && emailValue) || (showPhone && phoneValue) || (showWhatsApp && whatsAppValue) ? (
+                  <View style={styles.publicSection}>
+                    <Text style={styles.publicSectionTitle}>Kontakt</Text>
+                    
+                    {showEmail && emailValue && (
+                      <View style={styles.publicContactItem}>
+                        <Ionicons name="mail-outline" size={20} color="#666" />
+                        <Text style={styles.publicContactText}>{emailValue}</Text>
+                      </View>
+                    )}
+                    
+                    {showPhone && phoneValue && (
+                      <View style={styles.publicContactItem}>
+                        <Ionicons name="call-outline" size={20} color="#666" />
+                        <Text style={styles.publicContactText}>{phoneValue}</Text>
+                      </View>
+                    )}
+                    
+                    {showWhatsApp && whatsAppValue && (
+                      <View style={styles.publicContactItem}>
+                        <Ionicons name="logo-whatsapp" size={20} color="#666" />
+                        <Text style={styles.publicContactText}>{whatsAppValue}</Text>
+                      </View>
+                    )}
                   </View>
+                ) : null}
 
-                  <View style={styles.ratingItem}>
-                    <View style={styles.ratingLeft}>
-                      <Ionicons name="sad-outline" size={20} color="#EF4444" />
-                      <Text style={styles.ratingLabel}>Unzufrieden</Text>
-                    </View>
-                    <Text style={styles.ratingValue}>1</Text>
+                {/* Links */}
+                {(showWebsite && websiteValue) || (showCalendar && calendarValue) ? (
+                  <View style={styles.publicSection}>
+                    <Text style={styles.publicSectionTitle}>Links</Text>
+                    
+                    {showWebsite && websiteValue && (
+                      <TouchableOpacity style={styles.publicLinkItem}>
+                        <Ionicons name="globe-outline" size={20} color="#000" />
+                        <Text style={styles.publicLinkText}>Webseite</Text>
+                        <Ionicons name="chevron-forward" size={20} color="#CCC" />
+                      </TouchableOpacity>
+                    )}
+                    
+                    {showCalendar && calendarValue && (
+                      <TouchableOpacity style={styles.publicLinkItem}>
+                        <Ionicons name="calendar-outline" size={20} color="#000" />
+                        <Text style={styles.publicLinkText}>Termin buchen</Text>
+                        <Ionicons name="chevron-forward" size={20} color="#CCC" />
+                      </TouchableOpacity>
+                    )}
                   </View>
-                </View>
+                ) : null}
+
+                {/* Social Media */}
+                {(showLinkedIn && linkedInValue) || (showInstagram && instagramValue) ? (
+                  <View style={styles.publicSection}>
+                    <Text style={styles.publicSectionTitle}>Social Media</Text>
+                    
+                    <View style={styles.publicSocialRow}>
+                      {showLinkedIn && linkedInValue && (
+                        <TouchableOpacity style={styles.publicSocialButton}>
+                          <Ionicons name="logo-linkedin" size={28} color="#0A66C2" />
+                        </TouchableOpacity>
+                      )}
+                      
+                      {showInstagram && instagramValue && (
+                        <TouchableOpacity style={styles.publicSocialButton}>
+                          <Ionicons name="logo-instagram" size={28} color="#E4405F" />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </View>
+                ) : null}
               </>
             )}
 
@@ -493,17 +586,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   publicStatsCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
   },
   publicStatRow: {
     flexDirection: 'row',
@@ -530,17 +613,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E5E5',
   },
   ratingCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
   },
   cardTitle: {
     fontSize: 17,
@@ -665,5 +738,64 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999',
     marginTop: 2,
+  },
+  // Öffentliche Ansicht Styles
+  publicSection: {
+    marginBottom: 24,
+  },
+  publicDescription: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#333',
+    marginBottom: 8,
+  },
+  publicSectionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  publicContactItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 8,
+  },
+  publicContactText: {
+    fontSize: 15,
+    color: '#333',
+  },
+  publicLinkItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  publicLinkText: {
+    flex: 1,
+    fontSize: 15,
+    color: '#000',
+    fontWeight: '500',
+  },
+  publicSocialRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  publicSocialButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
 });

@@ -123,11 +123,13 @@ export default function DashboardScreen() {
 
         {/* RateScale - AUSSERHALB der Card */}
         <View style={styles.rateScaleSection}>
-          <View style={styles.rateScaleTitleContainer}>
-            <Text style={styles.rateScaleTitle}>Erfolgsquote </Text>
-            <Text style={styles.rateScaleSubtitle}>(aus {totalRatings} Projekten)</Text>
-          </View>
-          <RateScale rate={successRate} size="medium" showLabel={false} />
+          <RateScale 
+            rate={successRate} 
+            size="medium" 
+            showLabel={false}
+            title="Erfolgsquote"
+            totalRatings={totalRatings}
+          />
         </View>
 
         {/* Bewertungslevel Card */}
@@ -272,23 +274,6 @@ const styles = StyleSheet.create({
   },
   rateScaleSection: {
     marginBottom: 32,
-  },
-  rateScaleTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: 4,
-  },
-  rateScaleTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
-    letterSpacing: -0.3,
-  },
-  rateScaleSubtitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#999999',
-    letterSpacing: -0.2,
   },
   ratingsCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',

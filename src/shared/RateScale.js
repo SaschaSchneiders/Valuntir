@@ -10,8 +10,16 @@ import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
  * @param {number} rate - Erfolgsquote in Prozent (0-100)
  * @param {string} size - Größe: 'small', 'medium', 'large' (default: 'medium')
  * @param {boolean} showLabel - Label anzeigen (default: true)
+ * @param {string} title - Titel über der Skala (optional)
+ * @param {number} totalRatings - Anzahl der Projekte für Subtitle (optional)
  */
-export default function RateScale({ rate = 0, size = 'medium', showLabel = true }) {
+export default function RateScale({ 
+  rate = 0, 
+  size = 'medium', 
+  showLabel = true,
+  title = null,
+  totalRatings = null
+}) {
   // Sicherstellen, dass rate zwischen 0 und 100 liegt
   const normalizedRate = Math.min(Math.max(rate, 0), 100);
   
@@ -49,6 +57,16 @@ export default function RateScale({ rate = 0, size = 'medium', showLabel = true 
   
   return (
     <View style={styles.container}>
+      {/* Titel und Subtitle - wenn vorhanden */}
+      {title && (
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{title} </Text>
+          {totalRatings && (
+            <Text style={styles.subtitle}>(aus {totalRatings} Projekten)</Text>
+          )}
+        </View>
+      )}
+      
       {showLabel && (
         <Text style={[styles.label, { fontSize: config.labelSize }]}>
           Erfolgsquote
@@ -159,6 +177,22 @@ export default function RateScale({ rate = 0, size = 'medium', showLabel = true 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: 4,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000000',
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#999999',
   },
   label: {
     color: '#666666',
