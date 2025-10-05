@@ -72,12 +72,10 @@ export default function FloatingTabBar({ state, descriptors, navigation }) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 20,
     left: 0,
     right: 0,
     paddingHorizontal: 20,
-    paddingBottom: 34, // Safe area für iPhone
-    paddingTop: 10,
   },
   tabBar: {
     flexDirection: 'row',

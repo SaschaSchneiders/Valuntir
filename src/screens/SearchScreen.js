@@ -3,15 +3,16 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   TextInput,
   TouchableOpacity,
   Animated,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import ProviderCard from '../shared/ProviderCard';
 
 export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,16 +33,20 @@ export default function SearchScreen() {
 
   useEffect(() => {
     if (isSearchFocused) {
+      // Reset to initial state first
+      fadeAnim.setValue(0);
+      slideAnim.setValue(50);
+      
+      // Faster animation to match keyboard
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 1,
-          duration: 250,
+          duration: 150,
           useNativeDriver: true,
         }),
-        Animated.spring(slideAnim, {
+        Animated.timing(slideAnim, {
           toValue: 0,
-          tension: 40,
-          friction: 8,
+          duration: 150,
           useNativeDriver: true,
         }),
       ]).start();
@@ -49,12 +54,12 @@ export default function SearchScreen() {
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
-          duration: 200,
+          duration: 150,
           useNativeDriver: true,
         }),
         Animated.timing(slideAnim, {
           toValue: 50,
-          duration: 200,
+          duration: 150,
           useNativeDriver: true,
         }),
       ]).start();
@@ -63,6 +68,11 @@ export default function SearchScreen() {
 
   useEffect(() => {
     if (showFilters) {
+      // Reset to initial state first
+      filterFadeAnim.setValue(0);
+      filterSlideAnim.setValue(50);
+      
+      // Then animate in
       Animated.parallel([
         Animated.timing(filterFadeAnim, {
           toValue: 1,
@@ -191,75 +201,6 @@ export default function SearchScreen() {
 
   const filteredProviders = filterProviders();
 
-  const getSuccessRateColor = (rate) => {
-    if (rate >= 90) return '#22C55E';
-    if (rate >= 80) return '#F59E0B';
-    if (rate >= 70) return '#EF4444';
-    return '#999999';
-  };
-
-  const ProviderCard = ({ provider }) => (
-    <TouchableOpacity style={styles.providerCard}>
-      <View style={styles.providerHeader}>
-        <View style={styles.providerIcon}>
-          <Ionicons name="briefcase" size={24} color="#000" />
-        </View>
-        <View style={styles.providerInfo}>
-          <Text style={styles.providerName}>{provider.name}</Text>
-          <Text style={styles.providerUsername}>{provider.username}</Text>
-        </View>
-      </View>
-
-      <View style={styles.providerDetails}>
-        <View style={styles.providerMeta}>
-          <View style={styles.metaItem}>
-            <Ionicons name="location-outline" size={14} color="#666" />
-            <Text style={styles.metaText}>{provider.location}</Text>
-          </View>
-          <View style={styles.metaItem}>
-            <Ionicons name="pricetag-outline" size={14} color="#666" />
-            <Text style={styles.metaText}>{provider.category}</Text>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.providerStats}>
-        <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Bewertungen</Text>
-          <Text style={styles.statValue}>{provider.reviewCount}</Text>
-        </View>
-        
-        <View style={styles.statDivider} />
-        
-        <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Erfolgsquote</Text>
-          {provider.hasActivePlan ? (
-            <Text 
-              style={[
-                styles.statValue, 
-                { color: getSuccessRateColor(provider.successRate) }
-              ]}
-            >
-              {provider.successRate}%
-            </Text>
-          ) : (
-            <View style={styles.lockedBadge}>
-              <Ionicons name="lock-closed" size={12} color="#999" />
-              <Text style={styles.lockedText}>Nicht aktiviert</Text>
-            </View>
-          )}
-        </View>
-      </View>
-
-      {provider.hasActivePlan && (
-        <TouchableOpacity style={styles.viewProfileButton}>
-          <Text style={styles.viewProfileText}>Profil ansehen</Text>
-          <Ionicons name="arrow-forward" size={16} color="#000" />
-        </TouchableOpacity>
-      )}
-    </TouchableOpacity>
-  );
-
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -268,7 +209,7 @@ export default function SearchScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={styles.safeArea} edges={['top']}>
           <ScrollView contentContainerStyle={styles.content}>
             <View style={styles.header}>
               <Text style={styles.title}>Anbieter Suchen</Text>
@@ -289,7 +230,7 @@ export default function SearchScreen() {
                     styles.searchPlaceholder,
                     searchQuery && styles.searchPlaceholderActive
                   ]}>
-                    {searchQuery || 'Name oder Branche...'}
+                    {searchQuery || 'Wonach suchst du?'}
                   </Text>
                 </View>
                 {searchQuery.length > 0 && (
@@ -373,7 +314,7 @@ export default function SearchScreen() {
               <Ionicons name="search" size={22} color="#000" style={styles.searchIcon} />
               <TextInput
                 style={styles.searchOverlayInput}
-                placeholder="Name oder Branche..."
+                placeholder="Wonach suchst du?"
                 placeholderTextColor="#999"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
@@ -575,7 +516,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    paddingBottom: 100,
   },
   header: {
     marginBottom: 24,
@@ -693,7 +633,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
     color: '#000',
-    fontWeight: '700',
+    fontWeight: '500',
     letterSpacing: -0.3,
   },
   popularSearchesSection: {
@@ -900,119 +840,6 @@ const styles = StyleSheet.create({
   providersList: {
     gap: 16,
     marginBottom: 24,
-  },
-  providerCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 20,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  providerHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  providerIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#F5F5F5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  providerInfo: {
-    flex: 1,
-  },
-  providerName: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 4,
-  },
-  providerUsername: {
-    fontSize: 14,
-    color: '#666666',
-    fontWeight: '500',
-  },
-  providerDetails: {
-    marginBottom: 16,
-  },
-  providerMeta: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  metaText: {
-    fontSize: 13,
-    color: '#666666',
-    fontWeight: '500',
-  },
-  providerStats: {
-    flexDirection: 'row',
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
-    marginBottom: 16,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statDivider: {
-    width: 1,
-    backgroundColor: '#F0F0F0',
-    marginHorizontal: 12,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#999999',
-    fontWeight: '500',
-    marginBottom: 6,
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#000000',
-    letterSpacing: -0.5,
-  },
-  lockedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#F5F5F5',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  lockedText: {
-    fontSize: 10,
-    color: '#999999',
-    fontWeight: '600',
-  },
-  viewProfileButton: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    padding: 14,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 8,
-  },
-  viewProfileText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#000000',
   },
   emptyState: {
     alignItems: 'center',

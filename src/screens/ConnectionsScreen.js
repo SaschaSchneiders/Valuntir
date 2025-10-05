@@ -4,12 +4,22 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ConnectionsScreen() {
+  const navigation = useNavigation();
+
+  const tabs = [
+    { name: 'Home', icon: 'home-outline' },
+    { name: 'Dashboard', icon: 'bar-chart-outline' },
+    { name: 'Search', icon: 'search-outline' },
+    { name: 'Profile', icon: 'person-outline' },
+  ];
   // Mock-Daten für Connections (synchronisiert mit Dashboard)
   const connections = [
     { id: '1', status: 'pending', date: '2024-01-15', customer: '@bauhaus_berlin' },
@@ -56,7 +66,7 @@ export default function ConnectionsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
         <Text style={styles.title}>Connections</Text>
         <TouchableOpacity style={styles.addButton}>
@@ -102,9 +112,24 @@ export default function ConnectionsScreen() {
         data={connections}
         renderItem={renderConnection}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
+        contentContainerStyle={[styles.listContainer, { paddingBottom: 100 }]}
         showsVerticalScrollIndicator={false}
       />
+
+      {/* Schwebende TabBar */}
+      <View style={styles.floatingTabBarContainer}>
+        <View style={styles.floatingTabBar}>
+          {tabs.map((tab) => (
+            <TouchableOpacity
+              key={tab.name}
+              style={styles.tabButton}
+              onPress={() => navigation.navigate(tab.name)}
+            >
+              <Ionicons name={tab.icon} size={24} color="#666666" />
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
@@ -226,5 +251,37 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#000000',
     borderRadius: 4,
+  },
+  floatingTabBarContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+  },
+  floatingTabBar: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
+  },
+  tabButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 20,
   },
 });

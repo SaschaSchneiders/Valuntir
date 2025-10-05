@@ -4,10 +4,10 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   Switch,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -16,8 +16,15 @@ export default function SettingsScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = React.useState(false);
 
+  const tabs = [
+    { name: 'Home', icon: 'home-outline' },
+    { name: 'Dashboard', icon: 'bar-chart-outline' },
+    { name: 'Search', icon: 'search-outline' },
+    { name: 'Profile', icon: 'person-outline' },
+  ];
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <TouchableOpacity 
@@ -165,7 +172,25 @@ export default function SettingsScreen() {
             <Text style={styles.logoutText}>Abmelden</Text>
           </TouchableOpacity>
         </View>
+        
+        {/* Platz für die schwebende TabBar */}
+        <View style={{ height: 100 }} />
       </ScrollView>
+
+      {/* Schwebende TabBar */}
+      <View style={styles.floatingTabBarContainer}>
+        <View style={styles.floatingTabBar}>
+          {tabs.map((tab) => (
+            <TouchableOpacity
+              key={tab.name}
+              style={styles.tabButton}
+              onPress={() => navigation.navigate(tab.name)}
+            >
+              <Ionicons name={tab.icon} size={24} color="#666666" />
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
@@ -263,5 +288,37 @@ const styles = StyleSheet.create({
   subscriptionDetails: {
     fontSize: 14,
     color: '#666',
+  },
+  floatingTabBarContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+  },
+  floatingTabBar: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
+  },
+  tabButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 20,
   },
 });

@@ -3,12 +3,13 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import ConnectionCard from '../shared/ConnectionCard';
 
 export default function HomeScreen() {
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -93,25 +94,6 @@ export default function HomeScreen() {
 
   const filteredConnections = filterConnections(connections, selectedFilter);
 
-  const formatDate = (date) => {
-    const now = new Date();
-    const diff = now - date;
-    const days = Math.floor(diff / (24 * 60 * 60 * 1000));
-    
-    if (days === 0) return 'Heute';
-    if (days === 1) return 'Gestern';
-    if (days < 7) return `vor ${days} Tagen`;
-    if (days < 30) return `vor ${Math.floor(days / 7)} Wochen`;
-    return `vor ${Math.floor(days / 30)} Monaten`;
-  };
-
-  const formatAmount = (amount) => {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(amount);
-  };
-
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -120,7 +102,7 @@ export default function HomeScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={styles.safeArea} edges={['top']}>
           <ScrollView contentContainerStyle={styles.content}>
             <View style={styles.header}>
               <Text style={styles.title}>Valuntir</Text>
@@ -159,48 +141,11 @@ export default function HomeScreen() {
                 </View>
               ) : (
                 filteredConnections.map((connection) => (
-                  <TouchableOpacity
+                  <ConnectionCard
                     key={connection.id}
-                    style={styles.connectionCard}
-                  >
-                    <View style={styles.connectionHeader}>
-                      <View style={styles.connectionIcon}>
-                        <Ionicons name="business" size={24} color="#000" />
-                      </View>
-                      <View style={styles.connectionInfo}>
-                        <Text style={styles.connectionCompany}>
-                          {connection.company}
-                        </Text>
-                        <Text style={styles.connectionCategory}>
-                          {connection.category}
-                        </Text>
-                      </View>
-                      {connection.status === 'rated' && (
-                        <Ionicons name="checkmark-circle" size={24} color="#22C55E" />
-                      )}
-                    </View>
-
-                    <View style={styles.connectionDetails}>
-                      <View style={styles.connectionAmount}>
-                        <Text style={styles.connectionAmountLabel}>Betrag</Text>
-                        <Text style={styles.connectionAmountValue}>
-                          {formatAmount(connection.amount)}
-                        </Text>
-                      </View>
-                      <View style={styles.connectionDate}>
-                        <Text style={styles.connectionDateLabel}>
-                          {formatDate(connection.date)}
-                        </Text>
-                      </View>
-                    </View>
-
-                    {connection.status === 'pending' && (
-                      <TouchableOpacity style={styles.rateButton}>
-                        <Text style={styles.rateButtonText}>Jetzt bewerten</Text>
-                        <Ionicons name="arrow-forward" size={16} color="#FFF" />
-                      </TouchableOpacity>
-                    )}
-                  </TouchableOpacity>
+                    connection={connection}
+                    onPress={() => {}}
+                  />
                 ))
               )}
             </View>
@@ -270,92 +215,6 @@ const styles = StyleSheet.create({
   },
   connectionsList: {
     gap: 16,
-  },
-  connectionCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 20,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  connectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  connectionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#F5F5F5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  connectionInfo: {
-    flex: 1,
-  },
-  connectionCompany: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 4,
-  },
-  connectionCategory: {
-    fontSize: 13,
-    color: '#666666',
-    fontWeight: '500',
-  },
-  connectionDetails: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
-  },
-  connectionAmount: {
-    flex: 1,
-  },
-  connectionAmountLabel: {
-    fontSize: 12,
-    color: '#999999',
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  connectionAmountValue: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#000000',
-    letterSpacing: -0.5,
-  },
-  connectionDate: {
-    alignItems: 'flex-end',
-  },
-  connectionDateLabel: {
-    fontSize: 13,
-    color: '#666666',
-    fontWeight: '600',
-  },
-  rateButton: {
-    backgroundColor: '#000000',
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 8,
-  },
-  rateButtonText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#FFFFFF',
   },
   emptyState: {
     alignItems: 'center',
