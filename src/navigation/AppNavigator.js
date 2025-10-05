@@ -4,7 +4,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
 // Screens
+import HomeScreen from '../screens/HomeScreen';
 import DashboardScreen from '../screens/DashboardScreen';
+import SearchScreen from '../screens/SearchScreen';
 import ConnectionsScreen from '../screens/ConnectionsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
@@ -25,17 +27,24 @@ function TabNavigator() {
       tabBar={(props) => <FloatingTabBar {...props} />}
     >
       <Tab.Screen 
-        name="Dashboard" 
-        component={DashboardScreen}
+        name="Home" 
+        component={HomeScreen}
         options={{
-          tabBarLabel: 'Dashboard',
+          tabBarLabel: 'Home',
         }}
       />
       <Tab.Screen 
-        name="NewConnection" 
-        component={ProfileScreen} // Placeholder - wird später ersetzt
+        name="Dashboard" 
+        component={DashboardScreen}
         options={{
-          tabBarLabel: 'Neu',
+          tabBarLabel: 'Statistiken',
+        }}
+      />
+      <Tab.Screen 
+        name="Search" 
+        component={SearchScreen}
+        options={{
+          tabBarLabel: 'Suche',
         }}
       />
       <Tab.Screen 

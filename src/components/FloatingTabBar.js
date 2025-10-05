@@ -30,22 +30,22 @@ export default function FloatingTabBar({ state, descriptors, navigation }) {
 
           const getIconName = (routeName) => {
             switch (routeName) {
-              case 'Dashboard':
+              case 'Home':
                 return isFocused ? 'home' : 'home-outline';
+              case 'Dashboard':
+                return isFocused ? 'bar-chart' : 'bar-chart-outline';
+              case 'Search':
+                return isFocused ? 'search' : 'search-outline';
               case 'Connections':
                 return isFocused ? 'people' : 'people-outline';
               case 'Profile':
                 return isFocused ? 'person' : 'person-outline';
               case 'Settings':
                 return isFocused ? 'settings' : 'settings-outline';
-              case 'NewConnection':
-                return 'add';
               default:
                 return 'circle';
             }
           };
-
-          const isNewConnectionTab = route.name === 'NewConnection';
           
           return (
             <TouchableOpacity
@@ -53,20 +53,13 @@ export default function FloatingTabBar({ state, descriptors, navigation }) {
               onPress={onPress}
               style={[
                 styles.tab, 
-                isFocused && styles.activeTab,
-                isNewConnectionTab && styles.newConnectionTab
+                isFocused && styles.activeTab
               ]}
             >
               <Ionicons
                 name={getIconName(route.name)}
                 size={24}
-                color={
-                  isNewConnectionTab 
-                    ? '#FFFFFF' 
-                    : isFocused 
-                      ? '#000000' 
-                      : '#666666'
-                }
+                color={isFocused ? '#000000' : '#666666'}
               />
             </TouchableOpacity>
           );
@@ -113,9 +106,5 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     backgroundColor: '#f5f5f5',
-  },
-  newConnectionTab: {
-    backgroundColor: '#000000',
-    borderRadius: 20,
   },
 });
