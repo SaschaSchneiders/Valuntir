@@ -12,10 +12,80 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import PrimaryButton from '../shared/PrimaryButton';
+import InfoPopup from '../shared/InfoPopup';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const [isPublicView, setIsPublicView] = useState(false);
+  
+  // Toggle States für Kontaktoptionen
+  const [showWebsite, setShowWebsite] = useState(false);
+  const [showEmail, setShowEmail] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
+  const [showWhatsApp, setShowWhatsApp] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [showLinkedIn, setShowLinkedIn] = useState(false);
+  const [showInstagram, setShowInstagram] = useState(false);
+  
+  // Modal States
+  const [activeModal, setActiveModal] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  
+  // Gespeicherte Werte
+  const [websiteValue, setWebsiteValue] = useState('');
+  const [emailValue, setEmailValue] = useState('');
+  const [phoneValue, setPhoneValue] = useState('');
+  const [whatsAppValue, setWhatsAppValue] = useState('');
+  const [calendarValue, setCalendarValue] = useState('');
+  const [linkedInValue, setLinkedInValue] = useState('');
+  const [instagramValue, setInstagramValue] = useState('');
+  
+  // Modal Handler
+  const openModal = (type, currentValue = '') => {
+    setActiveModal(type);
+    setInputValue(currentValue);
+  };
+  
+  const closeModal = () => {
+    setActiveModal(null);
+    setInputValue('');
+  };
+  
+  const saveValue = () => {
+    switch(activeModal) {
+      case 'website':
+        setWebsiteValue(inputValue);
+        break;
+      case 'email':
+        setEmailValue(inputValue);
+        break;
+      case 'phone':
+        setPhoneValue(inputValue);
+        break;
+      case 'whatsapp':
+        setWhatsAppValue(inputValue);
+        break;
+      case 'calendar':
+        setCalendarValue(inputValue);
+        break;
+      case 'linkedin':
+        setLinkedInValue(inputValue);
+        break;
+      case 'instagram':
+        setInstagramValue(inputValue);
+        break;
+    }
+    closeModal();
+  };
+  
+  const handleToggle = (type, currentState, setter, currentValue) => {
+    if (!currentState) {
+      openModal(type, currentValue);
+      setter(true);
+    } else {
+      setter(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -58,7 +128,6 @@ export default function ProfileScreen() {
               </View>
 
               <Text style={styles.companyName}>Beratungszentrum Nord GmbH</Text>
-              <Text style={styles.username}>@beratungszentrum_nord</Text>
               <View style={styles.branchBadge}>
                 <Ionicons name="briefcase-outline" size={14} color="#666" />
                 <Text style={styles.branchText}>Unternehmensberatung</Text>
@@ -126,42 +195,50 @@ export default function ProfileScreen() {
               <>
                 <View style={styles.menuCard}>
                   <View style={styles.cardTitleRow}>
-                    <Text style={styles.cardTitle}>Pflichtangaben</Text>
+                    <Text style={styles.cardTitle}>Firmenprofil</Text>
                     <View style={styles.requiredBadge}>
                       <Text style={styles.requiredText}>Erforderlich</Text>
                     </View>
                   </View>
                   
-                  <TouchableOpacity style={styles.menuItem}>
+                  {/* Read-Only Felder - bereits von Plattform definiert */}
+                  <View style={styles.infoItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="business-outline" size={20} color="#000" />
                       </View>
-                      <Text style={styles.menuText}>Firmenname</Text>
+                      <View>
+                        <Text style={styles.infoLabel}>Firmenname</Text>
+                        <Text style={styles.infoValue}>Beratungszentrum Nord GmbH</Text>
+                      </View>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+                  </View>
 
-                  <TouchableOpacity style={styles.menuItem}>
+                  <View style={styles.infoItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="briefcase-outline" size={20} color="#000" />
                       </View>
-                      <Text style={styles.menuText}>Branche</Text>
+                      <View>
+                        <Text style={styles.infoLabel}>Branche</Text>
+                        <Text style={styles.infoValue}>Unternehmensberatung</Text>
+                      </View>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+                  </View>
 
-                  <TouchableOpacity style={styles.menuItem}>
+                  <View style={styles.infoItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="location-outline" size={20} color="#000" />
                       </View>
-                      <Text style={styles.menuText}>Standort</Text>
+                      <View>
+                        <Text style={styles.infoLabel}>Standort</Text>
+                        <Text style={styles.infoValue}>Hamburg, Deutschland</Text>
+                      </View>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+                  </View>
 
+                  {/* Editierbare Felder */}
                   <TouchableOpacity style={styles.menuItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
@@ -190,87 +267,129 @@ export default function ProfileScreen() {
                 <View style={styles.menuCard}>
                   <Text style={styles.cardTitle}>Kontakt</Text>
                   
-                  <TouchableOpacity style={styles.menuItem}>
+                  <View style={styles.toggleItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="globe-outline" size={20} color="#000" />
                       </View>
                       <Text style={styles.menuText}>Webseite</Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+                    <Switch
+                      value={showWebsite}
+                      onValueChange={() => handleToggle('website', showWebsite, setShowWebsite, websiteValue)}
+                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                      thumbColor="#FFFFFF"
+                      style={{ transform: [{ scale: 0.8 }] }}
+                    />
+                  </View>
 
-                  <TouchableOpacity style={styles.menuItem}>
+                  <View style={styles.toggleItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="mail-outline" size={20} color="#000" />
                       </View>
                       <Text style={styles.menuText}>E-Mail</Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+                    <Switch
+                      value={showEmail}
+                      onValueChange={() => handleToggle('email', showEmail, setShowEmail, emailValue)}
+                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                      thumbColor="#FFFFFF"
+                      style={{ transform: [{ scale: 0.8 }] }}
+                    />
+                  </View>
 
-                  <TouchableOpacity style={styles.menuItem}>
+                  <View style={styles.toggleItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="call-outline" size={20} color="#000" />
                       </View>
                       <Text style={styles.menuText}>Telefon</Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+                    <Switch
+                      value={showPhone}
+                      onValueChange={() => handleToggle('phone', showPhone, setShowPhone, phoneValue)}
+                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                      thumbColor="#FFFFFF"
+                      style={{ transform: [{ scale: 0.8 }] }}
+                    />
+                  </View>
 
-                  <TouchableOpacity style={styles.menuItem}>
+                  <View style={styles.toggleItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="logo-whatsapp" size={20} color="#000" />
                       </View>
                       <Text style={styles.menuText}>WhatsApp</Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+                    <Switch
+                      value={showWhatsApp}
+                      onValueChange={() => handleToggle('whatsapp', showWhatsApp, setShowWhatsApp, whatsAppValue)}
+                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                      thumbColor="#FFFFFF"
+                      style={{ transform: [{ scale: 0.8 }] }}
+                    />
+                  </View>
 
-                  <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
+                  <View style={[styles.toggleItem, styles.toggleItemLast]}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="calendar-outline" size={20} color="#000" />
                       </View>
                       <Text style={styles.menuText}>Kalender-Link</Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+                    <Switch
+                      value={showCalendar}
+                      onValueChange={() => handleToggle('calendar', showCalendar, setShowCalendar, calendarValue)}
+                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                      thumbColor="#FFFFFF"
+                      style={{ transform: [{ scale: 0.8 }] }}
+                    />
+                  </View>
                 </View>
 
                 {/* Social Media */}
                 <View style={styles.menuCard}>
                   <Text style={styles.cardTitle}>Social Media</Text>
                   
-                  <TouchableOpacity style={styles.menuItem}>
+                  <View style={styles.toggleItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="logo-linkedin" size={20} color="#000" />
                       </View>
                       <Text style={styles.menuText}>LinkedIn</Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+                    <Switch
+                      value={showLinkedIn}
+                      onValueChange={() => handleToggle('linkedin', showLinkedIn, setShowLinkedIn, linkedInValue)}
+                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                      thumbColor="#FFFFFF"
+                      style={{ transform: [{ scale: 0.8 }] }}
+                    />
+                  </View>
 
-                  <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
+                  <View style={[styles.toggleItem, styles.toggleItemLast]}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="logo-instagram" size={20} color="#000" />
                       </View>
                       <Text style={styles.menuText}>Instagram</Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+                    <Switch
+                      value={showInstagram}
+                      onValueChange={() => handleToggle('instagram', showInstagram, setShowInstagram, instagramValue)}
+                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                      thumbColor="#FFFFFF"
+                      style={{ transform: [{ scale: 0.8 }] }}
+                    />
+                  </View>
                 </View>
 
                 {/* Keywords */}
                 <View style={styles.menuCard}>
                   <Text style={styles.cardTitle}>Sichtbarkeit</Text>
                   
-                  <TouchableOpacity style={styles.menuItem}>
+                  <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="pricetag-outline" size={20} color="#000" />
@@ -279,16 +398,6 @@ export default function ProfileScreen() {
                         <Text style={styles.menuText}>Such-Keywords</Text>
                         <Text style={styles.menuSubtext}>Max. 8-10 Stichworte</Text>
                       </View>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
-                    <View style={styles.menuLeft}>
-                      <View style={styles.menuIconContainer}>
-                        <Ionicons name="at-outline" size={20} color="#000" />
-                      </View>
-                      <Text style={styles.menuText}>Benutzername</Text>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color="#999" />
                   </TouchableOpacity>
@@ -301,6 +410,40 @@ export default function ProfileScreen() {
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
+
+      {/* Input Modal */}
+      <InfoPopup
+        visible={activeModal !== null}
+        title={
+          activeModal === 'website' ? 'Webseite' :
+          activeModal === 'email' ? 'E-Mail' :
+          activeModal === 'phone' ? 'Telefon' :
+          activeModal === 'whatsapp' ? 'WhatsApp' :
+          activeModal === 'calendar' ? 'Kalender-Link' :
+          activeModal === 'linkedin' ? 'LinkedIn' :
+          activeModal === 'instagram' ? 'Instagram' :
+          ''
+        }
+        value={inputValue}
+        placeholder={
+          activeModal === 'website' ? 'https://...' :
+          activeModal === 'email' ? 'info@firma.de' :
+          activeModal === 'phone' ? '+49 ...' :
+          activeModal === 'whatsapp' ? 'wa.me/...' :
+          activeModal === 'calendar' ? 'https://calendly.com/...' :
+          activeModal === 'linkedin' ? 'https://linkedin.com/in/...' :
+          activeModal === 'instagram' ? 'https://instagram.com/...' :
+          'https://...'
+        }
+        keyboardType={
+          activeModal === 'email' ? 'email-address' :
+          activeModal === 'phone' ? 'phone-pad' :
+          'url'
+        }
+        onClose={closeModal}
+        onSave={saveValue}
+        onChangeText={setInputValue}
+      />
     </View>
   );
 }
@@ -322,7 +465,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
-    marginBottom: 16,
+    marginBottom: 12,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -363,7 +506,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   avatarContainer: {
-    marginBottom: 16,
+    marginBottom: 12,
   },
   avatar: {
     width: 100,
@@ -382,14 +525,8 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '800',
     color: '#000000',
-    marginBottom: 6,
+    marginBottom: 10,
     textAlign: 'center',
-  },
-  username: {
-    fontSize: 15,
-    color: '#666666',
-    marginBottom: 12,
-    fontWeight: '500',
   },
   branchBadge: {
     flexDirection: 'row',
@@ -408,8 +545,8 @@ const styles = StyleSheet.create({
   publicStatsCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    padding: 16,
+    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -445,8 +582,8 @@ const styles = StyleSheet.create({
   ratingCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    padding: 16,
+    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -456,16 +593,16 @@ const styles = StyleSheet.create({
     borderColor: '#F0F0F0',
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
     color: '#000000',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   cardTitleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   requiredBadge: {
     backgroundColor: '#FEF3C7',
@@ -482,7 +619,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#F5F5F5',
   },
@@ -504,8 +641,8 @@ const styles = StyleSheet.create({
   menuCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    padding: 16,
+    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -518,11 +655,40 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 14,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#F5F5F5',
   },
   menuItemLast: {
+    borderBottomWidth: 0,
+  },
+  infoItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5F5F5',
+  },
+  infoLabel: {
+    fontSize: 13,
+    color: '#999',
+    marginBottom: 4,
+  },
+  infoValue: {
+    fontSize: 15,
+    color: '#000',
+    fontWeight: '600',
+  },
+  toggleItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5F5F5',
+  },
+  toggleItemLast: {
     borderBottomWidth: 0,
   },
   menuLeft: {
