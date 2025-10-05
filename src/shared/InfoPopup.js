@@ -19,6 +19,7 @@ export default function InfoPopup({
   keyboardType = 'default',
   multiline = false,
   numberOfLines = 1,
+  maxLength,
   saveButtonText = 'Speichern',
   onClose,
   onSave,
@@ -52,20 +53,28 @@ export default function InfoPopup({
               </TouchableOpacity>
             </View>
 
-            <TextInput
-              style={[styles.modalInput, multiline && styles.modalInputMultiline]}
-              value={value}
-              onChangeText={onChangeText}
-              placeholder={placeholder}
-              autoFocus
-              keyboardType={keyboardType}
-              returnKeyType={multiline ? 'default' : 'done'}
-              onSubmitEditing={multiline ? undefined : onSave}
-              blurOnSubmit={false}
-              multiline={multiline}
-              numberOfLines={numberOfLines}
-              textAlignVertical={multiline ? 'top' : 'center'}
-            />
+            <View>
+              <TextInput
+                style={[styles.modalInput, multiline && styles.modalInputMultiline]}
+                value={value}
+                onChangeText={onChangeText}
+                placeholder={placeholder}
+                autoFocus
+                keyboardType={keyboardType}
+                returnKeyType={multiline ? 'default' : 'done'}
+                onSubmitEditing={multiline ? undefined : onSave}
+                blurOnSubmit={false}
+                multiline={multiline}
+                numberOfLines={numberOfLines}
+                textAlignVertical={multiline ? 'top' : 'center'}
+                maxLength={maxLength}
+              />
+              {maxLength && (
+                <Text style={styles.charCounter}>
+                  {value?.length || 0} / {maxLength}
+                </Text>
+              )}
+            </View>
 
             <TouchableOpacity 
               style={styles.modalButtonSave}
@@ -114,13 +123,19 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    marginBottom: 20,
+    marginBottom: 8,
     borderWidth: 1,
     borderColor: '#E5E5E5',
   },
   modalInputMultiline: {
     minHeight: 120,
     paddingTop: 16,
+  },
+  charCounter: {
+    fontSize: 13,
+    color: '#999',
+    textAlign: 'right',
+    marginBottom: 12,
   },
   modalButtonSave: {
     width: '100%',

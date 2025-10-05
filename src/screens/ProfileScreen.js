@@ -20,6 +20,7 @@ export default function ProfileScreen() {
   const [isPublicView, setIsPublicView] = useState(false);
   
   // Toggle States für Kontaktoptionen
+  const [showDescription, setShowDescription] = useState(false);
   const [showWebsite, setShowWebsite] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
@@ -33,6 +34,7 @@ export default function ProfileScreen() {
   const [inputValue, setInputValue] = useState('');
   
   // Gespeicherte Werte
+  const [descriptionValue, setDescriptionValue] = useState('');
   const [websiteValue, setWebsiteValue] = useState('');
   const [emailValue, setEmailValue] = useState('');
   const [phoneValue, setPhoneValue] = useState('');
@@ -55,6 +57,9 @@ export default function ProfileScreen() {
   
   const saveValue = () => {
     switch(activeModal) {
+      case 'description':
+        setDescriptionValue(inputValue);
+        break;
       case 'website':
         setWebsiteValue(inputValue);
         break;
@@ -222,18 +227,30 @@ export default function ProfileScreen() {
                   </View>
 
                   {/* Editierbare Felder */}
-                  <TouchableOpacity style={styles.menuItem}>
+                  <View style={styles.toggleItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="document-text-outline" size={20} color="#000" />
                       </View>
-                      <View>
+                      <View style={styles.menuTextContainer}>
                         <Text style={styles.menuText}>Kurzbeschreibung</Text>
-                        <Text style={styles.menuSubtext}>Max. 200 Zeichen</Text>
+                        {descriptionValue ? (
+                          <Text style={styles.menuSubtext} numberOfLines={2}>
+                            {descriptionValue}
+                          </Text>
+                        ) : (
+                          <Text style={styles.menuSubtext}>Max. 200 Zeichen</Text>
+                        )}
                       </View>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+                    <Switch
+                      value={showDescription}
+                      onValueChange={() => handleToggle('description', showDescription, setShowDescription, descriptionValue)}
+                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                      thumbColor="#FFFFFF"
+                      style={{ transform: [{ scale: 0.8 }] }}
+                    />
+                  </View>
 
                   <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
                     <View style={styles.menuLeft}>
@@ -241,6 +258,24 @@ export default function ProfileScreen() {
                         <Ionicons name="image-outline" size={20} color="#000" />
                       </View>
                       <Text style={styles.menuText}>Logo hochladen</Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color="#999" />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Keywords */}
+                <View style={styles.menuCard}>
+                  <Text style={styles.cardTitle}>Sichtbarkeit</Text>
+                  
+                  <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
+                    <View style={styles.menuLeft}>
+                      <View style={styles.menuIconContainer}>
+                        <Ionicons name="pricetag-outline" size={20} color="#000" />
+                      </View>
+                      <View>
+                        <Text style={styles.menuText}>Such-Keywords</Text>
+                        <Text style={styles.menuSubtext}>Max. 8-10 Stichworte</Text>
+                      </View>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color="#999" />
                   </TouchableOpacity>
@@ -388,24 +423,6 @@ export default function ProfileScreen() {
                     />
                   </View>
                 </View>
-
-                {/* Keywords */}
-                <View style={styles.menuCard}>
-                  <Text style={styles.cardTitle}>Sichtbarkeit</Text>
-                  
-                  <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
-                    <View style={styles.menuLeft}>
-                      <View style={styles.menuIconContainer}>
-                        <Ionicons name="pricetag-outline" size={20} color="#000" />
-                      </View>
-                      <View>
-                        <Text style={styles.menuText}>Such-Keywords</Text>
-                        <Text style={styles.menuSubtext}>Max. 8-10 Stichworte</Text>
-                      </View>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
-                </View>
               </>
             )}
 
@@ -419,6 +436,7 @@ export default function ProfileScreen() {
       <InfoPopup
         visible={activeModal !== null}
         title={
+          activeModal === 'description' ? 'Kurzbeschreibung' :
           activeModal === 'website' ? 'Webseite' :
           activeModal === 'email' ? 'E-Mail' :
           activeModal === 'phone' ? 'Telefon' :
@@ -431,6 +449,7 @@ export default function ProfileScreen() {
         }
         value={inputValue}
         placeholder={
+          activeModal === 'description' ? 'Kurze Beschreibung deines Unternehmens (max. 200 Zeichen)...' :
           activeModal === 'website' ? 'https://...' :
           activeModal === 'email' ? 'info@firma.de' :
           activeModal === 'phone' ? '+49 ...' :
@@ -445,10 +464,12 @@ export default function ProfileScreen() {
           activeModal === 'email' ? 'email-address' :
           activeModal === 'phone' ? 'phone-pad' :
           activeModal === 'changeRequest' ? 'default' :
+          activeModal === 'description' ? 'default' :
           'url'
         }
-        multiline={activeModal === 'changeRequest'}
-        numberOfLines={activeModal === 'changeRequest' ? 5 : 1}
+        multiline={activeModal === 'changeRequest' || activeModal === 'description'}
+        numberOfLines={activeModal === 'changeRequest' ? 5 : activeModal === 'description' ? 4 : 1}
+        maxLength={activeModal === 'description' ? 200 : undefined}
         saveButtonText={activeModal === 'changeRequest' ? 'Support kontaktieren' : 'Speichern'}
         onClose={closeModal}
         onSave={saveValue}
