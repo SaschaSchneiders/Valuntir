@@ -11,6 +11,7 @@ import ConnectionsScreen from '../screens/ConnectionsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import PublicProfileScreen from '../screens/PublicProfileScreen';
+import ReminderScreen from '../screens/ReminderScreen';
 
 // Components
 import FloatingTabBar from '../components/FloatingTabBar';
@@ -67,6 +68,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Connections" component={ConnectionsScreen} />
         <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
+        <Stack.Screen name="Reminders" component={ReminderScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

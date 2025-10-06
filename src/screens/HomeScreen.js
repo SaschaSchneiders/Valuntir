@@ -11,7 +11,7 @@ import ConnectionRating from '../shared/ConnectionRating';
 import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 import FilterPills from '../shared/FilterPills';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState(null);
@@ -135,6 +135,7 @@ export default function HomeScreen() {
               subtitle="Bewerte deine Connections"
               showIcon={true}
               iconName="notifications-outline"
+              onIconPress={() => navigation.navigate('Reminders')}
             />
 
             <FilterPills 
