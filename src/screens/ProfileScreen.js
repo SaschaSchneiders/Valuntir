@@ -535,13 +535,20 @@ export default function ProfileScreen() {
                         {emailValue ? <Text style={styles.menuSubtext}>{emailValue}</Text> : null}
                       </View>
                     </View>
-                    <Switch
-                      value={showEmail}
-                      onValueChange={() => handleToggle('email', showEmail, setShowEmail, emailValue)}
-                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
-                      thumbColor="#FFFFFF"
-                      style={{ transform: [{ scale: 0.8 }] }}
-                    />
+                    <View style={styles.toggleRight}>
+                      {favoriteContact === 'email' && (
+                        <View style={styles.favoriteBadge}>
+                          <Ionicons name="star" size={14} color="#FFD700" />
+                        </View>
+                      )}
+                      <Switch
+                        value={showEmail}
+                        onValueChange={() => handleToggle('email', showEmail, setShowEmail, emailValue)}
+                        trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                        thumbColor="#FFFFFF"
+                        style={{ transform: [{ scale: 0.8 }] }}
+                      />
+                    </View>
                   </View>
 
                   <View style={styles.toggleItem}>
@@ -554,13 +561,20 @@ export default function ProfileScreen() {
                         {phoneValue ? <Text style={styles.menuSubtext}>{phoneValue}</Text> : null}
                       </View>
                     </View>
-                    <Switch
-                      value={showPhone}
-                      onValueChange={() => handleToggle('phone', showPhone, setShowPhone, phoneValue)}
-                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
-                      thumbColor="#FFFFFF"
-                      style={{ transform: [{ scale: 0.8 }] }}
-                    />
+                    <View style={styles.toggleRight}>
+                      {favoriteContact === 'phone' && (
+                        <View style={styles.favoriteBadge}>
+                          <Ionicons name="star" size={14} color="#FFD700" />
+                        </View>
+                      )}
+                      <Switch
+                        value={showPhone}
+                        onValueChange={() => handleToggle('phone', showPhone, setShowPhone, phoneValue)}
+                        trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                        thumbColor="#FFFFFF"
+                        style={{ transform: [{ scale: 0.8 }] }}
+                      />
+                    </View>
                   </View>
 
                   <View style={[styles.toggleItem, styles.toggleItemLast]}>
@@ -573,13 +587,20 @@ export default function ProfileScreen() {
                         {whatsAppValue ? <Text style={styles.menuSubtext}>{whatsAppValue}</Text> : null}
                       </View>
                     </View>
-                    <Switch
-                      value={showWhatsApp}
-                      onValueChange={() => handleToggle('whatsapp', showWhatsApp, setShowWhatsApp, whatsAppValue)}
-                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
-                      thumbColor="#FFFFFF"
-                      style={{ transform: [{ scale: 0.8 }] }}
-                    />
+                    <View style={styles.toggleRight}>
+                      {favoriteContact === 'whatsapp' && (
+                        <View style={styles.favoriteBadge}>
+                          <Ionicons name="star" size={14} color="#FFD700" />
+                        </View>
+                      )}
+                      <Switch
+                        value={showWhatsApp}
+                        onValueChange={() => handleToggle('whatsapp', showWhatsApp, setShowWhatsApp, whatsAppValue)}
+                        trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                        thumbColor="#FFFFFF"
+                        style={{ transform: [{ scale: 0.8 }] }}
+                      />
+                    </View>
                   </View>
                 </View>
 
@@ -867,6 +888,19 @@ const styles = StyleSheet.create({
   },
   toggleItemLast: {
     borderBottomWidth: 0,
+  },
+  toggleRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  favoriteBadge: {
+    backgroundColor: '#FFF9E6',
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FFE4A0',
   },
   menuLeft: {
     flex: 1,
