@@ -26,7 +26,7 @@ export default function ConnectionCard({ connection, onPress }) {
   };
 
   return (
-    <TouchableOpacity style={styles.connectionCard} onPress={onPress}>
+    <View style={styles.connectionCard}>
       <View style={styles.connectionHeader}>
         <View style={styles.connectionIcon}>
           <Ionicons name="business" size={24} color="#000" />
@@ -59,12 +59,12 @@ export default function ConnectionCard({ connection, onPress }) {
       </View>
 
       {connection.status === 'pending' && (
-        <TouchableOpacity style={styles.rateButton}>
+        <TouchableOpacity style={styles.rateButton} onPress={onPress}>
           <Text style={styles.rateButtonText}>Jetzt bewerten</Text>
           <Ionicons name="arrow-forward" size={16} color="#FFF" />
         </TouchableOpacity>
       )}
-    </TouchableOpacity>
+    </View>
   );
 }
 

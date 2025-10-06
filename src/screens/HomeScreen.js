@@ -10,9 +10,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import ConnectionCard from '../shared/ConnectionCard';
+import ConnectionRating from '../shared/ConnectionRating';
 
 export default function HomeScreen() {
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
+  const [selectedConnection, setSelectedConnection] = useState(null);
 
   // Mock-Daten für Connections die bewertet werden können
   const connections = [
@@ -94,6 +97,23 @@ export default function HomeScreen() {
 
   const filteredConnections = filterConnections(connections, selectedFilter);
 
+  const handleRateConnection = (connection) => {
+    setSelectedConnection(connection);
+    setRatingModalVisible(true);
+  };
+
+  const handleSubmitRating = (rating) => {
+    console.log('Bewertung abgeschickt:', rating);
+    // TODO: Backend API Call
+    setRatingModalVisible(false);
+    setSelectedConnection(null);
+  };
+
+  const handleCloseRating = () => {
+    setRatingModalVisible(false);
+    setSelectedConnection(null);
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -144,7 +164,7 @@ export default function HomeScreen() {
                   <ConnectionCard
                     key={connection.id}
                     connection={connection}
-                    onPress={() => {}}
+                    onPress={() => handleRateConnection(connection)}
                   />
                 ))
               )}
@@ -152,6 +172,14 @@ export default function HomeScreen() {
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
+
+      {/* Rating Modal */}
+      <ConnectionRating
+        visible={ratingModalVisible}
+        connection={selectedConnection}
+        onClose={handleCloseRating}
+        onSubmit={handleSubmitRating}
+      />
     </View>
   );
 }

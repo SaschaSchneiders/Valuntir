@@ -12,7 +12,6 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
-import PrimaryButton from '../shared/PrimaryButton';
 import InfoPopup from '../shared/InfoPopup';
 import ProfileCard from '../shared/ProfileCard';
 import ChartCard from '../shared/ChartCard';

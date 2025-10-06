@@ -23,12 +23,12 @@ export default function RatingBreakdown({
     },
     {
       icon: 'construct-outline',
-      label: 'Lieferqualität',
+      label: 'Lieferqualität / Umsetzung',
       value: deliveryQuality,
     },
     {
       icon: 'calendar-outline',
-      label: 'Verbindlichkeit',
+      label: 'Verlässlichkeit',
       value: reliability,
     },
   ];

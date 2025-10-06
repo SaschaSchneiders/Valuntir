@@ -17,8 +17,6 @@ import ProfileMetrics from '../shared/ProfileMetrics';
 export default function DashboardScreen() {
   // Mock-Daten für die Demo
   const successRate = 87;
-  const connectionsSent = 23;
-  const pendingConnections = 3;
   const totalRatings = 20;
   const profileViews = 156;
   const profileViewsChange = '+12% in 30 Tagen'; // Entwicklung der Profilaufrufe
@@ -108,11 +106,6 @@ export default function DashboardScreen() {
         {/* Chart Card - Wiederverwendbare Komponente */}
         <ChartCard
           timeframeData={timeframeData}
-          stats={[
-            { value: connectionsSent, label: 'Versendet' },
-            { value: pendingConnections, label: 'Ausstehend' },
-            { value: totalRatings, label: 'Bewertet' },
-          ]}
           title="Verlauf & Statistiken"
           defaultTimeframe="6months"
         />
