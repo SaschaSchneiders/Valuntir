@@ -211,9 +211,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                     placeholderTextColor="#999"
                     multiline
                     numberOfLines={4}
-                    maxLength={500}
+                    maxLength={200}
                   />
-                  <Text style={styles.charCount}>{comment.length}/500</Text>
+                  <Text style={styles.charCount}>{comment.length}/200</Text>
                 </View>
               </View>
             )}

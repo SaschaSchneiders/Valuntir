@@ -22,6 +22,7 @@ import CustomAlert from '../shared/CustomAlert';
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const [isPublicView, setIsPublicView] = useState(false);
+  const [isCommentsExpanded, setIsCommentsExpanded] = useState(false);
   
   // Chart Daten für öffentliche Ansicht
   const generateRealisticData = (numPoints, baseValue = 87) => {
@@ -62,6 +63,82 @@ export default function ProfileScreen() {
       labels: Array.from({length: 730}, (_, i) => i % 182 === 0 ? `H${Math.floor(i/182)+1}` : '')
     }
   };
+
+  // Mock Kommentare von bewerteten Projekten
+  const projectComments = [
+    {
+      id: 1,
+      comment: "Familienstiftung steuerlich optimal umgesetzt. Sehr kompetente Beratung mit klarem Fokus auf langfristige Vermögenssicherung.",
+      rating: 9.5,
+      date: "2024-09-15"
+    },
+    {
+      id: 2,
+      comment: "Komplexe Holdingstruktur fehlerfrei aufgebaut. Alle rechtlichen Anforderungen wurden berücksichtigt.",
+      rating: 9.8,
+      date: "2024-08-22"
+    },
+    {
+      id: 3,
+      comment: "GmbH-Gründung inklusive Gesellschaftsvertrag und Gewinnverwendung. Sehr strukturiert und transparent.",
+      rating: 9.2,
+      date: "2024-07-10"
+    },
+    {
+      id: 4,
+      comment: "Steuerliche Optimierung bei Immobilienverkauf. Exzellente Beratung, die mehrere Optionen aufgezeigt hat.",
+      rating: 9.0,
+      date: "2024-06-05"
+    },
+    {
+      id: 5,
+      comment: "Nachfolgeplanung mit Übergabevertrag. Alle steuerlichen Aspekte wurden berücksichtigt.",
+      rating: 8.8,
+      date: "2024-05-18"
+    },
+    {
+      id: 6,
+      comment: "Gesellschaftervereinbarung für Familienunternehmen. Klare Regelungen für alle Eventualitäten geschaffen.",
+      rating: 9.4,
+      date: "2024-04-12"
+    },
+    {
+      id: 7,
+      comment: "Umstrukturierung zur Optimierung der Steuerlast. Hervorragende Arbeit mit messbaren Einsparungen.",
+      rating: 9.7,
+      date: "2024-03-28"
+    },
+    {
+      id: 8,
+      comment: "Beratung zum Betriebsübergang. Alle arbeitsrechtlichen und steuerlichen Fragen professionell geklärt.",
+      rating: 8.9,
+      date: "2024-02-14"
+    },
+    {
+      id: 9,
+      comment: "Vermögensplanung für Unternehmerfamilie. Langfristige Strategie mit Fokus auf Generationenwechsel entwickelt.",
+      rating: 9.3,
+      date: "2024-01-20"
+    },
+    {
+      id: 10,
+      comment: "Steuergestaltung bei Immobilienportfolio. Innovative Lösungen für komplexe Strukturen gefunden.",
+      rating: 9.1,
+      date: "2023-12-08"
+    },
+    {
+      id: 11,
+      comment: "Begleitung bei Due Diligence für Unternehmenskauf. Sorgfältige Prüfung aller steuerlichen Risiken.",
+      rating: 9.6,
+      date: "2023-11-22"
+    },
+    {
+      id: 12,
+      comment: "Internationales Steuerrecht bei Auslandsinvestition. Kompetente Beratung zu grenzüberschreitenden Themen.",
+      rating: 9.0,
+      date: "2023-10-15"
+    },
+  ];
 
   
   // Toggle States für Kontaktoptionen
@@ -328,6 +405,58 @@ export default function ProfileScreen() {
                   />
                 </View>
 
+                {/* Projekterfahrungen (Accordion) */}
+                <View style={styles.commentsSection}>
+                  <TouchableOpacity 
+                    style={styles.commentsHeader}
+                    onPress={() => setIsCommentsExpanded(!isCommentsExpanded)}
+                  >
+                    <View style={styles.commentsHeaderLeft}>
+                      <Ionicons name="chatbubbles-outline" size={20} color="#000" />
+                      <Text style={styles.commentsHeaderTitle}>Projekterfahrungen</Text>
+                      <View style={styles.commentsBadge}>
+                        <Text style={styles.commentsBadgeText}>{projectComments.length}</Text>
+                      </View>
+                    </View>
+                    <Ionicons 
+                      name={isCommentsExpanded ? "chevron-up" : "chevron-down"} 
+                      size={24} 
+                      color="#666" 
+                    />
+                  </TouchableOpacity>
+
+                  {isCommentsExpanded && (
+                    <ScrollView 
+                      style={styles.commentsContent}
+                      showsVerticalScrollIndicator={true}
+                    >
+                      {projectComments.map((item, index) => (
+                        <View 
+                          key={item.id} 
+                          style={[
+                            styles.commentItem,
+                            index === projectComments.length - 1 && styles.commentItemLast
+                          ]}
+                        >
+                          <View style={styles.commentHeader}>
+                            <View style={styles.commentRating}>
+                              <Ionicons name="star" size={14} color="#FFD700" />
+                              <Text style={styles.commentRatingText}>{item.rating}/10</Text>
+                            </View>
+                            <Text style={styles.commentDate}>
+                              {new Date(item.date).toLocaleDateString('de-DE', { 
+                                month: 'short', 
+                                year: 'numeric' 
+                              })}
+                            </Text>
+                          </View>
+                          <Text style={styles.commentText}>{item.comment}</Text>
+                        </View>
+                      ))}
+                    </ScrollView>
+                  )}
+                </View>
+
                 {/* Kontaktmöglichkeiten */}
                 {(showEmail && emailValue) || (showPhone && phoneValue) || (showWhatsApp && whatsAppValue) ? (
                   <View style={styles.publicSection}>
@@ -455,8 +584,8 @@ export default function ProfileScreen() {
                       style={{ transform: [{ scale: 0.8 }] }}
                     />
                   </View>
-
-                  <TouchableOpacity style={styles.menuItem}>
+          
+          <TouchableOpacity style={styles.menuItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="image-outline" size={20} color="#000" />
@@ -464,8 +593,8 @@ export default function ProfileScreen() {
                       <Text style={styles.menuText}>Logo hochladen</Text>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
-
+          </TouchableOpacity>
+          
                   <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
@@ -474,7 +603,7 @@ export default function ProfileScreen() {
                       <Text style={styles.menuText}>Titelbild hochladen</Text>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color="#999" />
-                  </TouchableOpacity>
+          </TouchableOpacity>
                 </View>
 
                 {/* Keywords */}
@@ -1044,6 +1173,86 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 32,
+  },
+  // Kommentar-Sektion (Accordion)
+  commentsSection: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginBottom: 32,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  commentsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    backgroundColor: '#F8F9FA',
+  },
+  commentsHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  commentsHeaderTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#000',
+  },
+  commentsBadge: {
+    backgroundColor: '#000',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    minWidth: 24,
+    alignItems: 'center',
+  },
+  commentsBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFF',
+  },
+  commentsContent: {
+    maxHeight: 400,
+    padding: 16,
+    paddingTop: 12,
+  },
+  commentItem: {
+    marginBottom: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  commentItemLast: {
+    borderBottomWidth: 0,
+    marginBottom: 0,
+    paddingBottom: 0,
+  },
+  commentHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  commentRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  commentRatingText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#000',
+  },
+  commentDate: {
+    fontSize: 12,
+    color: '#999',
+  },
+  commentText: {
+    fontSize: 14,
+    color: '#333',
+    lineHeight: 20,
   },
 });
 
