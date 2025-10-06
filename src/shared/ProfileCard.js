@@ -10,6 +10,7 @@ export default function ProfileCard({
   companyName,
   branch,
   coverImage = null, // URL zum Titelbild (optional)
+  showControls = true, // Toggle und Settings Button anzeigen
 }) {
   return (
     <View style={styles.profileCard}>
@@ -29,26 +30,30 @@ export default function ProfileCard({
         </View>
       )}
 
-      {/* Toggle - Absolut positioniert */}
-      <View style={styles.toggleContainer}>
-        <Switch
-          value={isPublicView}
-          onValueChange={onToggleChange}
-          trackColor={{ false: '#D1D5DB', true: '#000000' }}
-          thumbColor="#FFFFFF"
-        />
-        <Text style={styles.toggleLabel}>
-          {isPublicView ? 'Öffentlich' : 'Anbieter'}
-        </Text>
-      </View>
+      {/* Toggle - Absolut positioniert - nur wenn showControls true */}
+      {showControls && (
+        <View style={styles.toggleContainer}>
+          <Switch
+            value={isPublicView}
+            onValueChange={onToggleChange}
+            trackColor={{ false: '#D1D5DB', true: '#000000' }}
+            thumbColor="#FFFFFF"
+          />
+          <Text style={styles.toggleLabel}>
+            {isPublicView ? 'Öffentlich' : 'Anbieter'}
+          </Text>
+        </View>
+      )}
 
-      {/* Settings Button - Absolut positioniert */}
-      <TouchableOpacity 
-        style={styles.settingsButton}
-        onPress={onSettingsPress}
-      >
-        <Ionicons name="settings-outline" size={28} color="#666" />
-      </TouchableOpacity>
+      {/* Settings Button - Absolut positioniert - nur wenn showControls true */}
+      {showControls && (
+        <TouchableOpacity 
+          style={styles.settingsButton}
+          onPress={onSettingsPress}
+        >
+          <Ionicons name="settings-outline" size={28} color="#666" />
+        </TouchableOpacity>
+      )}
 
       {/* Avatar - überlappt Titelbild wenn vorhanden */}
       <View style={[

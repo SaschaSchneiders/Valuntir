@@ -10,6 +10,7 @@ import SearchScreen from '../screens/SearchScreen';
 import ConnectionsScreen from '../screens/ConnectionsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import PublicProfileScreen from '../screens/PublicProfileScreen';
 
 // Components
 import FloatingTabBar from '../components/FloatingTabBar';
@@ -65,6 +66,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Main" component={TabNavigator} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Connections" component={ConnectionsScreen} />
+        <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

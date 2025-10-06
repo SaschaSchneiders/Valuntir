@@ -9,12 +9,14 @@ import {
   Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import ProviderCard from '../shared/ProviderCard';
 
 export default function SearchScreen() {
+  const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [locationQuery, setLocationQuery] = useState('');
@@ -106,6 +108,7 @@ export default function SearchScreen() {
   const providers = [
     {
       id: 1,
+      providerId: 'steuerberater_schmidt',
       name: 'Steuerberater Schmidt',
       username: '@steuerberater_schmidt',
       category: 'Steuerberatung',
@@ -116,6 +119,7 @@ export default function SearchScreen() {
     },
     {
       id: 2,
+      providerId: 'marketing_xyz',
       name: 'Marketing Agentur XYZ',
       username: '@marketing_xyz',
       category: 'Marketing',
@@ -267,7 +271,15 @@ export default function SearchScreen() {
                 </View>
               ) : (
                 filteredProviders.map((provider) => (
-                  <ProviderCard key={provider.id} provider={provider} />
+                  <ProviderCard 
+                    key={provider.id} 
+                    provider={provider}
+                    onPress={() => {
+                      if (provider.hasActivePlan && provider.providerId) {
+                        navigation.navigate('PublicProfile', { providerId: provider.providerId });
+                      }
+                    }}
+                  />
                 ))
               )}
             </View>

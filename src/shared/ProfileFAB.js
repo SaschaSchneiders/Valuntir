@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 
-export default function ProfileFAB({ favoriteContact, onPress }) {
+export default function ProfileFAB({ favoriteContact, onPress, bottom = 112 }) {
   if (!favoriteContact) return null;
 
   const getIconName = () => {
@@ -21,7 +21,7 @@ export default function ProfileFAB({ favoriteContact, onPress }) {
 
   return (
     <TouchableOpacity 
-      style={styles.fab}
+      style={[styles.fab, { bottom }]}
       activeOpacity={0.9}
       onPress={onPress}
     >
@@ -39,7 +39,6 @@ export default function ProfileFAB({ favoriteContact, onPress }) {
 const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
-    bottom: 112,
     right: 20,
     width: 64,
     height: 64,
