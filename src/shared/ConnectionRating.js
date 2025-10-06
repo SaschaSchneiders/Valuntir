@@ -177,47 +177,43 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                 {/* Frage 1: Ziel erreicht? */}
                 <View style={styles.questionContainer}>
                   <Text style={styles.questionTitle}>Wurde das Ziel des Projekts erreicht?</Text>
-                  <View style={styles.interactiveRateScale}>
-                    <RateScale
-                      rate={goalAchieved}
-                      size="medium"
-                      showLabel={false}
-                    />
-                    <Slider
-                      style={styles.overlaySlider}
-                      minimumValue={0}
-                      maximumValue={100}
-                      step={1}
-                      value={goalAchieved}
-                      onValueChange={setGoalAchieved}
-                      minimumTrackTintColor="transparent"
-                      maximumTrackTintColor="transparent"
-                      thumbTintColor="transparent"
-                    />
-                  </View>
+                  <RateScale
+                    rate={goalAchieved}
+                    size="medium"
+                    showLabel={false}
+                  />
+                  <Slider
+                    style={styles.controlSlider}
+                    minimumValue={0}
+                    maximumValue={100}
+                    step={1}
+                    value={goalAchieved}
+                    onValueChange={setGoalAchieved}
+                    minimumTrackTintColor="#000000"
+                    maximumTrackTintColor="#E0E0E0"
+                    thumbTintColor="#000000"
+                  />
                 </View>
 
                 {/* Frage 2: Hat sich gelohnt? */}
                 <View style={styles.questionContainer}>
                   <Text style={styles.questionTitle}>Hat sich das Projekt für dich gelohnt?</Text>
-                  <View style={styles.interactiveRateScale}>
-                    <RateScale
-                      rate={worthIt}
-                      size="medium"
-                      showLabel={false}
-                    />
-                    <Slider
-                      style={styles.overlaySlider}
-                      minimumValue={0}
-                      maximumValue={100}
-                      step={1}
-                      value={worthIt}
-                      onValueChange={setWorthIt}
-                      minimumTrackTintColor="transparent"
-                      maximumTrackTintColor="transparent"
-                      thumbTintColor="transparent"
-                    />
-                  </View>
+                  <RateScale
+                    rate={worthIt}
+                    size="medium"
+                    showLabel={false}
+                  />
+                  <Slider
+                    style={styles.controlSlider}
+                    minimumValue={0}
+                    maximumValue={100}
+                    step={1}
+                    value={worthIt}
+                    onValueChange={setWorthIt}
+                    minimumTrackTintColor="#000000"
+                    maximumTrackTintColor="#E0E0E0"
+                    thumbTintColor="#000000"
+                  />
                 </View>
               </View>
             )}
@@ -230,10 +226,13 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                   Berechnet aus deinen Angaben zum Projekterfolg
                 </Text>
                 
-                {/* Erfolgsscore-Anzeige */}
-                <View style={styles.scoreDisplay}>
-                  <Text style={styles.scoreNumber}>{successScore}%</Text>
-                  <Text style={styles.scoreLabel}>Erfolgsscore</Text>
+                {/* RateScale */}
+                <View style={styles.scoreRateScale}>
+                  <RateScale
+                    rate={successScore}
+                    size="medium"
+                    showLabel={false}
+                  />
                 </View>
 
                 <View style={styles.commentSection}>
@@ -419,42 +418,14 @@ const styles = StyleSheet.create({
     color: '#000',
     marginBottom: 16,
   },
-  interactiveRateScale: {
-    position: 'relative',
+  controlSlider: {
+    width: '100%',
+    height: 40,
+    marginTop: -10,
   },
-  overlaySlider: {
-    position: 'absolute',
-    top: 8,
-    left: 0,
-    right: 0,
-    height: 80,
-    opacity: 0,
-    zIndex: 999,
-  },
-  scoreDisplay: {
-    backgroundColor: '#F8F9FA',
-    borderRadius: 14,
-    padding: 24,
-    alignItems: 'center',
-    marginBottom: 24,
-    borderWidth: 2,
-    borderColor: '#000',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  scoreNumber: {
-    fontSize: 48,
-    fontWeight: '900',
-    color: '#000',
-    marginBottom: 8,
-  },
-  scoreLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
+  scoreRateScale: {
+    marginTop: 0,
+    marginBottom: 20,
   },
   commentSection: {
     marginTop: 4,
