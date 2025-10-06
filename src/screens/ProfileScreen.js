@@ -17,6 +17,7 @@ import InfoPopup from '../shared/InfoPopup';
 import ProfileCard from '../shared/ProfileCard';
 import ChartCard from '../shared/ChartCard';
 import RateScale from '../shared/RateScale';
+import RatingBreakdown from '../shared/RatingBreakdown';
 import CustomAlert from '../shared/CustomAlert';
 
 export default function ProfileScreen() {
@@ -63,11 +64,6 @@ export default function ProfileScreen() {
     }
   };
 
-  const stats = [
-    { value: '124', label: 'Projekte' },
-    { value: '87%', label: 'Erfolgsquote' },
-    { value: '4.8', label: 'Bewertung' },
-  ];
   
   // Toggle States für Kontaktoptionen
   const [showDescription, setShowDescription] = useState(true);
@@ -93,6 +89,7 @@ export default function ProfileScreen() {
   const [linkedInValue, setLinkedInValue] = useState('https://linkedin.com/company/beratungszentrum-nord');
   const [instagramValue, setInstagramValue] = useState('https://instagram.com/beratungszentrum.nord');
   const [changeRequestMessage, setChangeRequestMessage] = useState('');
+  const [coverImageValue, setCoverImageValue] = useState('https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=200&fit=crop'); // Beispiel-Titelbild
   
   // Favorisierte Kontaktmöglichkeit für FAB
   const [favoriteContact, setFavoriteContact] = useState(null); // 'email', 'phone', 'whatsapp' oder null
@@ -265,6 +262,7 @@ export default function ProfileScreen() {
               onSettingsPress={() => navigation.navigate('Settings')}
               companyName="Beratungszentrum Nord GmbH"
               branch="Unternehmensberatung"
+              coverImage={coverImageValue}
             />
 
             {/* Öffentliche Ansicht */}
@@ -305,19 +303,29 @@ export default function ProfileScreen() {
                 {/* Chart & Statistiken */}
                 <ChartCard 
                   timeframeData={timeframeData}
-                  stats={stats}
                   title="Verlauf der Erfolgsquote"
                   defaultTimeframe="6months"
                 />
 
                 {/* Erfolgsquote Scale */}
-                <View style={{ marginBottom: 32 }}>
+                <View style={{ marginBottom: 24 }}>
                   <RateScale 
                     rate={87} 
                     size="medium" 
                     showLabel={false}
                     title="Erfolgsquote"
                     totalRatings={124}
+                  />
+                </View>
+
+                {/* Bewertungsdetails - 4 Kernbereiche */}
+                <View style={{ marginBottom: 32 }}>
+                  <RatingBreakdown
+                    communication={87}
+                    pricePerformance={92}
+                    deliveryQuality={89}
+                    reliability={94}
+                    totalProjects={124}
                   />
                 </View>
 
@@ -449,7 +457,7 @@ export default function ProfileScreen() {
                     />
                   </View>
 
-                  <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
+                  <TouchableOpacity style={styles.menuItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="image-outline" size={20} color="#000" />
@@ -457,7 +465,17 @@ export default function ProfileScreen() {
                       <Text style={styles.menuText}>Logo hochladen</Text>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color="#999" />
-          </TouchableOpacity>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
+                    <View style={styles.menuLeft}>
+                      <View style={styles.menuIconContainer}>
+                        <Ionicons name="images-outline" size={20} color="#000" />
+                      </View>
+                      <Text style={styles.menuText}>Titelbild hochladen</Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color="#999" />
+                  </TouchableOpacity>
                 </View>
 
                 {/* Keywords */}

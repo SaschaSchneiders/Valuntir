@@ -12,13 +12,11 @@ import Svg, { Path, Line, Text as SvgText } from 'react-native-svg';
  * ChartCard - Wiederverwendbare Chart-Kachel mit Zeitraum-Auswahl
  * 
  * @param {object} timeframeData - Objekt mit Zeiträumen und ihren Daten
- * @param {array} stats - Array mit Statistiken [{value, label}, ...]
  * @param {string} title - Titel der Card (default: 'Verlauf & Statistiken')
  * @param {string} defaultTimeframe - Standard-Zeitraum (default: '6months')
  */
 export default function ChartCard({ 
   timeframeData = {},
-  stats = [],
   title = 'Verlauf & Statistiken',
   defaultTimeframe = '6months'
 }) {
@@ -202,17 +200,6 @@ export default function ChartCard({
         })()}
       </View>
 
-      {/* Stats Grid - Dynamisch aus props */}
-      {stats.length > 0 && (
-        <View style={styles.statsRow}>
-          {stats.map((stat, index) => (
-            <View key={index} style={styles.miniStat}>
-              <Text style={styles.miniStatNumber}>{stat.value}</Text>
-              <Text style={styles.miniStatLabel}>{stat.label}</Text>
-            </View>
-          ))}
-        </View>
-      )}
     </View>
   );
 }

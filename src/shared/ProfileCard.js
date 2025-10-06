@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Switch, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function ProfileCard({
   isPublicView,
@@ -8,9 +9,26 @@ export default function ProfileCard({
   onSettingsPress,
   companyName,
   branch,
+  coverImage = null, // URL zum Titelbild (optional)
 }) {
   return (
     <View style={styles.profileCard}>
+      {/* Titelbild - nur wenn gesetzt */}
+      {coverImage && (
+        <View style={styles.coverImageContainer}>
+          <ImageBackground
+            source={{ uri: coverImage }}
+            style={styles.coverImage}
+            imageStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.3)']}
+              style={styles.coverOverlay}
+            />
+          </ImageBackground>
+        </View>
+      )}
+
       {/* Toggle - Absolut positioniert */}
       <View style={styles.toggleContainer}>
         <Switch
@@ -32,7 +50,11 @@ export default function ProfileCard({
         <Ionicons name="settings-outline" size={28} color="#666" />
       </TouchableOpacity>
 
-      <View style={styles.avatarContainer}>
+      {/* Avatar - überlappt Titelbild wenn vorhanden */}
+      <View style={[
+        styles.avatarContainer,
+        coverImage && styles.avatarContainerWithCover
+      ]}>
         <View style={styles.avatar}>
           <Ionicons name="business" size={48} color="#FFFFFF" />
         </View>
@@ -53,13 +75,28 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     position: 'relative',
   },
+  coverImageContainer: {
+    position: 'absolute',
+    top: -20, // Negatives Margin um das Screen-Padding zu kompensieren
+    left: -20,
+    right: -20,
+    height: 140, // Erhöht von 80px auf 140px
+    overflow: 'hidden',
+  },
+  coverImage: {
+    width: '100%',
+    height: '100%',
+  },
+  coverOverlay: {
+    ...StyleSheet.absoluteFillObject,
+  },
   toggleContainer: {
     position: 'absolute',
     top: 12,
-    left: 12,
+    left: -8, // Angepasst für negative Margins
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: 'rgba(245, 245, 245, 0.95)',
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 8,
@@ -74,8 +111,8 @@ const styles = StyleSheet.create({
   settingsButton: {
     position: 'absolute',
     top: 12,
-    right: 12,
-    backgroundColor: '#F5F5F5',
+    right: -8, // Angepasst für negative Margins
+    backgroundColor: 'rgba(245, 245, 245, 0.95)',
     borderRadius: 12,
     width: 44,
     height: 44,
@@ -86,6 +123,9 @@ const styles = StyleSheet.create({
   avatarContainer: {
     marginBottom: 12,
   },
+  avatarContainerWithCover: {
+    marginTop: 50, // Avatar überlappt das Titelbild zur Hälfte
+  },
   avatar: {
     width: 100,
     height: 100,
@@ -93,6 +133,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FFFFFF', // Weißer Ring für Kontrast
   },
   companyName: {
     fontSize: 22,
