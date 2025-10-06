@@ -132,8 +132,13 @@ export default function HomeScreen() {
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <ScrollView contentContainerStyle={styles.content}>
             <View style={styles.header}>
-              <Text style={styles.title}>Valuntir</Text>
-              <Text style={styles.subtitle}>Bewerte deine Connections</Text>
+              <View>
+                <Text style={styles.title}>Valuntir</Text>
+                <Text style={styles.subtitle}>Bewerte deine Connections</Text>
+              </View>
+              <TouchableOpacity style={styles.headerButton}>
+                <Ionicons name="notifications-outline" size={24} color="#000" />
+              </TouchableOpacity>
             </View>
 
             {/* Filter Tabs */}
@@ -209,6 +214,13 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 24,
     paddingTop: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  headerButton: {
+    padding: 8,
+    marginTop: 4,
   },
   title: {
     fontSize: 34,
