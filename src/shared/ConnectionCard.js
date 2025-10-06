@@ -1,8 +1,25 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function ConnectionCard({ connection, onPress }) {
+export default function ConnectionCard({ connection, onPress, onSetReminder }) {
+  const [showReminderModal, setShowReminderModal] = useState(false);
+
+  const reminderOptions = [
+    { label: 'In 1 Woche', days: 7 },
+    { label: 'In 2 Wochen', days: 14 },
+    { label: 'In 1 Monat', days: 30 },
+    { label: 'In 3 Monaten', days: 90 },
+    { label: 'In 6 Monaten', days: 180 },
+  ];
+
+  const handleSetReminder = (days) => {
+    if (onSetReminder) {
+      onSetReminder(connection.id, days);
+    }
+    setShowReminderModal(false);
+  };
+
   // Hilfsfunktion für Datumsformatierung
   const formatDate = (date) => {
     const now = new Date();
@@ -59,11 +76,55 @@ export default function ConnectionCard({ connection, onPress }) {
       </View>
 
       {connection.status === 'pending' && (
-        <TouchableOpacity style={styles.rateButton} onPress={onPress}>
-          <Text style={styles.rateButtonText}>Jetzt bewerten</Text>
-          <Ionicons name="arrow-forward" size={16} color="#FFF" />
-        </TouchableOpacity>
+        <View style={styles.actionRow}>
+          <TouchableOpacity style={styles.rateButton} onPress={onPress}>
+            <Text style={styles.rateButtonText}>Jetzt bewerten</Text>
+            <Ionicons name="arrow-forward" size={16} color="#FFF" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.reminderButton}
+            onPress={() => setShowReminderModal(true)}
+          >
+            <Ionicons name="notifications-outline" size={22} color="#666" />
+          </TouchableOpacity>
+        </View>
       )}
+
+      {/* Reminder Modal */}
+      <Modal
+        visible={showReminderModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowReminderModal(false)}
+      >
+        <TouchableOpacity 
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowReminderModal(false)}
+        >
+          <TouchableOpacity 
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Erinnerung setzen</Text>
+              <Text style={styles.modalSubtitle}>Wann möchtest du bewerten?</Text>
+            
+            {reminderOptions.map((option, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.reminderOption}
+                onPress={() => handleSetReminder(option.days)}
+              >
+                <Ionicons name="time-outline" size={20} color="#666" />
+                <Text style={styles.reminderOptionText}>{option.label}</Text>
+              </TouchableOpacity>
+            ))}
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -143,7 +204,13 @@ const styles = StyleSheet.create({
     color: '#666666',
     fontWeight: '500',
   },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
   rateButton: {
+    flex: 1,
     backgroundColor: '#000000',
     borderRadius: 12,
     paddingVertical: 14,
@@ -157,6 +224,63 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '700',
+  },
+  reminderButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#F5F5F5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 8,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 20,
+  },
+  reminderOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: '#F8F9FA',
+    marginBottom: 10,
+    gap: 12,
+  },
+  reminderOptionText: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000',
   },
 });
 

@@ -114,6 +114,12 @@ export default function HomeScreen() {
     setSelectedConnection(null);
   };
 
+  const handleSetReminder = (connectionId, days) => {
+    console.log(`Erinnerung gesetzt für Connection ${connectionId} in ${days} Tagen`);
+    // TODO: Backend API Call
+    // Hier würde die Erinnerung gespeichert werden
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -165,6 +171,7 @@ export default function HomeScreen() {
                     key={connection.id}
                     connection={connection}
                     onPress={() => handleRateConnection(connection)}
+                    onSetReminder={handleSetReminder}
                   />
                 ))
               )}

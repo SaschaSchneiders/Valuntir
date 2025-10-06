@@ -956,10 +956,6 @@ const styles = StyleSheet.create({
     color: '#999',
     marginTop: 2,
   },
-  // Öffentliche Ansicht Styles
-  publicSection: {
-    marginBottom: 24,
-  },
 });
 
 
