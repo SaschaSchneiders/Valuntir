@@ -11,47 +11,62 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 import FilterPills from '../shared/FilterPills';
+import ConnectionCard from '../shared/ConnectionCard';
 
 export default function ReminderScreen({ navigation }) {
   const [selectedFilter, setSelectedFilter] = useState('all');
 
-  // Mock-Daten für Erinnerungen
+  // Mock-Daten für Erinnerungen (basierend auf typischen Reminder-Optionen)
+  const today = new Date(); // Aktuelles Datum
+  
   const reminders = [
     {
       id: 1,
-      company: 'Steuerberater Schmidt',
-      category: 'Steuerberatung',
-      amount: 1950,
-      reminderDate: new Date('2024-10-08'),
-      originalDate: new Date('2024-10-01'),
-      daysUntilReminder: 2,
+      company: 'Grafikdesigner Weber',
+      category: 'Grafikdesign',
+      amount: 2800,
+      date: new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000), // In 3 Tagen
+      status: 'reminder',
     },
     {
       id: 2,
-      company: 'Marketing Agentur XYZ',
-      category: 'Marketing',
-      amount: 8500,
-      reminderDate: new Date('2024-10-20'),
-      originalDate: new Date('2024-09-28'),
-      daysUntilReminder: 14,
+      company: 'SEO-Agentur Digital',
+      category: 'SEO',
+      amount: 1500,
+      date: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000), // In 1 Woche
+      status: 'reminder',
     },
     {
       id: 3,
-      company: 'IT-Consulting Pro',
-      category: 'IT-Beratung',
-      amount: 3200,
-      reminderDate: new Date('2024-11-15'),
-      originalDate: new Date('2024-09-15'),
-      daysUntilReminder: 40,
+      company: 'Steuerberater Schmidt',
+      category: 'Steuerberatung',
+      amount: 1950,
+      date: new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000), // In 2 Wochen
+      status: 'reminder',
     },
     {
       id: 4,
+      company: 'Marketing Agentur XYZ',
+      category: 'Marketing',
+      amount: 8500,
+      date: new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000), // In 1 Monat
+      status: 'reminder',
+    },
+    {
+      id: 5,
+      company: 'IT-Consulting Pro',
+      category: 'IT-Beratung',
+      amount: 3200,
+      date: new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000), // In 3 Monaten
+      status: 'reminder',
+    },
+    {
+      id: 6,
       company: 'Rechtsanwalt Müller',
       category: 'Rechtsberatung',
       amount: 2400,
-      reminderDate: new Date('2024-12-20'),
-      originalDate: new Date('2024-08-20'),
-      daysUntilReminder: 75,
+      date: new Date(today.getTime() + 180 * 24 * 60 * 60 * 1000), // In 6 Monaten
+      status: 'reminder',
     },
   ];
 
@@ -64,15 +79,32 @@ export default function ReminderScreen({ navigation }) {
   ];
 
   const filterReminders = (reminders, filter) => {
+    const now = new Date();
     switch (filter) {
       case 'week':
-        return reminders.filter(r => r.daysUntilReminder <= 7);
+        return reminders.filter(r => {
+          const diff = r.date - now;
+          const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+          return days <= 7;
+        });
       case 'month':
-        return reminders.filter(r => r.daysUntilReminder <= 30);
+        return reminders.filter(r => {
+          const diff = r.date - now;
+          const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+          return days <= 30;
+        });
       case '90days':
-        return reminders.filter(r => r.daysUntilReminder <= 90);
+        return reminders.filter(r => {
+          const diff = r.date - now;
+          const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+          return days <= 90;
+        });
       case 'older':
-        return reminders.filter(r => r.daysUntilReminder > 90);
+        return reminders.filter(r => {
+          const diff = r.date - now;
+          const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+          return days > 90;
+        });
       default:
         return reminders;
     }
@@ -80,26 +112,9 @@ export default function ReminderScreen({ navigation }) {
 
   const filteredReminders = filterReminders(reminders, selectedFilter);
 
-  const formatAmount = (amount) => {
-    const formatted = amount.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    return `${formatted} €`;
-  };
-
-  const formatReminderDate = (date) => {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}.${month}.${year}`;
-  };
-
-  const getDaysText = (days) => {
-    if (days === 0) return 'heute';
-    if (days === 1) return 'morgen';
-    if (days < 7) return `in ${days} Tagen`;
-    if (days < 30) return `in ${Math.floor(days / 7)} Wochen`;
-    if (days < 90) return `in ${Math.floor(days / 30)} Monaten`;
-    return `in ${Math.floor(days / 30)} Monaten`;
+  const handleRateConnection = (connection) => {
+    // Navigiere zum Rating oder öffne Modal
+    console.log('Rate connection:', connection);
   };
 
   return (
@@ -143,41 +158,12 @@ export default function ReminderScreen({ navigation }) {
                 </View>
               ) : (
                 filteredReminders.map((reminder) => (
-                  <View key={reminder.id} style={styles.reminderCard}>
-                    <View style={styles.reminderHeader}>
-                      <View style={styles.reminderIcon}>
-                        <Ionicons name="time-outline" size={22} color="#000" />
-                      </View>
-                      <View style={styles.reminderInfo}>
-                        <Text style={styles.reminderCompany}>
-                          {reminder.company}
-                        </Text>
-                        <Text style={styles.reminderCategory}>
-                          {reminder.category}
-                        </Text>
-                      </View>
-                      <View style={styles.reminderBadge}>
-                        <Text style={styles.reminderBadgeText}>
-                          {getDaysText(reminder.daysUntilReminder)}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.reminderDetails}>
-                      <View style={styles.reminderAmount}>
-                        <Text style={styles.reminderAmountLabel}>Betrag</Text>
-                        <Text style={styles.reminderAmountValue}>
-                          {formatAmount(reminder.amount)}
-                        </Text>
-                      </View>
-                      <View style={styles.reminderDate}>
-                        <Text style={styles.reminderDateLabel}>Erinnerung am</Text>
-                        <Text style={styles.reminderDateValue}>
-                          {formatReminderDate(reminder.reminderDate)}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
+                  <ConnectionCard
+                    key={reminder.id}
+                    connection={reminder}
+                    onPress={() => handleRateConnection(reminder)}
+                    isReminderMode={true}
+                  />
                 ))
               )}
             </View>
@@ -222,102 +208,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   remindersList: {
-    gap: 12,
-  },
-  reminderCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-  },
-  reminderHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  reminderIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: '#FFF9E6',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  reminderInfo: {
-    flex: 1,
-  },
-  reminderCompany: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 4,
-  },
-  reminderCategory: {
-    fontSize: 13,
-    color: '#666666',
-  },
-  reminderBadge: {
-    backgroundColor: '#FFF9E6',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#FFE8A3',
-  },
-  reminderBadgeText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#D97706',
-  },
-  reminderDetails: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderColor: '#F0F0F0',
-  },
-  reminderAmount: {
-    flex: 1,
-  },
-  reminderAmountLabel: {
-    fontSize: 11,
-    color: '#999999',
-    marginBottom: 4,
-  },
-  reminderAmountValue: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000000',
-  },
-  reminderDate: {
-    alignItems: 'flex-end',
-  },
-  reminderDateLabel: {
-    fontSize: 11,
-    color: '#999999',
-    marginBottom: 4,
-  },
-  reminderDateValue: {
-    fontSize: 14,
-    color: '#666666',
-    fontWeight: '600',
+    gap: 10,
   },
   emptyState: {
     alignItems: 'center',

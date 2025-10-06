@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function ConnectionCard({ connection, onPress, onSetReminder }) {
+export default function ConnectionCard({ connection, onPress, onSetReminder, isReminderMode = false }) {
   const [showReminderModal, setShowReminderModal] = useState(false);
 
   const reminderOptions = [
@@ -24,14 +24,25 @@ export default function ConnectionCard({ connection, onPress, onSetReminder }) {
   const formatDate = (date) => {
     const now = new Date();
     const connectionDate = new Date(date);
-    const diffTime = Math.abs(now - connectionDate);
+    const diffTime = isReminderMode ? connectionDate - now : now - connectionDate;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
-    if (diffDays === 0) return 'heute';
-    if (diffDays === 1) return 'gestern';
-    if (diffDays < 30) return `vor ${diffDays} Tagen`;
-    if (diffDays < 365) return `vor ${Math.floor(diffDays / 30)} Monaten`;
-    return `vor ${Math.floor(diffDays / 365)} Jahren`;
+    if (isReminderMode) {
+      // Zukunftsorientiert für Erinnerungen
+      if (diffDays === 0) return 'heute';
+      if (diffDays === 1) return 'morgen';
+      if (diffDays < 7) return `in ${diffDays} Tagen`;
+      if (diffDays < 30) return `in ${Math.floor(diffDays / 7)} Wochen`;
+      if (diffDays < 90) return `in ${Math.floor(diffDays / 30)} Monaten`;
+      return `in ${Math.floor(diffDays / 30)} Monaten`;
+    } else {
+      // Vergangenheitsorientiert für normale Connections
+      if (diffDays === 0) return 'heute';
+      if (diffDays === 1) return 'gestern';
+      if (diffDays < 30) return `vor ${diffDays} Tagen`;
+      if (diffDays < 365) return `vor ${Math.floor(diffDays / 30)} Monaten`;
+      return `vor ${Math.floor(diffDays / 365)} Jahren`;
+    }
   };
 
   // Hilfsfunktion für Betragsformatierung
@@ -90,6 +101,15 @@ export default function ConnectionCard({ connection, onPress, onSetReminder }) {
           </TouchableOpacity>
         </View>
       )}
+      
+      {connection.status === 'reminder' && (
+        <View style={styles.actionRow}>
+          <TouchableOpacity style={styles.rateButton} onPress={onPress}>
+            <Text style={styles.rateButtonText}>Jetzt bewerten</Text>
+            <Ionicons name="arrow-forward" size={16} color="#FFF" />
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Reminder Modal */}
       <Modal
@@ -134,7 +154,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
-    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

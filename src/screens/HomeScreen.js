@@ -16,38 +16,63 @@ export default function HomeScreen({ navigation }) {
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState(null);
 
-  // Mock-Daten für Connections die bewertet werden können
+  // Mock-Daten für Connections die bewertet werden können (dynamisch basierend auf heute)
+  const today = new Date();
   const connections = [
     {
       id: 1,
-      company: 'Steuerberater Schmidt',
-      amount: 1950,
-      date: new Date('2024-10-01'),
-      category: 'Steuerberatung',
+      company: 'Webdesign Studio Nord',
+      amount: 4200,
+      date: new Date(today.getTime() - 4 * 24 * 60 * 60 * 1000), // vor 4 Tagen
+      category: 'Webdesign',
       status: 'pending',
     },
     {
       id: 2,
-      company: 'Marketing Agentur XYZ',
-      amount: 8500,
-      date: new Date('2024-09-28'),
-      category: 'Marketing',
+      company: 'Steuerberater Schmidt',
+      amount: 1950,
+      date: new Date(today.getTime() - 8 * 24 * 60 * 60 * 1000), // vor 8 Tagen
+      category: 'Steuerberatung',
       status: 'pending',
     },
     {
       id: 3,
-      company: 'IT-Consulting Pro',
-      amount: 3200,
-      date: new Date('2024-09-15'),
-      category: 'IT-Beratung',
+      company: 'Marketing Agentur XYZ',
+      amount: 8500,
+      date: new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000), // vor 2 Wochen
+      category: 'Marketing',
       status: 'pending',
     },
     {
       id: 4,
+      company: 'IT-Consulting Pro',
+      amount: 3200,
+      date: new Date(today.getTime() - 28 * 24 * 60 * 60 * 1000), // vor ca. 1 Monat
+      category: 'IT-Beratung',
+      status: 'pending',
+    },
+    {
+      id: 5,
+      company: 'Fotografie Meier',
+      amount: 1800,
+      date: new Date(today.getTime() - 42 * 24 * 60 * 60 * 1000), // vor ca. 1,5 Monaten
+      category: 'Fotografie',
+      status: 'pending',
+    },
+    {
+      id: 6,
       company: 'Rechtsanwalt Müller',
       amount: 2400,
-      date: new Date('2024-08-20'),
+      date: new Date(today.getTime() - 55 * 24 * 60 * 60 * 1000), // vor ca. 2 Monaten
       category: 'Rechtsberatung',
+      status: 'pending',
+    },
+    {
+      id: 7,
+      company: 'Content-Agentur Berlin',
+      amount: 5600,
+      date: new Date(today.getTime() - 80 * 24 * 60 * 60 * 1000), // vor ca. 3 Monaten
+      category: 'Content Creation',
       status: 'rated',
     },
   ];
@@ -192,7 +217,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   connectionsList: {
-    gap: 12,
+    gap: 10,
   },
   emptyState: {
     alignItems: 'center',
