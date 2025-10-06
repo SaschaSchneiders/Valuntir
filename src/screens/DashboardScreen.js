@@ -1,18 +1,16 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import RateScale from '../shared/RateScale';
 import ChartCard from '../shared/ChartCard';
 import RatingBreakdown from '../shared/RatingBreakdown';
 import ProfileMetrics from '../shared/ProfileMetrics';
+import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 
 export default function DashboardScreen() {
   // Mock-Daten für die Demo
@@ -99,10 +97,10 @@ export default function DashboardScreen() {
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <ScrollView contentContainerStyle={styles.content}>
-              <View style={styles.header}>
-                <Text style={styles.title}>Valuntir</Text>
-                <Text style={styles.subtitle}>Top Tier Value</Text>
-              </View>
+              <HeaderWithSubtitle 
+                title="Valuntir" 
+                subtitle="Top Tier Value"
+              />
 
         {/* Chart Card - Wiederverwendbare Komponente */}
         <ChartCard
@@ -217,25 +215,6 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
     paddingBottom: 100,
-  },
-  header: {
-    marginBottom: 24,
-    paddingTop: 8,
-  },
-  title: {
-    fontSize: 34,
-    fontWeight: '800',
-    color: '#000000',
-    letterSpacing: -0.5,
-    marginBottom: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.06)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666666',
-    fontWeight: '500',
   },
   rateScaleSection: {
     marginBottom: 24,

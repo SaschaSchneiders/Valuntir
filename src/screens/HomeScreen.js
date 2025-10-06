@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 import ConnectionCard from '../shared/ConnectionCard';
 import ConnectionRating from '../shared/ConnectionRating';
+import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
+import FilterPills from '../shared/FilterPills';
 
 export default function HomeScreen() {
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -131,38 +130,18 @@ export default function HomeScreen() {
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <ScrollView contentContainerStyle={styles.content}>
-            <View style={styles.header}>
-              <View>
-                <Text style={styles.title}>Valuntir</Text>
-                <Text style={styles.subtitle}>Bewerte deine Connections</Text>
-              </View>
-              <TouchableOpacity style={styles.headerButton}>
-                <Ionicons name="notifications-outline" size={24} color="#000" />
-              </TouchableOpacity>
-            </View>
+            <HeaderWithSubtitle 
+              title="Valuntir" 
+              subtitle="Bewerte deine Connections"
+              showIcon={true}
+              iconName="notifications-outline"
+            />
 
-            {/* Filter Tabs */}
-            <View style={styles.filterContainer}>
-              {filterTabs.map((tab) => (
-                <TouchableOpacity
-                  key={tab.key}
-                  style={[
-                    styles.filterTab,
-                    selectedFilter === tab.key && styles.filterTabActive
-                  ]}
-                  onPress={() => setSelectedFilter(tab.key)}
-                >
-                  <Text
-                    style={[
-                      styles.filterTabText,
-                      selectedFilter === tab.key && styles.filterTabTextActive
-                    ]}
-                  >
-                    {tab.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <FilterPills 
+              tabs={filterTabs}
+              selectedFilter={selectedFilter}
+              onFilterChange={setSelectedFilter}
+            />
 
             {/* Connection Liste */}
             <View style={styles.connectionsList}>
@@ -210,59 +189,6 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
     paddingBottom: 100,
-  },
-  header: {
-    marginBottom: 24,
-    paddingTop: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  headerButton: {
-    padding: 8,
-    marginTop: 4,
-  },
-  title: {
-    fontSize: 34,
-    fontWeight: '800',
-    color: '#000000',
-    letterSpacing: -0.5,
-    marginBottom: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.06)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666666',
-    fontWeight: '500',
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    marginBottom: 24,
-    gap: 6,
-  },
-  filterTab: {
-    flex: 1,
-    paddingHorizontal: 6,
-    paddingVertical: 6,
-    borderRadius: 20,
-    backgroundColor: 'rgba(245, 245, 245, 0.6)',
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.05)',
-    alignItems: 'center',
-  },
-  filterTabActive: {
-    backgroundColor: '#000000',
-    borderColor: '#000000',
-  },
-  filterTabText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#999999',
-  },
-  filterTabTextActive: {
-    color: '#FFFFFF',
   },
   connectionsList: {
     gap: 12,
