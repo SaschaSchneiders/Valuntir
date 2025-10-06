@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   successHeader: {
-    marginBottom: 24,
+    marginBottom: 8,
   },
   cardTitle: {
     fontSize: 22,
@@ -231,10 +231,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.05)',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
   },
   pillActive: {
     backgroundColor: '#000000',
     borderColor: '#000000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
   },
   pillText: {
     fontSize: 12,

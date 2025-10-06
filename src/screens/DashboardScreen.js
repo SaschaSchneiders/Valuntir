@@ -91,7 +91,8 @@ export default function DashboardScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
+        colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
+        locations={[0, 0.3, 0.65, 1]}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -227,6 +228,9 @@ const styles = StyleSheet.create({
     color: '#000000',
     letterSpacing: -0.5,
     marginBottom: 4,
+    textShadowColor: 'rgba(0, 0, 0, 0.06)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   subtitle: {
     fontSize: 16,
@@ -250,10 +254,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.06)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.08,
-    shadowRadius: 32,
-    elevation: 12,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 5,
   },
   activityItem: {
     flexDirection: 'row',
@@ -270,6 +274,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   activityContent: {
     flex: 1,
