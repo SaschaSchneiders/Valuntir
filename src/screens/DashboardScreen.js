@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   header: {
-    marginBottom: 32,
+    marginBottom: 24,
     paddingTop: 8,
   },
   title: {
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   rateScaleSection: {
-    marginBottom: 32,
+    marginBottom: 24,
   },
   cardTitle: {
     fontSize: 18,

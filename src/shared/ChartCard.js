@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '800',
     color: '#000000',
-    marginBottom: 16,
+    marginBottom: 12,
     letterSpacing: -0.5,
   },
   timeframePills: {
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   chartArea: {
-    marginBottom: 20,
+    marginBottom: 0,
   },
   statsRow: {
     flexDirection: 'row',
