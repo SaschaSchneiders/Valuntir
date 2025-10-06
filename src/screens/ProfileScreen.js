@@ -11,13 +11,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import InfoPopup from '../shared/InfoPopup';
 import ProfileCard from '../shared/ProfileCard';
 import ChartCard from '../shared/ChartCard';
 import RateScale from '../shared/RateScale';
 import RatingBreakdown from '../shared/RatingBreakdown';
 import CustomAlert from '../shared/CustomAlert';
+import ProfileFAB from '../shared/ProfileFAB';
+import ProfileDescription from '../shared/ProfileDescription';
+import QuickActionButtons from '../shared/QuickActionButtons';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
@@ -346,35 +348,14 @@ export default function ProfileScreen() {
               <>
                 {/* Kurzbeschreibung */}
                 {showDescription && descriptionValue && (
-                  <View style={[styles.publicSection, { marginBottom: 16 }]}>
-                    <Text style={styles.publicDescription}>{descriptionValue}</Text>
-                  </View>
+                  <ProfileDescription description={descriptionValue} />
                 )}
 
                 {/* Quick Action Tabs - Webseite & Termin */}
-                {((showWebsite && websiteValue) || (showCalendar && calendarValue)) && (
-                  <View style={styles.quickActionTabs}>
-                    {showWebsite && websiteValue && (
-                      <TouchableOpacity 
-                        style={styles.quickActionTab}
-                        onPress={() => console.log('Open Website:', websiteValue)}
-                      >
-                        <Ionicons name="globe-outline" size={20} color="#000" />
-                        <Text style={styles.quickActionTabText}>Webseite</Text>
-                      </TouchableOpacity>
-                    )}
-                    
-                    {showCalendar && calendarValue && (
-                      <TouchableOpacity 
-                        style={styles.quickActionTab}
-                        onPress={() => console.log('Open Calendar:', calendarValue)}
-                      >
-                        <Ionicons name="calendar-outline" size={20} color="#000" />
-                        <Text style={styles.quickActionTabText}>Termin buchen</Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                )}
+                <QuickActionButtons
+                  websiteUrl={showWebsite ? websiteValue : null}
+                  calendarUrl={showCalendar ? calendarValue : null}
+                />
 
                 {/* Chart & Statistiken */}
                 <ChartCard 
@@ -855,10 +836,9 @@ export default function ProfileScreen() {
       />
 
       {/* Floating Action Button - NUR in öffentlicher Ansicht UND wenn Favorit gesetzt */}
-      {isPublicView && favoriteContact && (
-        <TouchableOpacity 
-          style={styles.fab}
-          activeOpacity={0.9}
+      {isPublicView && (
+        <ProfileFAB
+          favoriteContact={favoriteContact}
           onPress={() => {
             // Favorisierte Kontaktmöglichkeit verwenden
             if (favoriteContact === 'whatsapp' && showWhatsApp && whatsAppValue) {
@@ -869,19 +849,7 @@ export default function ProfileScreen() {
               console.log('Email:', emailValue);
             }
           }}
-        >
-          <BlurView intensity={30} tint="dark" style={styles.fabBlur}>
-            <Ionicons 
-              name={
-                favoriteContact === 'whatsapp' ? 'logo-whatsapp' :
-                favoriteContact === 'phone' ? 'call' :
-                'mail'
-              } 
-              size={28} 
-              color="#FFFFFF" 
-            />
-          </BlurView>
-        </TouchableOpacity>
+        />
       )}
 
       {/* Custom Alert */}
@@ -1080,39 +1048,6 @@ const styles = StyleSheet.create({
   publicSection: {
     marginBottom: 24,
   },
-  publicDescription: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: '#333',
-  },
-  quickActionTabs: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 24,
-  },
-  quickActionTab: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  quickActionTabText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#000',
-  },
   publicSectionTitle: {
     fontSize: 14,
     fontWeight: '700',
@@ -1149,31 +1084,6 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   // Floating Action Button
-  fab: {
-    position: 'absolute',
-    bottom: 112, // Tab-Bar (72px Höhe + 20px Position) + 20px Abstand = gleich wie right (20px)
-    right: 20,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Semi-transparent für Glassmorphism
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 8,
-    zIndex: 999,
-  },
-  fabBlur: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 32,
-  },
   // Kommentar-Sektion (Accordion)
   commentsSection: {
     backgroundColor: '#FFFFFF',
