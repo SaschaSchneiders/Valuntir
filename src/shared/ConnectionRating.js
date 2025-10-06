@@ -15,20 +15,24 @@ import Slider from '@react-native-community/slider';
 import RateScale from './RateScale';
 
 export default function ConnectionRating({ visible, connection, onClose, onSubmit }) {
-  // Schritt-Steuerung (1 oder 2)
+  // Schritt-Steuerung (1, 2 oder 3)
   const [currentStep, setCurrentStep] = useState(1);
   
-  // Bewertungen für die 4 Kernbereiche (1-10)
+  // Bewertungen für die 4 Kernbereiche (1-10) - Schritt 1
   const [communication, setCommunication] = useState(5);
   const [pricePerformance, setPricePerformance] = useState(5);
   const [deliveryQuality, setDeliveryQuality] = useState(5);
   const [reliability, setReliability] = useState(5);
   
-  // Projekterfolg / Erfolgsrate (0-100%, unabhängig von Kernbereichen)
-  const [successRate, setSuccessRate] = useState(50);
+  // Zwei Erfolgs-Fragen (0-100%) - Schritt 2
+  const [goalAchieved, setGoalAchieved] = useState(50); // Ziel erreicht?
+  const [worthIt, setWorthIt] = useState(50); // Hat sich gelohnt?
   
-  // Optionaler Freitext
+  // Optionaler Freitext - Schritt 3
   const [comment, setComment] = useState('');
+  
+  // Erfolgsscore berechnen (Durchschnitt der beiden Fragen)
+  const successScore = Math.round((goalAchieved + worthIt) / 2);
 
   // Kategorien-Definitionen
   const categories = [
@@ -73,7 +77,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
       pricePerformance,
       deliveryQuality,
       reliability,
-      successRate,
+      goalAchieved,
+      worthIt,
+      successScore,
       comment: comment.trim(),
       timestamp: new Date().toISOString(),
     };
@@ -87,7 +93,8 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     setPricePerformance(5);
     setDeliveryQuality(5);
     setReliability(5);
-    setSuccessRate(50);
+    setGoalAchieved(50);
+    setWorthIt(50);
     setComment('');
   };
 
@@ -97,11 +104,15 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   };
 
   const handleNext = () => {
-    setCurrentStep(2);
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+    }
   };
 
   const handleBack = () => {
-    setCurrentStep(1);
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
   };
 
   return (
@@ -116,7 +127,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
             <View style={styles.header}>
               <View style={styles.headerTop}>
                 <Text style={styles.title}>
-                  {currentStep === 1 ? 'Schritt 1 von 2' : 'Schritt 2 von 2'}
+                  Schritt {currentStep} von 3
                 </Text>
                 <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                   <Ionicons name="close" size={28} color="#666" />
@@ -160,36 +171,69 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               </View>
             )}
 
-            {/* Step 2: Projekterfolg & Kommentar */}
+            {/* Step 2: Zwei Erfolgs-Fragen */}
             {currentStep === 2 && (
               <View style={styles.stepContent}>
-                <Text style={styles.sectionTitle}>Wie erfolgreich war das Projekt?</Text>
-                <Text style={styles.overallHint}>
-                  Unabhängig von den Soft-Facts: Hat das Endergebnis gestimmt?
-                </Text>
-                
-                {/* RateScale als visueller Indikator */}
-                <View style={styles.rateScaleContainer}>
-                  <RateScale
-                    rate={successRate}
-                    size="medium"
-                    showLabel={false}
-                  />
+                {/* Frage 1: Ziel erreicht? */}
+                <View style={styles.questionContainer}>
+                  <Text style={styles.questionTitle}>Wurde das Ziel des Projekts erreicht?</Text>
+                  <View style={styles.interactiveRateScale}>
+                    <RateScale
+                      rate={goalAchieved}
+                      size="medium"
+                      showLabel={false}
+                    />
+                    <Slider
+                      style={styles.overlaySlider}
+                      minimumValue={0}
+                      maximumValue={100}
+                      step={1}
+                      value={goalAchieved}
+                      onValueChange={setGoalAchieved}
+                      minimumTrackTintColor="transparent"
+                      maximumTrackTintColor="transparent"
+                      thumbTintColor="transparent"
+                    />
+                  </View>
                 </View>
 
-                {/* Slider zur Steuerung */}
-                <View style={styles.sliderContainer}>
-                  <Slider
-                    style={styles.fullSlider}
-                    minimumValue={0}
-                    maximumValue={100}
-                    step={1}
-                    value={successRate}
-                    onValueChange={setSuccessRate}
-                    minimumTrackTintColor="#000000"
-                    maximumTrackTintColor="#E0E0E0"
-                    thumbTintColor="#000000"
-                  />
+                {/* Frage 2: Hat sich gelohnt? */}
+                <View style={styles.questionContainer}>
+                  <Text style={styles.questionTitle}>Hat sich das Projekt für dich gelohnt?</Text>
+                  <View style={styles.interactiveRateScale}>
+                    <RateScale
+                      rate={worthIt}
+                      size="medium"
+                      showLabel={false}
+                    />
+                    <Slider
+                      style={styles.overlaySlider}
+                      minimumValue={0}
+                      maximumValue={100}
+                      step={1}
+                      value={worthIt}
+                      onValueChange={setWorthIt}
+                      minimumTrackTintColor="transparent"
+                      maximumTrackTintColor="transparent"
+                      thumbTintColor="transparent"
+                    />
+                  </View>
+                </View>
+              </View>
+            )}
+
+            {/* Step 3: Erfolgsscore & Kommentar */}
+            {currentStep === 3 && (
+              <View style={styles.stepContent}>
+                <Text style={styles.sectionTitle}>Erfolgsscore</Text>
+                <Text style={styles.overallHint}>
+                  Berechnet aus deinen Angaben zum Projekterfolg
+                </Text>
+                
+                {/* Erfolgsscore-Anzeige */}
+                <View style={styles.scoreDisplay}>
+                  <Text style={styles.scoreNumber}>{successScore}%</Text>
+                  <Text style={styles.scoreLabel}>Erfolgsscore</Text>
                 </View>
 
                 <View style={styles.commentSection}>
@@ -219,6 +263,17 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                   <Text style={styles.nextButtonText}>Weiter</Text>
                   <Ionicons name="arrow-forward" size={20} color="#FFF" />
                 </TouchableOpacity>
+              ) : currentStep === 2 ? (
+                <View style={styles.footerRow}>
+                  <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                    <Ionicons name="arrow-back" size={20} color="#000" />
+                    <Text style={styles.backButtonText}>Zurück</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.nextButtonInRow} onPress={handleNext}>
+                    <Text style={styles.nextButtonText}>Weiter</Text>
+                    <Ionicons name="arrow-forward" size={20} color="#FFF" />
+                  </TouchableOpacity>
+                </View>
               ) : (
                 <View style={styles.footerRow}>
                   <TouchableOpacity style={styles.backButton} onPress={handleBack}>
@@ -355,17 +410,51 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontStyle: 'italic',
   },
-  rateScaleContainer: {
+  questionContainer: {
+    marginBottom: 32,
+  },
+  questionTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 16,
+  },
+  interactiveRateScale: {
+    position: 'relative',
+  },
+  overlaySlider: {
+    position: 'absolute',
+    top: 8,
+    left: 0,
+    right: 0,
+    height: 80,
+    opacity: 0,
+    zIndex: 999,
+  },
+  scoreDisplay: {
+    backgroundColor: '#F8F9FA',
+    borderRadius: 14,
+    padding: 24,
+    alignItems: 'center',
+    marginBottom: 24,
+    borderWidth: 2,
+    borderColor: '#000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  scoreNumber: {
+    fontSize: 48,
+    fontWeight: '900',
+    color: '#000',
     marginBottom: 8,
-    paddingHorizontal: 4,
   },
-  sliderContainer: {
-    marginBottom: 20,
-    paddingHorizontal: 4,
-  },
-  fullSlider: {
-    width: '100%',
-    height: 40,
+  scoreLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666',
   },
   commentSection: {
     marginTop: 4,
@@ -428,6 +517,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  nextButtonInRow: {
+    flex: 2,
+    backgroundColor: '#000000',
+    borderRadius: 14,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
   backButton: {
     flex: 1,
     backgroundColor: '#F5F5F5',
@@ -451,7 +557,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   submitButton: {
-    flex: 1,
+    flex: 2,
     backgroundColor: '#000000',
     borderRadius: 14,
     paddingVertical: 14,
