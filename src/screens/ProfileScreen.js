@@ -327,7 +327,8 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
+        colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
+        locations={[0, 0.3, 0.65, 1]}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -377,7 +378,7 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Bewertungsdetails - 4 Kernbereiche */}
-                <View style={{ marginBottom: 32 }}>
+                <View style={{ marginBottom: 24 }}>
                   <RatingBreakdown
                     communication={87}
                     pricePerformance={92}
@@ -868,10 +869,10 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 5,
     borderWidth: 1,
     borderColor: '#F0F0F0',
   },
