@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import Slider from '@react-native-community/slider';
+import RateScale from './RateScale';
 
 export default function ConnectionRating({ visible, connection, onClose, onSubmit }) {
   // Schritt-Steuerung (1 oder 2)
@@ -23,9 +24,8 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   const [deliveryQuality, setDeliveryQuality] = useState(5);
   const [reliability, setReliability] = useState(5);
   
-  // Gesamtzufriedenheit (wird berechnet, kann aber angepasst werden)
-  const [overallSatisfaction, setOverallSatisfaction] = useState(5);
-  const [isOverallCustomized, setIsOverallCustomized] = useState(false);
+  // Projekterfolg / Erfolgsrate (0-100%, unabhängig von Kernbereichen)
+  const [successRate, setSuccessRate] = useState(50);
   
   // Optionaler Freitext
   const [comment, setComment] = useState('');
@@ -66,14 +66,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     },
   ];
 
-  // Automatische Berechnung der Gesamtzufriedenheit (Durchschnitt)
-  useEffect(() => {
-    if (!isOverallCustomized) {
-      const average = (communication + pricePerformance + deliveryQuality + reliability) / 4;
-      setOverallSatisfaction(Math.round(average * 10) / 10);
-    }
-  }, [communication, pricePerformance, deliveryQuality, reliability, isOverallCustomized]);
-
   const handleSubmit = () => {
     const rating = {
       connectionId: connection?.id,
@@ -81,7 +73,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
       pricePerformance,
       deliveryQuality,
       reliability,
-      overallSatisfaction,
+      successRate,
       comment: comment.trim(),
       timestamp: new Date().toISOString(),
     };
@@ -95,8 +87,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     setPricePerformance(5);
     setDeliveryQuality(5);
     setReliability(5);
-    setOverallSatisfaction(5);
-    setIsOverallCustomized(false);
+    setSuccessRate(50);
     setComment('');
   };
 
@@ -169,29 +160,32 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               </View>
             )}
 
-            {/* Step 2: Gesamtzufriedenheit & Kommentar */}
+            {/* Step 2: Projekterfolg & Kommentar */}
             {currentStep === 2 && (
               <View style={styles.stepContent}>
-                <Text style={styles.sectionTitle}>Gesamtzufriedenheit</Text>
+                <Text style={styles.sectionTitle}>Wie erfolgreich war das Projekt?</Text>
                 <Text style={styles.overallHint}>
-                  {isOverallCustomized
-                    ? 'Von dir angepasst'
-                    : 'Automatisch berechnet (anpassbar)'}
+                  Unabhängig von den Soft-Facts: Hat das Endergebnis gestimmt?
                 </Text>
-                <View style={styles.overallBox}>
-                  <View style={styles.overallHeader}>
-                    <Text style={styles.overallNumber}>{overallSatisfaction}/10</Text>
-                  </View>
+                
+                {/* RateScale als visueller Indikator */}
+                <View style={styles.rateScaleContainer}>
+                  <RateScale
+                    rate={successRate}
+                    size="medium"
+                    showLabel={false}
+                  />
+                </View>
+
+                {/* Slider zur Steuerung */}
+                <View style={styles.sliderContainer}>
                   <Slider
-                    style={styles.slider}
-                    minimumValue={1}
-                    maximumValue={10}
-                    step={0.1}
-                    value={overallSatisfaction}
-                    onValueChange={(value) => {
-                      setOverallSatisfaction(Math.round(value * 10) / 10);
-                      setIsOverallCustomized(true);
-                    }}
+                    style={styles.fullSlider}
+                    minimumValue={0}
+                    maximumValue={100}
+                    step={1}
+                    value={successRate}
+                    onValueChange={setSuccessRate}
                     minimumTrackTintColor="#000000"
                     maximumTrackTintColor="#E0E0E0"
                     thumbTintColor="#000000"
@@ -260,6 +254,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
   },
   header: {
     padding: 20,
@@ -318,6 +317,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   ratingInfo: {
     flex: 1,
@@ -348,27 +352,20 @@ const styles = StyleSheet.create({
   overallHint: {
     fontSize: 12,
     color: '#999',
-    marginBottom: 10,
+    marginBottom: 16,
     fontStyle: 'italic',
   },
-  overallBox: {
-    backgroundColor: '#F8F9FA',
-    borderRadius: 14,
-    padding: 16,
-    borderWidth: 2,
-    borderColor: '#000',
+  rateScaleContainer: {
+    marginBottom: 8,
+    paddingHorizontal: 4,
+  },
+  sliderContainer: {
     marginBottom: 20,
+    paddingHorizontal: 4,
   },
-  overallHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-  overallNumber: {
-    fontSize: 28,
-    fontWeight: '900',
-    color: '#000',
+  fullSlider: {
+    width: '100%',
+    height: 40,
   },
   commentSection: {
     marginTop: 4,
@@ -388,6 +385,11 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     borderWidth: 1,
     borderColor: '#E0E0E0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 1,
   },
   charCount: {
     fontSize: 11,
@@ -413,6 +415,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   nextButtonText: {
     color: '#FFFFFF',
@@ -430,6 +439,11 @@ const styles = StyleSheet.create({
     gap: 8,
     borderWidth: 1,
     borderColor: '#E0E0E0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   backButtonText: {
     color: '#000000',
@@ -445,6 +459,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   submitButtonText: {
     color: '#FFFFFF',
