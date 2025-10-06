@@ -20,11 +20,12 @@ import CustomAlert from '../shared/CustomAlert';
 import ProfileFAB from '../shared/ProfileFAB';
 import ProfileDescription from '../shared/ProfileDescription';
 import QuickActionButtons from '../shared/QuickActionButtons';
+import ProjectComments from '../shared/ProjectComments';
+import ContactSection from '../shared/ContactSection';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const [isPublicView, setIsPublicView] = useState(false);
-  const [isCommentsExpanded, setIsCommentsExpanded] = useState(false);
   
   // Chart Daten für öffentliche Ansicht
   const generateRealisticData = (numPoints, baseValue = 87) => {
@@ -387,105 +388,16 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Projekterfahrungen (Accordion) */}
-                <View style={styles.commentsSection}>
-                  <TouchableOpacity 
-                    style={styles.commentsHeader}
-                    onPress={() => setIsCommentsExpanded(!isCommentsExpanded)}
-                  >
-                    <View style={styles.commentsHeaderLeft}>
-                      <Ionicons name="chatbubbles-outline" size={20} color="#000" />
-                      <Text style={styles.commentsHeaderTitle}>Projekterfahrungen</Text>
-                      <View style={styles.commentsBadge}>
-                        <Text style={styles.commentsBadgeText}>{projectComments.length}</Text>
-                      </View>
-                    </View>
-                    <Ionicons 
-                      name={isCommentsExpanded ? "chevron-up" : "chevron-down"} 
-                      size={24} 
-                      color="#666" 
-                    />
-                  </TouchableOpacity>
+                <ProjectComments comments={projectComments} />
 
-                  {isCommentsExpanded && (
-                    <ScrollView 
-                      style={styles.commentsContent}
-                      showsVerticalScrollIndicator={true}
-                    >
-                      {projectComments.map((item, index) => (
-                        <View 
-                          key={item.id} 
-                          style={[
-                            styles.commentItem,
-                            index === projectComments.length - 1 && styles.commentItemLast
-                          ]}
-                        >
-                          <View style={styles.commentHeader}>
-                            <View style={styles.commentRating}>
-                              <Ionicons name="star" size={14} color="#FFD700" />
-                              <Text style={styles.commentRatingText}>{item.rating}/10</Text>
-                            </View>
-                            <Text style={styles.commentDate}>
-                              {new Date(item.date).toLocaleDateString('de-DE', { 
-                                month: 'short', 
-                                year: 'numeric' 
-                              })}
-                            </Text>
-                          </View>
-                          <Text style={styles.commentText}>{item.comment}</Text>
-                        </View>
-                      ))}
-                    </ScrollView>
-                  )}
-                </View>
-
-                {/* Kontaktmöglichkeiten */}
-                {(showEmail && emailValue) || (showPhone && phoneValue) || (showWhatsApp && whatsAppValue) ? (
-                  <View style={styles.publicSection}>
-                    <Text style={styles.publicSectionTitle}>Kontakt</Text>
-                    
-                    {showEmail && emailValue && (
-                      <View style={styles.publicContactItem}>
-                        <Ionicons name="mail-outline" size={20} color="#666" />
-                        <Text style={styles.publicContactText}>{emailValue}</Text>
-                      </View>
-                    )}
-                    
-                    {showPhone && phoneValue && (
-                      <View style={styles.publicContactItem}>
-                        <Ionicons name="call-outline" size={20} color="#666" />
-                        <Text style={styles.publicContactText}>{phoneValue}</Text>
-                      </View>
-                    )}
-                    
-                    {showWhatsApp && whatsAppValue && (
-                      <View style={styles.publicContactItem}>
-                        <Ionicons name="logo-whatsapp" size={20} color="#666" />
-                        <Text style={styles.publicContactText}>{whatsAppValue}</Text>
-                      </View>
-                    )}
-                  </View>
-                ) : null}
-
-                {/* Social Media */}
-                {(showLinkedIn && linkedInValue) || (showInstagram && instagramValue) ? (
-                  <View style={styles.publicSection}>
-                    <Text style={styles.publicSectionTitle}>Social Media</Text>
-                    
-                    <View style={styles.publicSocialRow}>
-                      {showLinkedIn && linkedInValue && (
-                        <TouchableOpacity style={styles.publicSocialButton}>
-                          <Ionicons name="logo-linkedin" size={28} color="#0A66C2" />
-                        </TouchableOpacity>
-                      )}
-                      
-                      {showInstagram && instagramValue && (
-                        <TouchableOpacity style={styles.publicSocialButton}>
-                          <Ionicons name="logo-instagram" size={28} color="#E4405F" />
-                        </TouchableOpacity>
-                      )}
-          </View>
-        </View>
-                ) : null}
+                {/* Kontakt & Social Media */}
+                <ContactSection
+                  email={showEmail ? emailValue : null}
+                  phone={showPhone ? phoneValue : null}
+                  whatsapp={showWhatsApp ? whatsAppValue : null}
+                  linkedin={showLinkedIn ? linkedInValue : null}
+                  instagram={showInstagram ? instagramValue : null}
+                />
               </>
             )}
 
@@ -1047,122 +959,6 @@ const styles = StyleSheet.create({
   // Öffentliche Ansicht Styles
   publicSection: {
     marginBottom: 24,
-  },
-  publicSectionTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#000',
-    marginBottom: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  publicContactItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 8,
-  },
-  publicContactText: {
-    fontSize: 15,
-    color: '#333',
-  },
-  publicSocialRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  publicSocialButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  // Floating Action Button
-  // Kommentar-Sektion (Accordion)
-  commentsSection: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    marginBottom: 32,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  commentsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    backgroundColor: '#F8F9FA',
-  },
-  commentsHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  commentsHeaderTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#000',
-  },
-  commentsBadge: {
-    backgroundColor: '#000',
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    minWidth: 24,
-    alignItems: 'center',
-  },
-  commentsBadgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#FFF',
-  },
-  commentsContent: {
-    maxHeight: 400,
-    padding: 16,
-    paddingTop: 12,
-  },
-  commentItem: {
-    marginBottom: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  commentItemLast: {
-    borderBottomWidth: 0,
-    marginBottom: 0,
-    paddingBottom: 0,
-  },
-  commentHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  commentRating: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  commentRatingText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#000',
-  },
-  commentDate: {
-    fontSize: 12,
-    color: '#999',
-  },
-  commentText: {
-    fontSize: 14,
-    color: '#333',
-    lineHeight: 20,
   },
 });
 
