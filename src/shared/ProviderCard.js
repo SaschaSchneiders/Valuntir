@@ -19,19 +19,15 @@ export default function ProviderCard({ provider, onPress }) {
         </View>
         <View style={styles.info}>
           <Text style={styles.name}>{provider.name}</Text>
-          <Text style={styles.username}>{provider.username}</Text>
-        </View>
-      </View>
-
-      <View style={styles.details}>
-        <View style={styles.meta}>
-          <View style={styles.metaItem}>
-            <Ionicons name="location-outline" size={13} color="#666" />
-            <Text style={styles.metaText}>{provider.location}</Text>
-          </View>
-          <View style={styles.metaItem}>
-            <Ionicons name="pricetag-outline" size={13} color="#666" />
-            <Text style={styles.metaText}>{provider.category}</Text>
+          <View style={styles.meta}>
+            <View style={styles.metaItem}>
+              <Ionicons name="location-outline" size={13} color="#666" />
+              <Text style={styles.metaText}>{provider.location}</Text>
+            </View>
+            <View style={styles.metaItem}>
+              <Ionicons name="pricetag-outline" size={13} color="#666" />
+              <Text style={styles.metaText}>{provider.category}</Text>
+            </View>
           </View>
         </View>
       </View>
@@ -75,16 +71,16 @@ export default function ProviderCard({ provider, onPress }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
+    borderColor: '#F0F0F0',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.12,
     shadowRadius: 12,
-    elevation: 4,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',
@@ -99,6 +95,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   info: {
     flex: 1,
@@ -107,15 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#000000',
-    marginBottom: 4,
-  },
-  username: {
-    fontSize: 13,
-    color: '#666666',
-    fontWeight: '500',
-  },
-  details: {
-    marginBottom: 12,
+    marginBottom: 6,
   },
   meta: {
     flexDirection: 'row',

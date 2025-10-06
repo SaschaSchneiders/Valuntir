@@ -208,7 +208,8 @@ export default function SearchScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
+        colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
+        locations={[0, 0.3, 0.65, 1]}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -539,6 +540,9 @@ const styles = StyleSheet.create({
     color: '#000000',
     letterSpacing: -0.5,
     marginBottom: 4,
+    textShadowColor: 'rgba(0, 0, 0, 0.06)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   subtitle: {
     fontSize: 16,
@@ -561,10 +565,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.06)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 2,
+    elevation: 3,
   },
   searchIcon: {
     marginRight: 12,
@@ -590,10 +594,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.06)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 2,
+    elevation: 3,
   },
   filterBadge: {
     position: 'absolute',
@@ -850,7 +854,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.3,
   },
   providersList: {
-    gap: 16,
+    gap: 12,
     marginBottom: 24,
   },
   emptyState: {
