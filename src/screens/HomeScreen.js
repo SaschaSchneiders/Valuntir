@@ -123,7 +123,8 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
+        colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
+        locations={[0, 0.3, 0.65, 1]}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -215,6 +216,9 @@ const styles = StyleSheet.create({
     color: '#000000',
     letterSpacing: -0.5,
     marginBottom: 4,
+    textShadowColor: 'rgba(0, 0, 0, 0.06)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   subtitle: {
     fontSize: 16,
@@ -235,10 +239,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.05)',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
   },
   filterTabActive: {
     backgroundColor: '#000000',
     borderColor: '#000000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
   },
   filterTabText: {
     fontSize: 12,
@@ -249,7 +263,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   connectionsList: {
-    gap: 16,
+    gap: 12,
   },
   emptyState: {
     alignItems: 'center',
