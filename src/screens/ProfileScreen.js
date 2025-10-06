@@ -17,6 +17,7 @@ import InfoPopup from '../shared/InfoPopup';
 import ProfileCard from '../shared/ProfileCard';
 import ChartCard from '../shared/ChartCard';
 import RateScale from '../shared/RateScale';
+import CustomAlert from '../shared/CustomAlert';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
@@ -92,6 +93,104 @@ export default function ProfileScreen() {
   const [linkedInValue, setLinkedInValue] = useState('https://linkedin.com/company/beratungszentrum-nord');
   const [instagramValue, setInstagramValue] = useState('https://instagram.com/beratungszentrum.nord');
   const [changeRequestMessage, setChangeRequestMessage] = useState('');
+  
+  // Favorisierte Kontaktmöglichkeit für FAB
+  const [favoriteContact, setFavoriteContact] = useState(null); // 'email', 'phone', 'whatsapp' oder null
+  
+  // Custom Alert State
+  const [alertConfig, setAlertConfig] = useState({
+    visible: false,
+    title: '',
+    message: '',
+    buttons: []
+  });
+  
+  const showAlert = (title, message, buttons) => {
+    setAlertConfig({ visible: true, title, message, buttons });
+  };
+  
+  const hideAlert = () => {
+    setAlertConfig({ ...alertConfig, visible: false });
+  };
+  
+  // Handler für Favoriten-Toggle
+  const handleToggleFavorite = (contactType) => {
+    const contactNames = {
+      email: 'E-Mail',
+      phone: 'Telefon',
+      whatsapp: 'WhatsApp'
+    };
+    
+    // Wenn bereits diese Option favorisiert ist → Deaktivieren
+    if (favoriteContact === contactType) {
+      showAlert(
+        'Favorit entfernt',
+        'Der Kontaktbutton wurde von deinem Profil entfernt.',
+        [
+          {
+            text: 'OK',
+            style: 'primary',
+            onPress: () => {
+              setFavoriteContact(null);
+              hideAlert();
+            }
+          }
+        ]
+      );
+      return;
+    }
+    
+    // Wenn eine andere Option favorisiert ist → Warnung
+    if (favoriteContact && favoriteContact !== contactType) {
+      showAlert(
+        'Favorit ändern?',
+        `Möchtest du ${contactNames[favoriteContact]} durch ${contactNames[contactType]} als bevorzugte Kontaktmöglichkeit ersetzen?`,
+        [
+          {
+            text: 'Abbrechen',
+            style: 'secondary',
+            onPress: hideAlert
+          },
+          {
+            text: 'Ersetzen',
+            style: 'primary',
+            onPress: () => {
+              setFavoriteContact(contactType);
+              hideAlert();
+              setTimeout(() => {
+                showAlert(
+                  'Favorit gesetzt',
+                  `Der Kontaktbutton in deinem öffentlichen Profil ist jetzt mit ${contactNames[contactType]} verknüpft.`,
+                  [
+                    {
+                      text: 'Verstanden',
+                      style: 'primary',
+                      onPress: hideAlert
+                    }
+                  ]
+                );
+              }, 300);
+            }
+          }
+        ]
+      );
+      return;
+    }
+    
+    // Neue Favorit-Option setzen
+    setFavoriteContact(contactType);
+    showAlert(
+      'Favorit gesetzt',
+      `Der Kontaktbutton in deinem öffentlichen Profil ist jetzt mit ${contactNames[contactType]} verknüpft.`,
+      [
+        {
+          text: 'Verstanden',
+          style: 'primary',
+          onPress: hideAlert
+        }
+      ]
+    );
+  };
   
   // Modal Handler
   const openModal = (type, currentValue = '') => {
@@ -379,9 +478,9 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
         
-                {/* Kontaktinformationen */}
+                {/* Links */}
                 <View style={styles.menuCard}>
-                  <Text style={styles.cardTitle}>Kontakt</Text>
+                  <Text style={styles.cardTitle}>Links</Text>
                   
                   <View style={styles.toggleItem}>
                     <View style={styles.menuLeft}>
@@ -402,6 +501,30 @@ export default function ProfileScreen() {
                     />
                   </View>
 
+                  <View style={[styles.toggleItem, styles.toggleItemLast]}>
+                    <View style={styles.menuLeft}>
+                      <View style={styles.menuIconContainer}>
+                        <Ionicons name="calendar-outline" size={20} color="#000" />
+                      </View>
+                      <View style={styles.menuTextContainer}>
+                        <Text style={styles.menuText}>Kalender-Link</Text>
+                        {calendarValue ? <Text style={styles.menuSubtext}>{calendarValue}</Text> : null}
+                      </View>
+                    </View>
+                    <Switch
+                      value={showCalendar}
+                      onValueChange={() => handleToggle('calendar', showCalendar, setShowCalendar, calendarValue)}
+                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
+                      thumbColor="#FFFFFF"
+                      style={{ transform: [{ scale: 0.8 }] }}
+                    />
+                  </View>
+                </View>
+
+                {/* Kontakt */}
+                <View style={styles.menuCard}>
+                  <Text style={styles.cardTitle}>Kontakt</Text>
+                  
                   <View style={styles.toggleItem}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
@@ -440,7 +563,7 @@ export default function ProfileScreen() {
                     />
                   </View>
 
-                  <View style={styles.toggleItem}>
+                  <View style={[styles.toggleItem, styles.toggleItemLast]}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="logo-whatsapp" size={20} color="#000" />
@@ -453,25 +576,6 @@ export default function ProfileScreen() {
                     <Switch
                       value={showWhatsApp}
                       onValueChange={() => handleToggle('whatsapp', showWhatsApp, setShowWhatsApp, whatsAppValue)}
-                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
-                      thumbColor="#FFFFFF"
-                      style={{ transform: [{ scale: 0.8 }] }}
-                    />
-                  </View>
-
-                  <View style={[styles.toggleItem, styles.toggleItemLast]}>
-                    <View style={styles.menuLeft}>
-                      <View style={styles.menuIconContainer}>
-                        <Ionicons name="calendar-outline" size={20} color="#000" />
-                      </View>
-                      <View style={styles.menuTextContainer}>
-                        <Text style={styles.menuText}>Kalender-Link</Text>
-                        {calendarValue ? <Text style={styles.menuSubtext}>{calendarValue}</Text> : null}
-                      </View>
-                    </View>
-                    <Switch
-                      value={showCalendar}
-                      onValueChange={() => handleToggle('calendar', showCalendar, setShowCalendar, calendarValue)}
                       trackColor={{ false: '#D1D5DB', true: '#000000' }}
                       thumbColor="#FFFFFF"
                       style={{ transform: [{ scale: 0.8 }] }}
@@ -569,26 +673,32 @@ export default function ProfileScreen() {
         numberOfLines={activeModal === 'changeRequest' ? 5 : activeModal === 'description' ? 4 : 1}
         maxLength={activeModal === 'description' ? 200 : undefined}
         saveButtonText={activeModal === 'changeRequest' ? 'Support kontaktieren' : 'Speichern'}
+        isContactType={activeModal === 'email' || activeModal === 'phone' || activeModal === 'whatsapp'}
+        isFavorite={activeModal === favoriteContact}
+        onToggleFavorite={() => {
+          const currentModal = activeModal;
+          closeModal();
+          setTimeout(() => {
+            handleToggleFavorite(currentModal);
+          }, 300);
+        }}
         onClose={closeModal}
         onSave={saveValue}
         onChangeText={setInputValue}
       />
 
-      {/* Floating Action Button - NUR in öffentlicher Ansicht */}
-      {isPublicView && (
+      {/* Floating Action Button - NUR in öffentlicher Ansicht UND wenn Favorit gesetzt */}
+      {isPublicView && favoriteContact && (
         <TouchableOpacity 
           style={styles.fab}
           activeOpacity={0.9}
           onPress={() => {
-            // Bevorzugte Kontaktmöglichkeit: WhatsApp > Telefon > Email
-            if (showWhatsApp && whatsAppValue) {
-              // WhatsApp öffnen
+            // Favorisierte Kontaktmöglichkeit verwenden
+            if (favoriteContact === 'whatsapp' && showWhatsApp && whatsAppValue) {
               console.log('WhatsApp:', whatsAppValue);
-            } else if (showPhone && phoneValue) {
-              // Telefon öffnen
+            } else if (favoriteContact === 'phone' && showPhone && phoneValue) {
               console.log('Telefon:', phoneValue);
-            } else if (showEmail && emailValue) {
-              // Email öffnen
+            } else if (favoriteContact === 'email' && showEmail && emailValue) {
               console.log('Email:', emailValue);
             }
           }}
@@ -596,8 +706,8 @@ export default function ProfileScreen() {
           <BlurView intensity={30} tint="dark" style={styles.fabBlur}>
             <Ionicons 
               name={
-                showWhatsApp && whatsAppValue ? 'logo-whatsapp' :
-                showPhone && phoneValue ? 'call' :
+                favoriteContact === 'whatsapp' ? 'logo-whatsapp' :
+                favoriteContact === 'phone' ? 'call' :
                 'mail'
               } 
               size={28} 
@@ -606,6 +716,15 @@ export default function ProfileScreen() {
           </BlurView>
         </TouchableOpacity>
       )}
+
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        buttons={alertConfig.buttons}
+        onClose={hideAlert}
+      />
     </View>
   );
 }
@@ -876,3 +995,9 @@ const styles = StyleSheet.create({
     borderRadius: 32,
   },
 });
+
+
+
+
+
+

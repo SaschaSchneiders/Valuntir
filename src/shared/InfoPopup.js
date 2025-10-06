@@ -21,6 +21,9 @@ export default function InfoPopup({
   numberOfLines = 1,
   maxLength,
   saveButtonText = 'Speichern',
+  isContactType = false, // Zeigt an, ob es eine Kontakt-Option ist (email, phone, whatsapp)
+  isFavorite = false, // Zeigt an, ob dies die favorisierte Kontakt-Option ist
+  onToggleFavorite, // Callback zum Setzen als Favorit
   onClose,
   onSave,
   onChangeText,
@@ -48,9 +51,23 @@ export default function InfoPopup({
           >
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{title}</Text>
-              <TouchableOpacity onPress={onClose}>
-                <Ionicons name="close" size={24} color="#666" />
-              </TouchableOpacity>
+              <View style={styles.headerIcons}>
+                {isContactType && onToggleFavorite && (
+                  <TouchableOpacity 
+                    onPress={onToggleFavorite}
+                    style={styles.favoriteButton}
+                  >
+                    <Ionicons 
+                      name={isFavorite ? 'star' : 'star-outline'} 
+                      size={24} 
+                      color={isFavorite ? '#FFD700' : '#666'} 
+                    />
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity onPress={onClose}>
+                  <Ionicons name="close" size={24} color="#666" />
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View>
@@ -117,6 +134,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: '#000',
+  },
+  headerIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  favoriteButton: {
+    padding: 4,
   },
   modalInput: {
     backgroundColor: '#F5F5F5',
