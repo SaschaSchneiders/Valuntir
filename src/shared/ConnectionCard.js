@@ -46,7 +46,7 @@ export default function ConnectionCard({ connection, onPress, onSetReminder }) {
     <View style={styles.connectionCard}>
       <View style={styles.connectionHeader}>
         <View style={styles.connectionIcon}>
-          <Ionicons name="business" size={24} color="#000" />
+          <Ionicons name="business" size={22} color="#000" />
         </View>
         <View style={styles.connectionInfo}>
           <Text style={styles.connectionCompany}>
@@ -57,7 +57,7 @@ export default function ConnectionCard({ connection, onPress, onSetReminder }) {
           </Text>
         </View>
         {connection.status === 'rated' && (
-          <Ionicons name="checkmark-circle" size={24} color="#22C55E" />
+          <Ionicons name="checkmark-circle" size={22} color="#22C55E" />
         )}
       </View>
 
@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
   connectionCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    padding: 16,
+    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -149,50 +149,50 @@ const styles = StyleSheet.create({
   connectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   connectionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    width: 40,
+    height: 40,
+    borderRadius: 10,
     backgroundColor: '#F5F5F5',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 10,
   },
   connectionInfo: {
     flex: 1,
   },
   connectionCompany: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
     color: '#000000',
     marginBottom: 4,
   },
   connectionCategory: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#666666',
   },
   connectionDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 8,
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: '#F0F0F0',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   connectionAmount: {
     flex: 1,
   },
   connectionAmountLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#999999',
     marginBottom: 4,
   },
   connectionAmountValue: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     color: '#000000',
   },
@@ -213,8 +213,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
     borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 18,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -226,8 +226,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   reminderButton: {
-    width: 48,
-    height: 48,
+    width: 44,
+    height: 44,
     borderRadius: 12,
     backgroundColor: '#F5F5F5',
     alignItems: 'center',

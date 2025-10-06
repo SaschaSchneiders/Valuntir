@@ -15,7 +15,7 @@ export default function ProviderCard({ provider, onPress }) {
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <View style={styles.header}>
         <View style={styles.icon}>
-          <Ionicons name="briefcase" size={24} color="#000" />
+          <Ionicons name="briefcase" size={22} color="#000" />
         </View>
         <View style={styles.info}>
           <Text style={styles.name}>{provider.name}</Text>
@@ -26,11 +26,11 @@ export default function ProviderCard({ provider, onPress }) {
       <View style={styles.details}>
         <View style={styles.meta}>
           <View style={styles.metaItem}>
-            <Ionicons name="location-outline" size={14} color="#666" />
+            <Ionicons name="location-outline" size={13} color="#666" />
             <Text style={styles.metaText}>{provider.location}</Text>
           </View>
           <View style={styles.metaItem}>
-            <Ionicons name="pricetag-outline" size={14} color="#666" />
+            <Ionicons name="pricetag-outline" size={13} color="#666" />
             <Text style={styles.metaText}>{provider.category}</Text>
           </View>
         </View>
@@ -57,7 +57,7 @@ export default function ProviderCard({ provider, onPress }) {
             </Text>
           ) : (
             <View style={styles.lockedBadge}>
-              <Ionicons name="lock-closed" size={12} color="#999" />
+              <Ionicons name="lock-closed" size={11} color="#999" />
               <Text style={styles.lockedText}>Nicht aktiviert</Text>
             </View>
           )}
@@ -76,8 +76,8 @@ export default function ProviderCard({ provider, onPress }) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 20,
-    padding: 20,
+    borderRadius: 16,
+    padding: 16,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.06)',
     shadowColor: '#000',
@@ -89,37 +89,37 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   icon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 10,
   },
   info: {
     flex: 1,
   },
   name: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
     color: '#000000',
     marginBottom: 4,
   },
   username: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#666666',
     fontWeight: '500',
   },
   details: {
-    marginBottom: 16,
+    marginBottom: 12,
   },
   meta: {
     flexDirection: 'row',
-    gap: 16,
+    gap: 12,
   },
   metaItem: {
     flexDirection: 'row',
@@ -127,16 +127,16 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   metaText: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#666666',
     fontWeight: '500',
   },
   stats: {
     flexDirection: 'row',
-    paddingTop: 16,
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#F0F0F0',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   statItem: {
     flex: 1,
@@ -148,13 +148,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#999999',
     fontWeight: '500',
     marginBottom: 6,
   },
   statValue: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '800',
     color: '#000000',
     letterSpacing: -0.5,
