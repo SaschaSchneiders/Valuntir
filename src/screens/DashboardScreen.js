@@ -11,6 +11,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import RateScale from '../shared/RateScale';
 import ChartCard from '../shared/ChartCard';
+import RatingBreakdown from '../shared/RatingBreakdown';
+import ProfileMetrics from '../shared/ProfileMetrics';
 
 export default function DashboardScreen() {
   // Mock-Daten für die Demo
@@ -19,7 +21,9 @@ export default function DashboardScreen() {
   const pendingConnections = 3;
   const totalRatings = 20;
   const profileViews = 156;
-  const profileViewsChange = '+12%'; // Entwicklung der Profilaufrufe
+  const profileViewsChange = '+12% in 30 Tagen'; // Entwicklung der Profilaufrufe
+  const profileInteractions = 89; // Klicks auf Kontakt/Links/Social Media
+  const interactionsChange = '+8% in 30 Tagen'; // Entwicklung der Interaktionen
   
   // Abo-Informationen
   const currentPlan = 'Professional';
@@ -86,14 +90,6 @@ export default function DashboardScreen() {
     }
   };
   
-  // Bewertungslevel aus dem Doc
-  const ratingLevels = {
-    sehrZufrieden: 15,
-    zufrieden: 3,
-    neutral: 1,
-    unzufrieden: 1
-  };
-
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -132,53 +128,25 @@ export default function DashboardScreen() {
           />
         </View>
 
-        {/* Bewertungslevel Card */}
-        <View style={styles.ratingsCard}>
-          <Text style={styles.cardTitle}>Bewertungsverteilung</Text>
-          
-          <View style={styles.ratingItem}>
-            <View style={styles.ratingIcon}>
-              <Ionicons name="checkmark-circle" size={22} color="#000000" />
-            </View>
-            <Text style={styles.ratingLabel}>Sehr zufrieden</Text>
-            <Text style={styles.ratingCount}>{ratingLevels.sehrZufrieden}</Text>
-          </View>
-
-          <View style={styles.ratingItem}>
-            <View style={styles.ratingIcon}>
-              <Ionicons name="happy" size={22} color="#000000" />
-            </View>
-            <Text style={styles.ratingLabel}>Zufrieden</Text>
-            <Text style={styles.ratingCount}>{ratingLevels.zufrieden}</Text>
-          </View>
-
-          <View style={styles.ratingItem}>
-            <View style={styles.ratingIcon}>
-              <Ionicons name="remove-circle" size={22} color="#000000" />
-            </View>
-            <Text style={styles.ratingLabel}>Neutral</Text>
-            <Text style={styles.ratingCount}>{ratingLevels.neutral}</Text>
-          </View>
-
-          <View style={styles.ratingItem}>
-            <View style={styles.ratingIcon}>
-              <Ionicons name="close-circle" size={22} color="#000000" />
-            </View>
-            <Text style={styles.ratingLabel}>Unzufrieden</Text>
-            <Text style={styles.ratingCount}>{ratingLevels.unzufrieden}</Text>
-          </View>
+        {/* Bewertungsdetails - 4 Kernbereiche */}
+        <View style={{ marginBottom: 24 }}>
+          <RatingBreakdown
+            communication={87}
+            pricePerformance={92}
+            deliveryQuality={89}
+            reliability={94}
+            totalProjects={totalRatings}
+          />
         </View>
 
-        {/* Profilaufrufe Card */}
-        <View style={styles.profileViewsCard}>
-          <View style={styles.profileViewsHeader}>
-            <Text style={styles.profileViewsTitle}>Profilaufrufe</Text>
-            <View style={styles.profileViewsChange}>
-              <Text style={styles.profileViewsChangeText}>{profileViewsChange}</Text>
-            </View>
-          </View>
-          <Text style={styles.profileViewsNumber}>{profileViews}</Text>
-          <Text style={styles.profileViewsSubtitle}>Gesamtaufrufe</Text>
+        {/* Profilaufrufe & Interaktionen Card */}
+        <View style={{ marginBottom: 24 }}>
+          <ProfileMetrics
+            profileViews={profileViews}
+            profileViewsChange={profileViewsChange}
+            profileInteractions={profileInteractions}
+            interactionsChange={interactionsChange}
+          />
         </View>
 
         {/* Abo-Informationen Card - Vollständige Version */}
@@ -275,99 +243,11 @@ const styles = StyleSheet.create({
   rateScaleSection: {
     marginBottom: 32,
   },
-  ratingsCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.08,
-    shadowRadius: 32,
-    elevation: 12,
-  },
   cardTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
     marginBottom: 16,
-  },
-  ratingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  ratingIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#F5F5F5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 14,
-  },
-  ratingLabel: {
-    flex: 1,
-    fontSize: 15,
-    color: '#333333',
-    fontWeight: '500',
-  },
-  ratingCount: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#000000',
-  },
-  profileViewsCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.08,
-    shadowRadius: 32,
-    elevation: 12,
-  },
-  profileViewsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  profileViewsTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
-    letterSpacing: -0.3,
-  },
-  profileViewsChange: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  profileViewsChangeText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#000000',
-  },
-  profileViewsNumber: {
-    fontSize: 48,
-    fontWeight: '900',
-    color: '#000000',
-    marginBottom: 4,
-    letterSpacing: -1,
-  },
-  profileViewsSubtitle: {
-    fontSize: 14,
-    color: '#666666',
-    fontWeight: '500',
   },
   activityCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
