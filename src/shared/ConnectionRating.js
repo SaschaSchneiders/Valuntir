@@ -18,6 +18,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   // Schritt-Steuerung (1, 2 oder 3)
   const [currentStep, setCurrentStep] = useState(1);
   
+  // Flag ob Kernbereiche übersprungen wurden
+  const [skippedCoreRatings, setSkippedCoreRatings] = useState(false);
+  
   // Bewertungen für die 4 Kernbereiche (1-10) - Schritt 1
   const [communication, setCommunication] = useState(5);
   const [pricePerformance, setPricePerformance] = useState(5);
@@ -73,10 +76,13 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   const handleSubmit = () => {
     const rating = {
       connectionId: connection?.id,
-      communication,
-      pricePerformance,
-      deliveryQuality,
-      reliability,
+      // Nur Kernbereiche einschließen wenn nicht übersprungen
+      ...(skippedCoreRatings ? {} : {
+        communication,
+        pricePerformance,
+        deliveryQuality,
+        reliability,
+      }),
       goalAchieved,
       worthIt,
       successScore,
@@ -89,6 +95,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
 
   const resetForm = () => {
     setCurrentStep(1);
+    setSkippedCoreRatings(false);
     setCommunication(5);
     setPricePerformance(5);
     setDeliveryQuality(5);
@@ -113,6 +120,11 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
+  };
+
+  const handleSkip = () => {
+    setSkippedCoreRatings(true);
+    setCurrentStep(2);
   };
 
   return (
@@ -258,10 +270,15 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
             {/* Footer mit Buttons */}
             <View style={styles.footer}>
               {currentStep === 1 ? (
-                <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-                  <Text style={styles.nextButtonText}>Weiter</Text>
-                  <Ionicons name="arrow-forward" size={20} color="#FFF" />
-                </TouchableOpacity>
+                <View style={styles.footerRow}>
+                  <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+                    <Text style={styles.skipButtonText} numberOfLines={1}>Überspringen</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.nextButtonInRow} onPress={handleNext}>
+                    <Text style={styles.nextButtonText} numberOfLines={1}>Weiter</Text>
+                    <Ionicons name="arrow-forward" size={20} color="#FFF" />
+                  </TouchableOpacity>
+                </View>
               ) : currentStep === 2 ? (
                 <View style={styles.footerRow}>
                   <TouchableOpacity style={styles.backButton} onPress={handleBack}>
@@ -548,6 +565,29 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
+  },
+  skipButton: {
+    flex: 1.3,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  skipButtonText: {
+    color: '#666666',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 
