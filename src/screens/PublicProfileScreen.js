@@ -13,6 +13,7 @@ import RatingBreakdown from '../shared/RatingBreakdown';
 import ProjectComments from '../shared/ProjectComments';
 import ContactSection from '../shared/ContactSection';
 import ProfileFAB from '../shared/ProfileFAB';
+import ConnectionMetrics from '../shared/ConnectionMetrics';
 
 export default function PublicProfileScreen({ route }) {
   const navigation = useNavigation();
@@ -40,6 +41,12 @@ export default function PublicProfileScreen({ route }) {
         linkedin: 'https://linkedin.com/company/steuerberater-schmidt',
         instagram: null,
         favoriteContact: 'email',
+        // Connection Metrics
+        isConnectionMetricsPublic: true,
+        connectionsSent: 45,
+        connectionsPending: 8,
+        connectionsRated: 37,
+        totalVolumeRated: 142500,
         comments: [
           {
             id: 1,
@@ -80,6 +87,12 @@ export default function PublicProfileScreen({ route }) {
         linkedin: 'https://linkedin.com/company/marketing-xyz',
         instagram: 'https://instagram.com/marketing.xyz',
         favoriteContact: 'whatsapp',
+        // Connection Metrics
+        isConnectionMetricsPublic: false, // Bei diesem Provider ist es deaktiviert
+        connectionsSent: 32,
+        connectionsPending: 5,
+        connectionsRated: 27,
+        totalVolumeRated: 98750,
         comments: [
           {
             id: 1,
@@ -221,6 +234,21 @@ export default function PublicProfileScreen({ route }) {
 
             {/* Projekterfahrungen */}
             <ProjectComments comments={provider.comments} />
+
+            {/* Connection Metrics - nur wenn öffentlich */}
+            {provider.isConnectionMetricsPublic && (
+              <View style={{ marginBottom: 32 }}>
+                <ConnectionMetrics
+                  sent={provider.connectionsSent}
+                  pending={provider.connectionsPending}
+                  rated={provider.connectionsRated}
+                  totalVolume={provider.totalVolumeRated}
+                  isPublic={provider.isConnectionMetricsPublic}
+                  onTogglePublic={null}
+                  isPublicView={true} // Im öffentlichen Profil: Kein Toggle, anderer Titel
+                />
+              </View>
+            )}
 
             {/* Kontakt & Social Media */}
             <ContactSection

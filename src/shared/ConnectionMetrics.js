@@ -1,12 +1,17 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Switch } from 'react-native';
 
 export default function ConnectionMetrics({
   sent = 0,
   pending = 0,
   rated = 0,
   totalVolume = 0,
+  isPublic = false,
+  onTogglePublic,
+  isPublicView = false, // Gibt an, ob die Kachel in einem öffentlichen Profil angezeigt wird
 }) {
+  const [isPublicLocal, setIsPublicLocal] = useState(isPublic);
+  
   // Formatiere Betrag mit Tausender-Trennzeichen
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('de-DE', {
@@ -16,12 +21,36 @@ export default function ConnectionMetrics({
       maximumFractionDigits: 0,
     }).format(amount);
   };
+
+  const handleToggle = (value) => {
+    setIsPublicLocal(value);
+    if (onTogglePublic) {
+      onTogglePublic(value);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* Überschrift */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Connection-Status</Text>
-        <Text style={styles.subtitle}>Übersicht deiner Geschäftsbeziehungen</Text>
+      {/* Header mit Toggle */}
+      <View style={styles.headerContainer}>
+        <View style={styles.headerText}>
+          <Text style={styles.title}>
+            {isPublicView ? 'Connection-Status' : 'Deine Connections'}
+          </Text>
+          <Text style={styles.subtitle}>Status deiner Kontakte</Text>
+        </View>
+        {!isPublicView && (
+          <View style={styles.toggleContainer}>
+            <Text style={styles.toggleLabel}>Öffentlich</Text>
+            <Switch
+              value={isPublicLocal}
+              onValueChange={handleToggle}
+              trackColor={{ false: '#E5E5E5', true: '#000000' }}
+              thumbColor={isPublicLocal ? '#FFFFFF' : '#FFFFFF'}
+              ios_backgroundColor="#E5E5E5"
+            />
+          </View>
+        )}
       </View>
 
       <View style={styles.metricsRow}>
@@ -75,8 +104,14 @@ const styles = StyleSheet.create({
     shadowRadius: 32,
     elevation: 12,
   },
-  header: {
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 24,
+  },
+  headerText: {
+    flex: 1,
   },
   title: {
     fontSize: 20,
@@ -88,6 +123,16 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     fontWeight: '500',
+    color: '#666666',
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  toggleLabel: {
+    fontSize: 13,
+    fontWeight: '600',
     color: '#666666',
   },
   metricsRow: {

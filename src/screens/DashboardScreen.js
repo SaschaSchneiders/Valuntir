@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -14,12 +14,14 @@ import ChartCard from '../shared/ChartCard';
 import RatingBreakdown from '../shared/RatingBreakdown';
 import ProfileMetrics from '../shared/ProfileMetrics';
 import ConnectionMetrics from '../shared/ConnectionMetrics';
+import FirstMoverMetrics from '../shared/FirstMoverMetrics';
 import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 import DesktopLayout from '../components/DesktopLayout';
 import { useResponsive } from '../utils/responsive';
 
 export default function DashboardScreen({ navigation }) {
   const { isDesktop, isLargeDesktop } = useResponsive();
+  const [isConnectionMetricsPublic, setIsConnectionMetricsPublic] = useState(false);
 
   // Mock-Daten für die Demo
   const successRate = 87;
@@ -29,11 +31,32 @@ export default function DashboardScreen({ navigation }) {
   const profileInteractions = 89; // Klicks auf Kontakt/Links/Social Media
   const interactionsChange = '+8% in 30 Tagen'; // Entwicklung der Interaktionen
   
+  // Lead-Tracking (Kontaktanfragen über öffentliches Profil)
+  const whatsappLeads = 24;
+  const calendarLeads = 12;
+  const websiteLeads = 18;
+  const phoneLeads = 8;
+  const totalLeads = whatsappLeads + calendarLeads + websiteLeads + phoneLeads; // 62
+  
   // Connection-Statistiken
   const connectionsSent = 23;
   const connectionsPending = 3;
   const connectionsRated = 20;
   const totalVolumeRated = 87350; // Gesamtvolumen der bewerteten Connections in €
+
+  // First Mover Statistiken
+  const totalFirstMovers = 7; // Anzahl Unternehmen, die als erster bewertet wurden
+  const activeFirstMoverSubscriptions = 3; // Davon haben 3 bereits ein Abo abgeschlossen
+  const monthlyRevenuePerSub = 4.90; // 10% von 49€ = 4,90€
+  const currentMonthlyRevenue = activeFirstMoverSubscriptions * monthlyRevenuePerSub; // 14,70€
+  const potentialMonthlyRevenue = totalFirstMovers * monthlyRevenuePerSub; // 34,30€ wenn alle ein Abo hätten
+
+  // Handler für den Public-Toggle der Connection Metrics
+  const handleToggleConnectionMetricsPublic = (value) => {
+    setIsConnectionMetricsPublic(value);
+    // Hier könnte später ein API-Call erfolgen, um die Einstellung zu speichern
+    console.log('Connection Metrics öffentlich:', value);
+  };
   
   // Hilfsfunktion zum Generieren realistischer Daten mit erkennbarem Verlauf
   const generateRealisticData = (count, startValue, endValue, volatility = 1.5) => {
@@ -148,6 +171,21 @@ export default function DashboardScreen({ navigation }) {
             profileViewsChange={profileViewsChange}
             profileInteractions={profileInteractions}
             interactionsChange={interactionsChange}
+            totalLeads={totalLeads}
+            whatsappClicks={whatsappLeads}
+            calendarClicks={calendarLeads}
+            websiteClicks={websiteLeads}
+            phoneClicks={phoneLeads}
+          />
+        </View>
+
+        {/* First Mover Programm */}
+        <View style={{ marginBottom: 24 }}>
+          <FirstMoverMetrics
+            totalFirstMovers={totalFirstMovers}
+            activeSubscriptions={activeFirstMoverSubscriptions}
+            potentialMonthlyRevenue={potentialMonthlyRevenue}
+            currentMonthlyRevenue={currentMonthlyRevenue}
           />
         </View>
 
@@ -158,9 +196,11 @@ export default function DashboardScreen({ navigation }) {
             pending={connectionsPending}
             rated={connectionsRated}
             totalVolume={totalVolumeRated}
+            isPublic={isConnectionMetricsPublic}
+            onTogglePublic={handleToggleConnectionMetricsPublic}
+            isPublicView={false} // Im Dashboard: Toggle sichtbar und editierbar
           />
         </View>
-
 
         {/* Recent Activity */}
         <View style={styles.activityCard}>
