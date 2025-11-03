@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import ConnectionCard from '../shared/ConnectionCard';
 import ConnectionRating from '../shared/ConnectionRating';
 import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
