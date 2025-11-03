@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   View,
+  Text,
   StyleSheet,
   ScrollView,
 } from 'react-native';
@@ -11,8 +12,11 @@ import ConnectionCard from '../shared/ConnectionCard';
 import ConnectionRating from '../shared/ConnectionRating';
 import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 import FilterPills from '../shared/FilterPills';
+import DesktopLayout from '../components/DesktopLayout';
+import { useResponsive } from '../utils/responsive';
 
 export default function HomeScreen({ navigation }) {
+  const { isDesktop } = useResponsive();
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState(null);
@@ -145,7 +149,7 @@ export default function HomeScreen({ navigation }) {
     // Hier würde die Erinnerung gespeichert werden
   };
 
-  return (
+  const content = (
     <View style={styles.container}>
       <LinearGradient
         colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
@@ -156,13 +160,15 @@ export default function HomeScreen({ navigation }) {
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <ScrollView contentContainerStyle={styles.content}>
-            <HeaderWithSubtitle 
-              title="Valuntir" 
-              subtitle="Bewerte deine Connections"
-              showIcon={true}
-              iconName="notifications-outline"
-              onIconPress={() => navigation.navigate('Reminders')}
-            />
+            {!isDesktop && (
+              <HeaderWithSubtitle 
+                title="Valuntir" 
+                subtitle="Bewerte deine Connections"
+                showIcon={true}
+                iconName="notifications-outline"
+                onIconPress={() => navigation.navigate('Reminders')}
+              />
+            )}
 
             <FilterPills 
               tabs={filterTabs}
@@ -201,6 +207,22 @@ export default function HomeScreen({ navigation }) {
       />
     </View>
   );
+
+  // Wrapper mit Desktop Layout
+  if (isDesktop) {
+    return (
+      <DesktopLayout
+        navigation={navigation}
+        currentRoute="Home"
+        title="Home"
+        subtitle="Bewerte deine offenen Connections"
+      >
+        {content}
+      </DesktopLayout>
+    );
+  }
+
+  return content;
 }
 
 const styles = StyleSheet.create({

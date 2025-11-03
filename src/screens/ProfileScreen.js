@@ -22,9 +22,12 @@ import ProfileDescription from '../shared/ProfileDescription';
 import QuickActionButtons from '../shared/QuickActionButtons';
 import ProjectComments from '../shared/ProjectComments';
 import ContactSection from '../shared/ContactSection';
+import DesktopLayout from '../components/DesktopLayout';
+import { useResponsive } from '../utils/responsive';
 
-export default function ProfileScreen() {
-  const navigation = useNavigation();
+export default function ProfileScreen({ navigation: navProp }) {
+  const { isDesktop } = useResponsive();
+  const navigation = navProp || useNavigation();
   const [isPublicView, setIsPublicView] = useState(false);
   
   // Chart Daten für öffentliche Ansicht
@@ -324,7 +327,7 @@ export default function ProfileScreen() {
     }
   };
 
-  return (
+  const content = (
     <View style={styles.container}>
       <LinearGradient
         colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
@@ -775,6 +778,22 @@ export default function ProfileScreen() {
       />
     </View>
   );
+
+  // Wrapper mit Desktop Layout
+  if (isDesktop) {
+    return (
+      <DesktopLayout
+        navigation={navigation}
+        currentRoute="Profile"
+        title="Profil"
+        subtitle="Verwalte dein öffentliches Profil"
+      >
+        {content}
+      </DesktopLayout>
+    );
+  }
+
+  return content;
 }
 
 const styles = StyleSheet.create({

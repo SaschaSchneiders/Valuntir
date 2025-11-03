@@ -12,8 +12,11 @@ import { Ionicons } from '@expo/vector-icons';
 import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 import FilterPills from '../shared/FilterPills';
 import ConnectionCard from '../shared/ConnectionCard';
+import DesktopLayout from '../components/DesktopLayout';
+import { useResponsive } from '../utils/responsive';
 
 export default function ReminderScreen({ navigation }) {
+  const { isDesktop } = useResponsive();
   const [selectedFilter, setSelectedFilter] = useState('all');
 
   // Mock-Daten für Erinnerungen (basierend auf typischen Reminder-Optionen)
@@ -117,7 +120,7 @@ export default function ReminderScreen({ navigation }) {
     console.log('Rate connection:', connection);
   };
 
-  return (
+  const content = (
     <View style={styles.container}>
       <LinearGradient
         colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
@@ -127,15 +130,17 @@ export default function ReminderScreen({ navigation }) {
         end={{ x: 1, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
-          {/* Zurück-Button */}
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <View style={styles.backButtonContainer}>
-              <Ionicons name="chevron-back" size={28} color="#000" />
-            </View>
-          </TouchableOpacity>
+          {/* Zurück-Button - nur auf Mobile */}
+          {!isDesktop && (
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <View style={styles.backButtonContainer}>
+                <Ionicons name="chevron-back" size={28} color="#000" />
+              </View>
+            </TouchableOpacity>
+          )}
 
           <ScrollView contentContainerStyle={styles.content}>
             <HeaderWithSubtitle 
@@ -172,6 +177,22 @@ export default function ReminderScreen({ navigation }) {
       </LinearGradient>
     </View>
   );
+
+  // Wrapper mit Desktop Layout
+  if (isDesktop) {
+    return (
+      <DesktopLayout
+        navigation={navigation}
+        currentRoute="Reminders"
+        title="Erinnerungen"
+        subtitle="Anstehende Bewertungen"
+      >
+        {content}
+      </DesktopLayout>
+    );
+  }
+
+  return content;
 }
 
 const styles = StyleSheet.create({

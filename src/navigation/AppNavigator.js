@@ -7,7 +7,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import SearchScreen from '../screens/SearchScreen';
-import ConnectionsScreen from '../screens/ConnectionsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import PublicProfileScreen from '../screens/PublicProfileScreen';
@@ -15,18 +14,21 @@ import ReminderScreen from '../screens/ReminderScreen';
 
 // Components
 import FloatingTabBar from '../components/FloatingTabBar';
+import { useResponsive } from '../utils/responsive';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 function TabNavigator() {
+  const { isDesktop } = useResponsive();
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { display: 'none' }, // Verstecke die Standard TabBar
+        tabBarStyle: isDesktop ? { display: 'none' } : { display: 'none' }, // TabBar immer verstecken
       }}
-      tabBar={(props) => <FloatingTabBar {...props} />}
+      tabBar={(props) => !isDesktop ? <FloatingTabBar {...props} /> : null}
     >
       <Tab.Screen 
         name="Home" 
@@ -66,7 +68,6 @@ export default function AppNavigator() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Main" component={TabNavigator} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="Connections" component={ConnectionsScreen} />
         <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
         <Stack.Screen name="Reminders" component={ReminderScreen} />
       </Stack.Navigator>

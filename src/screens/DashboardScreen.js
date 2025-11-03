@@ -13,9 +13,14 @@ import RateScale from '../shared/RateScale';
 import ChartCard from '../shared/ChartCard';
 import RatingBreakdown from '../shared/RatingBreakdown';
 import ProfileMetrics from '../shared/ProfileMetrics';
+import ConnectionMetrics from '../shared/ConnectionMetrics';
 import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
+import DesktopLayout from '../components/DesktopLayout';
+import { useResponsive } from '../utils/responsive';
 
-export default function DashboardScreen() {
+export default function DashboardScreen({ navigation }) {
+  const { isDesktop, isLargeDesktop } = useResponsive();
+
   // Mock-Daten für die Demo
   const successRate = 87;
   const totalRatings = 20;
@@ -24,11 +29,11 @@ export default function DashboardScreen() {
   const profileInteractions = 89; // Klicks auf Kontakt/Links/Social Media
   const interactionsChange = '+8% in 30 Tagen'; // Entwicklung der Interaktionen
   
-  // Abo-Informationen
-  const currentPlan = 'Professional';
-  const totalConnections = 50;
-  const usedConnections = 23;
-  const remainingConnections = totalConnections - usedConnections;
+  // Connection-Statistiken
+  const connectionsSent = 23;
+  const connectionsPending = 3;
+  const connectionsRated = 20;
+  const totalVolumeRated = 87350; // Gesamtvolumen der bewerteten Connections in €
   
   // Hilfsfunktion zum Generieren realistischer Daten mit erkennbarem Verlauf
   const generateRealisticData = (count, startValue, endValue, volatility = 1.5) => {
@@ -89,7 +94,7 @@ export default function DashboardScreen() {
     }
   };
   
-  return (
+  const content = (
     <View style={styles.container}>
       <LinearGradient
         colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
@@ -100,10 +105,12 @@ export default function DashboardScreen() {
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <ScrollView contentContainerStyle={styles.content}>
-              <HeaderWithSubtitle 
-                title="Valuntir" 
-                subtitle="Top Tier Value"
-              />
+              {!isDesktop && (
+                <HeaderWithSubtitle 
+                  title="Valuntir" 
+                  subtitle="Top Tier Value"
+                />
+              )}
 
         {/* Chart Card - Wiederverwendbare Komponente */}
         <ChartCard
@@ -144,33 +151,14 @@ export default function DashboardScreen() {
           />
         </View>
 
-        {/* Abo-Informationen Card - Vollständige Version */}
-        <View style={styles.subscriptionCard}>
-          <View style={styles.subscriptionHeader}>
-            <Text style={styles.subscriptionTitle}>Aktuelles Abo</Text>
-            <TouchableOpacity style={styles.upgradeButton}>
-              <Text style={styles.upgradeButtonText}>Upgrade</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.subscriptionPlan}>
-            <Text style={styles.planName}>{currentPlan}</Text>
-            <Text style={styles.planDetails}>{totalConnections} Connections/Monat</Text>
-          </View>
-
-          <View style={styles.connectionUsage}>
-            <View style={styles.usageBar}>
-              <View style={[styles.usageFill, { width: `${(usedConnections / totalConnections) * 100}%` }]} />
-            </View>
-            <View style={styles.usageStats}>
-              <Text style={styles.usageText}>
-                {usedConnections} von {totalConnections} verwendet
-              </Text>
-              <Text style={styles.remainingText}>
-                {remainingConnections} verbleibend
-              </Text>
-            </View>
-          </View>
+        {/* Connection-Status Übersicht */}
+        <View style={{ marginBottom: 24 }}>
+          <ConnectionMetrics
+            sent={connectionsSent}
+            pending={connectionsPending}
+            rated={connectionsRated}
+            totalVolume={totalVolumeRated}
+          />
         </View>
 
 
@@ -203,6 +191,22 @@ export default function DashboardScreen() {
       </LinearGradient>
     </View>
   );
+
+  // Wrapper mit Desktop Layout
+  if (isDesktop) {
+    return (
+      <DesktopLayout
+        navigation={navigation}
+        currentRoute="Dashboard"
+        title="Dashboard"
+        subtitle="Deine Erfolgsquoten-Übersicht"
+      >
+        {content}
+      </DesktopLayout>
+    );
+  }
+
+  return content;
 }
 
 const styles = StyleSheet.create({
@@ -274,87 +278,6 @@ const styles = StyleSheet.create({
   activitySubtitle: {
     fontSize: 13,
     color: '#999999',
-    fontWeight: '500',
-  },
-  subscriptionCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.08,
-    shadowRadius: 32,
-    elevation: 12,
-  },
-  subscriptionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  subscriptionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
-    letterSpacing: -0.3,
-  },
-  upgradeButton: {
-    backgroundColor: '#000000',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  upgradeButtonText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    fontWeight: '700',
-  },
-  subscriptionPlan: {
-    marginBottom: 20,
-  },
-  planName: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: '#000000',
-    marginBottom: 6,
-    letterSpacing: -0.5,
-  },
-  planDetails: {
-    fontSize: 15,
-    color: '#666666',
-    fontWeight: '500',
-  },
-  connectionUsage: {
-    marginTop: 8,
-  },
-  usageBar: {
-    height: 10,
-    backgroundColor: '#F0F0F0',
-    borderRadius: 6,
-    marginBottom: 12,
-    overflow: 'hidden',
-  },
-  usageFill: {
-    height: '100%',
-    backgroundColor: '#000000',
-    borderRadius: 6,
-  },
-  usageStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  usageText: {
-    fontSize: 15,
-    color: '#333333',
-    fontWeight: '600',
-  },
-  remainingText: {
-    fontSize: 15,
-    color: '#666666',
     fontWeight: '500',
   },
 });

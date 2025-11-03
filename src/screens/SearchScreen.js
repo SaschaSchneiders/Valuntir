@@ -14,9 +14,12 @@ import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import ProviderCard from '../shared/ProviderCard';
+import DesktopLayout from '../components/DesktopLayout';
+import { useResponsive } from '../utils/responsive';
 
-export default function SearchScreen() {
-  const navigation = useNavigation();
+export default function SearchScreen({ navigation: navProp }) {
+  const navigation = navProp || useNavigation();
+  const { isDesktop } = useResponsive();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [locationQuery, setLocationQuery] = useState('');
@@ -205,7 +208,7 @@ export default function SearchScreen() {
 
   const filteredProviders = filterProviders();
 
-  return (
+  const content = (
     <View style={styles.container}>
       <LinearGradient
         colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
@@ -216,10 +219,12 @@ export default function SearchScreen() {
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <ScrollView contentContainerStyle={styles.content}>
-            <View style={styles.header}>
-              <Text style={styles.title}>Anbieter Suchen</Text>
-              <Text style={styles.subtitle}>Finde vertrauenswürdige Partner</Text>
-            </View>
+            {!isDesktop && (
+              <View style={styles.header}>
+                <Text style={styles.title}>Anbieter Suchen</Text>
+                <Text style={styles.subtitle}>Finde vertrauenswürdige Partner</Text>
+              </View>
+            )}
 
             {/* Suchfeld + Filter in einer Zeile */}
             <View style={styles.searchFilterRow}>
@@ -515,6 +520,23 @@ export default function SearchScreen() {
       )}
     </View>
   );
+
+  // Wrapper mit Desktop Layout
+  if (isDesktop) {
+    return (
+      <DesktopLayout
+        navigation={navigation}
+        currentRoute="Search"
+        title="Anbieter Suchen"
+        subtitle="Finde vertrauenswürdige Partner in deiner Nähe"
+        showSearch={true}
+      >
+        {content}
+      </DesktopLayout>
+    );
+  }
+
+  return content;
 }
 
 const styles = StyleSheet.create({

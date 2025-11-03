@@ -11,9 +11,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import DesktopLayout from '../components/DesktopLayout';
+import { useResponsive } from '../utils/responsive';
 
-export default function SettingsScreen() {
-  const navigation = useNavigation();
+export default function SettingsScreen({ navigation: navProp }) {
+  const navigation = navProp || useNavigation();
+  const { isDesktop } = useResponsive();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
 
@@ -24,7 +27,7 @@ export default function SettingsScreen() {
     { name: 'Profile', icon: 'person-outline' },
   ];
 
-  return (
+  const content = (
     <View style={styles.container}>
       <LinearGradient
         colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
@@ -34,16 +37,18 @@ export default function SettingsScreen() {
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <ScrollView contentContainerStyle={styles.content}>
-            {/* Header */}
-            <View style={styles.header}>
-              <TouchableOpacity 
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}
-              >
-                <Ionicons name="arrow-back" size={24} color="#000" />
-              </TouchableOpacity>
-              <Text style={styles.title}>⚙️ Einstellungen</Text>
-            </View>
+            {/* Header - nur auf Mobile */}
+            {!isDesktop && (
+              <View style={styles.header}>
+                <TouchableOpacity 
+                  style={styles.backButton}
+                  onPress={() => navigation.goBack()}
+                >
+                  <Ionicons name="arrow-back" size={24} color="#000" />
+                </TouchableOpacity>
+                <Text style={styles.title}>⚙️ Einstellungen</Text>
+              </View>
+            )}
             
             {/* App Section */}
             <View style={styles.section}>
@@ -140,23 +145,41 @@ export default function SettingsScreen() {
           </ScrollView>
         </SafeAreaView>
 
-        {/* Schwebende TabBar */}
-        <View style={styles.floatingTabBarContainer}>
-          <View style={styles.floatingTabBar}>
-            {tabs.map((tab) => (
-              <TouchableOpacity
-                key={tab.name}
-                style={styles.tabButton}
-                onPress={() => navigation.navigate('Main', { screen: tab.name })}
-              >
-                <Ionicons name={tab.icon} size={24} color="#666666" />
-              </TouchableOpacity>
-            ))}
+        {/* Schwebende TabBar - nur auf Mobile */}
+        {!isDesktop && (
+          <View style={styles.floatingTabBarContainer}>
+            <View style={styles.floatingTabBar}>
+              {tabs.map((tab) => (
+                <TouchableOpacity
+                  key={tab.name}
+                  style={styles.tabButton}
+                  onPress={() => navigation.navigate('Main', { screen: tab.name })}
+                >
+                  <Ionicons name={tab.icon} size={24} color="#666666" />
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
+        )}
       </LinearGradient>
     </View>
   );
+
+  // Wrapper mit Desktop Layout
+  if (isDesktop) {
+    return (
+      <DesktopLayout
+        navigation={navigation}
+        currentRoute="Settings"
+        title="Einstellungen"
+        subtitle="Account & App-Einstellungen"
+      >
+        {content}
+      </DesktopLayout>
+    );
+  }
+
+  return content;
 }
 
 const styles = StyleSheet.create({
