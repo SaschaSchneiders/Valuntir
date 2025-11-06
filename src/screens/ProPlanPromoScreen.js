@@ -1,56 +1,18 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Dimensions } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import TransFAB from '../shared/TransFAB';
 
 export default function ProPlanPromoScreen({ onUpgrade }) {
   const scrollY = useRef(new Animated.Value(0)).current;
-  const [isExpanded, setIsExpanded] = useState(false);
-  const screenWidth = Dimensions.get('window').width;
 
-  // Animation Trigger: Erst bei 1200px Scroll → Button wird breit (ganz am Ende)
+  // Scroll Handler für Animated ScrollView
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-    { 
-      useNativeDriver: false,
-      listener: (event) => {
-        const offsetY = event.nativeEvent.contentOffset.y;
-        setIsExpanded(offsetY > 1200);
-      }
-    }
+    { useNativeDriver: false }
   );
-
-  // Animierte Werte für smooth Transition
-  const buttonWidth = scrollY.interpolate({
-    inputRange: [0, 1200, 1400],
-    outputRange: [64, 64, screenWidth - 40], // Rund → Volle Breite minus 20px padding
-    extrapolate: 'clamp',
-  });
-
-  const buttonBorderRadius = scrollY.interpolate({
-    inputRange: [0, 1200, 1400],
-    outputRange: [32, 32, 16], // Kreis → abgerundet
-    extrapolate: 'clamp',
-  });
-
-  const buttonRight = scrollY.interpolate({
-    inputRange: [0, 1200, 1400],
-    outputRange: [20, 20, 20],
-    extrapolate: 'clamp',
-  });
-
-  const iconOpacity = scrollY.interpolate({
-    inputRange: [0, 1200, 1300, 9999],
-    outputRange: [1, 1, 0, 0], // Icon verschwindet
-    extrapolate: 'clamp',
-  });
-
-  const textOpacity = scrollY.interpolate({
-    inputRange: [1200, 1300, 1400, 9999],
-    outputRange: [0, 0.5, 1, 1], // Text erscheint und bleibt
-    extrapolate: 'clamp',
-  });
 
   const features = [
     {
@@ -226,41 +188,13 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
           </ScrollView>
 
           {/* Animated Floating Action Button */}
-          <Animated.View
-            style={[
-              styles.fabContainer,
-              {
-                width: buttonWidth,
-                borderRadius: buttonBorderRadius,
-                right: buttonRight,
-              },
-            ]}
-          >
-            <TouchableOpacity 
-              style={styles.fab}
-              onPress={onUpgrade}
-              activeOpacity={0.9}
-            >
-              {/* Icon (sichtbar wenn rund) */}
-              <Animated.View style={{ opacity: iconOpacity }}>
-                <Ionicons name="sparkles" size={28} color="#FFFFFF" />
-              </Animated.View>
-              
-              {/* Text (sichtbar wenn breit) */}
-              <Animated.View 
-                style={[
-                  styles.fabTextContainer,
-                  { 
-                    opacity: textOpacity,
-                    position: isExpanded ? 'relative' : 'absolute',
-                  }
-                ]}
-              >
-                <Ionicons name="sparkles" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
-                <Text style={styles.fabText}>Auf Valuntir Pro upgraden</Text>
-              </Animated.View>
-            </TouchableOpacity>
-          </Animated.View>
+          <TransFAB 
+            scrollY={scrollY}
+            onPress={onUpgrade}
+            text="Auf Valuntir Pro upgraden"
+            icon="sparkles"
+            bottom={120}
+          />
         </SafeAreaView>
       </LinearGradient>
     </View>
@@ -526,37 +460,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#999999',
     textAlign: 'center',
-  },
-  fabContainer: {
-    position: 'absolute',
-    bottom: 120,
-    height: 64,
-    backgroundColor: '#000000',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 999,
-    zIndex: 999,
-    overflow: 'hidden',
-  },
-  fab: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-  },
-  fabTextContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  fabText: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    letterSpacing: -0.3,
   },
   trustSection: {
     flexDirection: 'row',
