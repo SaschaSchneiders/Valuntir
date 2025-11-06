@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function ProPlanPromoScreen({ onUpgrade }) {
   const scrollY = useRef(new Animated.Value(0)).current;
   const [isExpanded, setIsExpanded] = useState(false);
+  const screenWidth = Dimensions.get('window').width;
 
   // Animation Trigger: Erst bei 1200px Scroll → Button wird breit (ganz am Ende)
   const handleScroll = Animated.event(
@@ -23,7 +24,7 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
   // Animierte Werte für smooth Transition
   const buttonWidth = scrollY.interpolate({
     inputRange: [0, 1200, 1400],
-    outputRange: [64, 64, 350], // Rund → Breit und bleibt so
+    outputRange: [64, 64, screenWidth - 40], // Rund → Volle Breite minus 20px padding
     extrapolate: 'clamp',
   });
 
@@ -257,7 +258,6 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
               >
                 <Ionicons name="sparkles" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
                 <Text style={styles.fabText}>Auf Valuntir Pro upgraden</Text>
-                <Ionicons name="arrow-forward" size={20} color="#FFFFFF" style={{ marginLeft: 8 }} />
               </Animated.View>
             </TouchableOpacity>
           </Animated.View>
