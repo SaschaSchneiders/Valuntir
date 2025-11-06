@@ -242,7 +242,7 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
             >
               {/* Icon (sichtbar wenn rund) */}
               <Animated.View style={{ opacity: iconOpacity }}>
-                <Ionicons name="trending-up" size={28} color="#FFFFFF" />
+                <Ionicons name="sparkles" size={28} color="#FFFFFF" />
               </Animated.View>
               
               {/* Text (sichtbar wenn breit) */}
@@ -255,8 +255,9 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
                   }
                 ]}
               >
-                <Text style={styles.fabText}>Jetzt upgraden</Text>
-                <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
+                <Ionicons name="sparkles" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+                <Text style={styles.fabText}>Auf Valuntir Pro upgraden</Text>
+                <Ionicons name="arrow-forward" size={20} color="#FFFFFF" style={{ marginLeft: 8 }} />
               </Animated.View>
             </TouchableOpacity>
           </Animated.View>
