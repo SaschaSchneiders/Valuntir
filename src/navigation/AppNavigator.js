@@ -14,7 +14,11 @@ import ReminderScreen from '../screens/ReminderScreen';
 
 // Components
 import FloatingTabBar from '../components/FloatingTabBar';
+import PackageBadge from '../components/PackageBadge';
 import { useResponsive } from '../utils/responsive';
+
+// Context
+import { PackageProvider } from '../context/PackageContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -64,13 +68,16 @@ function TabNavigator() {
 
 export default function AppNavigator() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Main" component={TabNavigator} />
-        <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
-        <Stack.Screen name="Reminders" component={ReminderScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <PackageProvider>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Main" component={TabNavigator} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
+          <Stack.Screen name="Reminders" component={ReminderScreen} />
+        </Stack.Navigator>
+        <PackageBadge />
+      </NavigationContainer>
+    </PackageProvider>
   );
 }

@@ -13,10 +13,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import DesktopLayout from '../components/DesktopLayout';
 import { useResponsive } from '../utils/responsive';
+import { usePackage, PACKAGE_TYPES } from '../context/PackageContext';
 
 export default function SettingsScreen({ navigation: navProp }) {
   const navigation = navProp || useNavigation();
   const { isDesktop } = useResponsive();
+  const { currentPackage, switchPackage, isFree, isPro, isBusiness } = usePackage();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
 
@@ -140,6 +142,39 @@ export default function SettingsScreen({ navigation: navProp }) {
               </TouchableOpacity>
             </View>
             
+            {/* Demo-Modus - Paket-Switcher */}
+            <View style={styles.demoSection}>
+              <Text style={styles.demoTitle}>Demo-Modus</Text>
+              <View style={styles.packageSwitcherCompact}>
+                <TouchableOpacity
+                  style={[styles.packageButtonCompact, isFree && styles.packageButtonCompactActive]}
+                  onPress={() => switchPackage(PACKAGE_TYPES.FREE)}
+                >
+                  <Text style={[styles.packageButtonCompactText, isFree && styles.packageButtonCompactTextActive]}>
+                    Free
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.packageButtonCompact, isPro && styles.packageButtonCompactActive]}
+                  onPress={() => switchPackage(PACKAGE_TYPES.PRO)}
+                >
+                  <Text style={[styles.packageButtonCompactText, isPro && styles.packageButtonCompactTextActive]}>
+                    Pro
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.packageButtonCompact, isBusiness && styles.packageButtonCompactActive]}
+                  onPress={() => switchPackage(PACKAGE_TYPES.BUSINESS)}
+                >
+                  <Text style={[styles.packageButtonCompactText, isBusiness && styles.packageButtonCompactTextActive]}>
+                    Business
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            
             {/* Platz für TabBar */}
             <View style={{ height: 100 }} />
           </ScrollView>
@@ -229,6 +264,39 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     marginBottom: 12,
     letterSpacing: 0.5,
+  },
+  demoSection: {
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  demoTitle: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#AAA',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  packageSwitcherCompact: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  packageButtonCompact: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 8,
+  },
+  packageButtonCompactActive: {
+    backgroundColor: '#000000',
+  },
+  packageButtonCompactText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#666666',
+  },
+  packageButtonCompactTextActive: {
+    color: '#FFFFFF',
   },
   menuItem: {
     flexDirection: 'row',

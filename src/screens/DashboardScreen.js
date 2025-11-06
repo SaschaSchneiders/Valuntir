@@ -18,9 +18,11 @@ import FirstMoverMetrics from '../shared/FirstMoverMetrics';
 import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 import DesktopLayout from '../components/DesktopLayout';
 import { useResponsive } from '../utils/responsive';
+import { usePackage } from '../context/PackageContext';
 
 export default function DashboardScreen({ navigation }) {
   const { isDesktop, isLargeDesktop } = useResponsive();
+  const { isBusiness, isPro, isFree } = usePackage();
   const [isConnectionMetricsPublic, setIsConnectionMetricsPublic] = useState(false);
 
   // Mock-Daten für die Demo
