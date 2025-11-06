@@ -19,13 +19,41 @@ import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 import DesktopLayout from '../components/DesktopLayout';
 import { useResponsive } from '../utils/responsive';
 import { usePackage } from '../context/PackageContext';
+import ProPlanPromoScreen from './ProPlanPromoScreen';
 
 export default function DashboardScreen({ navigation }) {
   const { isDesktop, isLargeDesktop } = useResponsive();
   const { isBusiness, isPro, isFree } = usePackage();
   const [isConnectionMetricsPublic, setIsConnectionMetricsPublic] = useState(false);
 
-  // Mock-Daten für die Demo
+  // FREE-Modus: Zeige Pro-Plan Promotion
+  if (isFree) {
+    const handleUpgrade = () => {
+      // TODO: Navigation zu Payment/Upgrade-Flow
+      console.log('Upgrade zu Pro initiieren');
+      // Temporär: Zeige Alert
+      alert('Upgrade-Flow würde hier starten');
+    };
+
+    const promoContent = <ProPlanPromoScreen onUpgrade={handleUpgrade} />;
+
+    if (isDesktop) {
+      return (
+        <DesktopLayout
+          navigation={navigation}
+          currentRoute="Dashboard"
+          title="Dashboard"
+          subtitle="Upgrade auf Pro"
+        >
+          {promoContent}
+        </DesktopLayout>
+      );
+    }
+
+    return promoContent;
+  }
+
+  // Mock-Daten für die Demo (nur für Pro/Business)
   const successRate = 87;
   const totalRatings = 20;
   const profileViews = 156;
