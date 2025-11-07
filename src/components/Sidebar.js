@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { usePackage } from '../context/PackageContext';
 import { useHover } from '../utils/responsive';
 
 const NavItem = ({ icon, label, active, onPress }) => {
@@ -33,9 +34,16 @@ const NavItem = ({ icon, label, active, onPress }) => {
 };
 
 export default function Sidebar({ navigation, currentRoute }) {
+  const { isFree } = usePackage();
+
   const navItems = [
     { icon: 'home-outline', label: 'Home', route: 'Home', isTab: true },
-    { icon: 'stats-chart-outline', label: 'Dashboard', route: 'Dashboard', isTab: true },
+    { 
+      icon: isFree ? 'diamond-outline' : 'stats-chart-outline', 
+      label: isFree ? 'Upgrade' : 'Dashboard', 
+      route: 'Dashboard', 
+      isTab: true 
+    },
     { icon: 'search-outline', label: 'Suche', route: 'Search', isTab: true },
     { icon: 'notifications-outline', label: 'Reminder', route: 'Reminders', isTab: false },
     { icon: 'person-outline', label: 'Profil', route: 'Profile', isTab: true },

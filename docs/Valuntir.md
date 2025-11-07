@@ -113,7 +113,7 @@ First-Mover-Belohnung (integriert)
 – Wer einen Anbieter „entdeckt“ (erste Bewertung nach Transaktion),
 wird als First Mover erfasst
 – Wenn der Anbieter später ein Abo abschließt,
-bekommt der First Mover eine Gutschrift / Provision
+bekommt der First Mover eine Gutschrift / Provision in Höhe von 10%
 → Das motiviert zur Beteiligung
 → Die Plattform wächst viral
 → Nur wenn Nutzer zu dem Zeitpunkt noch zahlendes Mitglied ist
@@ -188,3 +188,43 @@ Keine Textfloskeln
 Nur: „Hat geliefert – oder nicht?“
 Wer dabei ist, wirkt glaubwürdig.
 Wer nicht dabei ist, wirkt fragwürdig.
+
+
+
+Ergänzung 5.10.2025:
+
+🧩 Bewertung auf Basis von vier Kernbereichen + Gesamtzufriedenheit
+Jede Bewertung erfolgt strukturiert anhand der vier wichtigsten Faktoren einer Geschäftsbeziehung:
+Bereich
+Bedeutung
+🗣️ Kommunikation
+Klarheit, Erreichbarkeit, Verbindlichkeit im Kontakt
+💰 Preis-Leistungs-Verhältnis
+Subjektive Fairness im Verhältnis von Kosten zu Nutzen
+🛠 Lieferqualität / Umsetzung
+Wurde das Ergebnis wie beauftragt und fachgerecht geliefert?
+📅 Verbindlichkeit / Zuverlässigkeit
+Wurden Termine, Zusagen und Absprachen eingehalten?
+
+Alle vier Bereiche werden auf einer 1–10 Skala bewertet.
+Daraus berechnet das System einen Vorschlag für die Gesamtzufriedenheit (z. B. 8,2 / 10).
+Im letzten Schritt kann der Nutzer diesen Vorschlag anpassen – etwa wenn er insgesamt deutlich zufriedener oder unzufriedener war, als die Einzelfaktoren ausdrücken.
+→ Dieser finale Gesamtwert fließt in die öffentliche Erfolgsquote des Anbieters ein.
+
+
+——————
+
+P.S.
+Ab einer Bewertung von unter 35 % wird das Freitextfeld automatisch verpflichtend.
+Der Grund ist einfach: Damit die Erfolgsquote fair und nachvollziehbar bleibt, müssen besonders niedrige Bewertungen kurz begründet werden. So kann sichergestellt werden, dass die Daten echt, nachvollziehbar und für alle Seiten transparent sind.
+
+Zusätzlich werden nur Transaktionen mit einem Betrag von mindestens 25 € als bewertbar anerkannt.
+Kleinbeträge (z. B. Testzahlungen, Versandkosten oder Teilbeträge) werden automatisch ausgeschlossen, um sicherzustellen, dass die Erfolgsquoten ausschließlich auf echten, relevanten Geschäftsleistungen basieren.
+
+Bewertungen, bei denen du als First Mover giltst, bleiben dauerhaft in deinem Profil sichtbar.
+Du wirst dort regelmäßig daran erinnert, bei welchen Anbietern du der Erste warst.
+Sobald einer dieser Anbieter sein Profil aktiviert, erhältst du automatisch die entsprechende Gutschrift – vorausgesetzt, dein Nutzerkonto ist zu diesem Zeitpunkt aktiv.
+
+Ab sofort sind alle Erfolgsraten grundsätzlich öffentlich sichtbar.
+Anbieter, die ihr Profil aktiv gestalten oder ihren Score zeitweise pausieren möchten, benötigen dazu ein aktives Anbieter-Abo.
+So bleibt die Transparenz für den Markt gewährleistet, während Anbieter volle Kontrolle über ihre Darstellung behalten. (Das gilt auch wenn im text weiter oben evtl. etwas anderes steht. das wird nachträglich noch geändert.)

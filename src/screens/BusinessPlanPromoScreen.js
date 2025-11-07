@@ -1,14 +1,13 @@
 import React, { useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Animated, TextInput, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import TransFAB from '../shared/TransFAB';
 
-export default function ProPlanPromoScreen({ onUpgrade }) {
+export default function BusinessPlanPromoScreen({ onRequestAccess }) {
   const scrollY = useRef(new Animated.Value(0)).current;
 
-  // Scroll Handler für Animated ScrollView
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
     { useNativeDriver: false }
@@ -16,27 +15,39 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
 
   const features = [
     {
-      icon: 'star',
-      title: 'Bewertungen abgeben',
-      description: 'Teile deine Erfahrungen und hilf anderen bei der Anbieter-Wahl',
+      icon: 'create',
+      title: 'Profil gestalten',
+      description: 'Füge Logo, Beschreibung und Kontaktdaten hinzu – verwandle Besucher in Leads',
       isPrimary: true,
     },
     {
-      icon: 'eye-outline',
-      title: 'Unbegrenzt Profile ansehen',
-      description: 'Keine Limits mehr – recherchiere so viel du willst',
+      icon: 'call',
+      title: 'Leads empfangen',
+      description: 'Erhalte direkte Kontaktanfragen von Interessenten über dein öffentliches Profil',
       isPrimary: true,
     },
     {
-      icon: 'remove-circle-outline',
-      title: 'Werbefrei',
-      description: 'Genieße Valuntir ohne Ablenkungen und Unterbrechungen',
+      icon: 'bar-chart',
+      title: 'Statistiken einsehen',
+      description: 'Analysiere Profilaufrufe, Interaktionen und Lead-Conversions in Echtzeit',
       isPrimary: true,
     },
     {
-      icon: 'rocket-outline',
-      title: 'First-Mover werden',
-      description: 'Sei der Erste, der einen Anbieter bewertet – und profitiere dauerhaft',
+      icon: 'eye-off',
+      title: 'Score pausieren',
+      description: 'Pausiere deine Erfolgsrate zeitweise – volle Kontrolle über deine Sichtbarkeit',
+      isPrimary: false,
+    },
+    {
+      icon: 'ribbon',
+      title: 'Trust-Badge',
+      description: 'Zeige deine Valuntir-Erfolgsrate auf deiner Website und in E-Mail-Signaturen',
+      isPrimary: false,
+    },
+    {
+      icon: 'notifications',
+      title: 'Benachrichtigungen',
+      description: 'Werde sofort informiert, wenn du neue Bewertungen oder Leads erhältst',
       isPrimary: false,
     },
   ];
@@ -60,17 +71,38 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
             {/* Hero Section */}
             <View style={styles.hero}>
               <View style={styles.badge}>
-                <Ionicons name="sparkles" size={16} color="#3B82F6" />
-                <Text style={styles.badgeText}>Valuntir Pro</Text>
+                <Ionicons name="briefcase" size={16} color="#3B82F6" />
+                <Text style={styles.badgeText}>Valuntir Business</Text>
               </View>
               
               <Text style={styles.headline}>
-                Entscheide klug.{'\n'}Spare Geld und Nerven.
+                Du wirst bewertet?{'\n'}Dann übernimm die Kontrolle.
               </Text>
               
               <Text style={styles.subheadline}>
-                Vergleiche unbegrenzt Erfolgsraten und finde{'\n'}zuverlässig den besten Anbieter für dich.
+                Deine Erfolgsrate ist öffentlich – gestalte dein{'\n'}Profil und wandle Besucher in Kunden um.
               </Text>
+            </View>
+
+            {/* Company Search */}
+            <View style={styles.searchInlineSection}>
+              <Text style={styles.searchInlineText}>
+                Suche nach deinem Unternehmen oder gib deine Geschäfts-IBAN ein:
+              </Text>
+              
+              <View style={styles.searchInputWrapper}>
+                <Ionicons name="business" size={20} color="#999999" style={styles.searchInlineIcon} />
+                <TextInput
+                  style={styles.searchInlineInput}
+                  placeholder="Firmenname oder IBAN..."
+                  placeholderTextColor="#999999"
+                />
+              </View>
+              
+              <TouchableOpacity style={styles.searchInlineButton}>
+                <Text style={styles.searchInlineButtonText}>Suchen</Text>
+                <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
+              </TouchableOpacity>
             </View>
 
             {/* Features Grid */}
@@ -99,71 +131,57 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
               ))}
             </View>
 
-            {/* FirstMover Explanation */}
-            <View style={styles.firstMoverSection}>
-              <View style={styles.firstMoverHeader}>
-                <Ionicons name="trophy" size={24} color="#FFD700" />
-                <Text style={styles.firstMoverTitle}>Das First-Mover-Prinzip</Text>
-              </View>
+            {/* Why Business Section */}
+            <View style={styles.whySection}>
+              <Text style={styles.sectionTitle}>Warum Business?</Text>
               
-              <Text style={styles.firstMoverDescription}>
-                Bewerte Anbieter als Erster, und erhalte 10% ihres Abo-Preises – dauerhaft. 
-                Je mehr First-Mover-Bewertungen, desto höher dein passives Einkommen.
-              </Text>
-
-              <View style={styles.exampleBox}>
-                <View style={styles.exampleRow}>
-                  <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                  <Text style={styles.exampleText}>
-                    <Text style={styles.exampleBold}>1 Anbieter</Text> meldet sich an → 
-                    <Text style={styles.exampleBold}> 4,90€/Monat</Text>
+              <View style={styles.reasonCard}>
+                <Ionicons name="shield-checkmark" size={24} color="#3B82F6" />
+                <View style={styles.reasonContent}>
+                  <Text style={styles.reasonTitle}>Kontrolliere dein Image</Text>
+                  <Text style={styles.reasonText}>
+                    Deine Bewertungen sind öffentlich – mit Business kannst du dein Profil aktiv gestalten.
                   </Text>
                 </View>
-                
-                <View style={styles.milestoneRow}>
-                  <View style={styles.milestoneLine} />
-                  <View style={styles.milestoneBox}>
-                    <Ionicons name="gift" size={16} color="#10B981" />
-                    <Text style={styles.milestoneText}>Dein Pro-Abo ist kostenlos</Text>
-                  </View>
-                  <View style={styles.milestoneLine} />
-                </View>
+              </View>
 
-                <View style={styles.scalingSection}>
-                  <Text style={styles.scalingHeader}>Und es geht weiter:</Text>
-                  
-                  <View style={styles.scalingRow}>
-                    <Text style={styles.scalingText}>
-                      <Text style={styles.scalingBold}>10 Anbieter</Text> → 
-                      <Text style={styles.scalingHighlight}> +49€/Monat</Text>
-                    </Text>
-                  </View>
-                  
-                  <View style={styles.scalingRow}>
-                    <Text style={styles.scalingText}>
-                      <Text style={styles.scalingBold}>100 Anbieter</Text> → 
-                      <Text style={styles.scalingHighlight}> +490€/Monat</Text>
-                    </Text>
-                  </View>
+              <View style={styles.reasonCard}>
+                <Ionicons name="trending-up" size={24} color="#3B82F6" />
+                <View style={styles.reasonContent}>
+                  <Text style={styles.reasonTitle}>Leads generieren</Text>
+                  <Text style={styles.reasonText}>
+                    Interessenten sehen deine Erfolgsrate – verwandle sie mit Kontaktoptionen in Kunden.
+                  </Text>
                 </View>
               </View>
 
-              <Text style={styles.firstMoverFootnote}>
-                Unbegrenzt skalierbar – bewerte so viele Anbieter wie du möchtest.
-              </Text>
+              <View style={styles.reasonCard}>
+                <Ionicons name="eye" size={24} color="#3B82F6" />
+                <View style={styles.reasonContent}>
+                  <Text style={styles.reasonTitle}>Daten nutzen</Text>
+                  <Text style={styles.reasonText}>
+                    Sieh wer dein Profil besucht, welche Kontakte geklickt werden und wie du performst.
+                  </Text>
+                </View>
+              </View>
             </View>
 
             {/* Price Section */}
             <View style={styles.priceSection}>
               <View style={styles.priceBox}>
-                <Text style={styles.priceLabel}>Pro-Abo</Text>
+                <Text style={styles.priceLabel}>Business-Abo</Text>
                 <View style={styles.priceRow}>
-                  <Text style={styles.priceAmount}>4,90€</Text>
+                  <Text style={styles.priceAmount}>49€</Text>
                   <Text style={styles.pricePeriod}>/Monat</Text>
                 </View>
                 <Text style={styles.priceDescription}>
                   Jederzeit kündbar. Keine versteckten Kosten.
                 </Text>
+              </View>
+              
+              <View style={styles.proIncludedBadge}>
+                <Ionicons name="checkmark-circle" size={16} color="#3B82F6" />
+                <Text style={styles.proIncludedText}>Inkl. aller Pro-Features</Text>
               </View>
             </View>
 
@@ -174,12 +192,12 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
                 <Text style={styles.trustText}>Keine Vertragsbindung</Text>
               </View>
               <View style={styles.trustItem}>
-                <Ionicons name="card" size={18} color="#10B981" />
-                <Text style={styles.trustText}>Sicher verschlüsselt</Text>
+                <Ionicons name="speedometer" size={18} color="#10B981" />
+                <Text style={styles.trustText}>Sofort aktiv</Text>
               </View>
               <View style={styles.trustItem}>
                 <Ionicons name="people" size={18} color="#10B981" />
-                <Text style={styles.trustText}>Transparente Community</Text>
+                <Text style={styles.trustText}>Transparente Bewertungen</Text>
               </View>
             </View>
 
@@ -190,9 +208,9 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
           {/* Animated Floating Action Button */}
           <TransFAB 
             scrollY={scrollY}
-            onPress={onUpgrade}
-            text="Auf Valuntir Pro upgraden"
-            icon="sparkles"
+            onPress={onRequestAccess}
+            text="Profil übernehmen"
+            icon="briefcase"
             bottom={120}
           />
         </SafeAreaView>
@@ -230,13 +248,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    marginBottom: 24,
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: 'rgba(59, 130, 246, 0.2)',
   },
   badgeText: {
     fontSize: 14,
     fontWeight: '700',
+    color: '#3B82F6',
+  },
+  proIncludedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(59, 130, 246, 0.05)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.1)',
+  },
+  proIncludedText: {
+    fontSize: 13,
+    fontWeight: '600',
     color: '#3B82F6',
   },
   headline: {
@@ -254,6 +289,61 @@ const styles = StyleSheet.create({
     color: '#666666',
     textAlign: 'center',
     lineHeight: 24,
+  },
+  searchInlineSection: {
+    paddingHorizontal: 20,
+    marginBottom: 48,
+  },
+  searchInlineText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#666666',
+    marginBottom: 16,
+    lineHeight: 22,
+  },
+  searchInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    paddingHorizontal: 16,
+    height: 52,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  searchInlineIcon: {
+    marginRight: 12,
+  },
+  searchInlineInput: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#000000',
+  },
+  searchInlineButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#000000',
+    borderRadius: 12,
+    height: 52,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  searchInlineButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
   featuresSection: {
     marginBottom: 48,
@@ -300,118 +390,41 @@ const styles = StyleSheet.create({
     color: '#666666',
     lineHeight: 22,
   },
-  firstMoverSection: {
-    backgroundColor: 'rgba(255, 215, 0, 0.05)',
-    borderRadius: 24,
-    padding: 24,
+  whySection: {
     marginBottom: 48,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 215, 0, 0.2)',
   },
-  firstMoverHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 16,
-  },
-  firstMoverTitle: {
-    fontSize: 20,
-    fontWeight: '700',
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: '800',
     color: '#000000',
-    letterSpacing: -0.3,
+    marginBottom: 24,
+    letterSpacing: -0.5,
   },
-  firstMoverDescription: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#333333',
-    lineHeight: 22,
-    marginBottom: 20,
-  },
-  exampleBox: {
+  reasonCard: {
+    flexDirection: 'row',
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 16,
-    gap: 12,
+    padding: 20,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#E5E5E5',
+    borderColor: '#F0F0F0',
+    gap: 16,
   },
-  exampleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  exampleText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#666666',
+  reasonContent: {
     flex: 1,
   },
-  exampleBold: {
+  reasonTitle: {
+    fontSize: 16,
     fontWeight: '700',
     color: '#000000',
+    marginBottom: 6,
+    letterSpacing: -0.3,
   },
-  milestoneRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 12,
-    gap: 8,
-  },
-  milestoneLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#10B981',
-    opacity: 0.3,
-  },
-  milestoneBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  milestoneText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#10B981',
-  },
-  scalingSection: {
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E5E5',
-  },
-  scalingHeader: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#666666',
-    marginBottom: 8,
-    fontStyle: 'italic',
-  },
-  scalingRow: {
-    paddingVertical: 4,
-  },
-  scalingText: {
+  reasonText: {
     fontSize: 14,
     fontWeight: '500',
     color: '#666666',
-  },
-  scalingBold: {
-    fontWeight: '700',
-    color: '#333333',
-  },
-  scalingHighlight: {
-    fontWeight: '800',
-    color: '#10B981',
-  },
-  firstMoverFootnote: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#999999',
-    fontStyle: 'italic',
-    textAlign: 'center',
+    lineHeight: 20,
   },
   priceSection: {
     marginBottom: 32,
@@ -421,7 +434,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 24,
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
     borderWidth: 1,
     borderColor: '#E5E5E5',
     shadowColor: '#000',

@@ -24,10 +24,15 @@ import ProjectComments from '../shared/ProjectComments';
 import ContactSection from '../shared/ContactSection';
 import DesktopLayout from '../components/DesktopLayout';
 import { useResponsive } from '../utils/responsive';
+import { usePackage } from '../context/PackageContext';
+import BusinessPlanPromoScreen from './BusinessPlanPromoScreen';
 
 export default function ProfileScreen({ navigation: navProp }) {
   const { isDesktop } = useResponsive();
   const navigation = navProp || useNavigation();
+  const { isFree } = usePackage();
+  
+  // All useState Hooks MUST come before any conditional returns
   const [isPublicView, setIsPublicView] = useState(false);
   
   // Chart Daten für öffentliche Ansicht
@@ -326,6 +331,17 @@ export default function ProfileScreen({ navigation: navProp }) {
       setter(false);
     }
   };
+
+  // Handler für Profil-Übernahme
+  const handleRequestBusinessAccess = () => {
+    console.log('Profil-Übernahme angefordert');
+    // TODO: Navigation zur Business-Checkout-Seite oder Unternehmenssuche
+  };
+  
+  // Wenn FreeMode → zeige BusinessPlanPromoScreen
+  if (isFree) {
+    return <BusinessPlanPromoScreen onRequestAccess={handleRequestBusinessAccess} />;
+  }
 
   const content = (
     <View style={styles.container}>

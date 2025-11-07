@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { usePackage } from '../context/PackageContext';
 
 export default function FloatingTabBar({ state, descriptors, navigation }) {
+  const { isFree } = usePackage();
   return (
     <View style={styles.container}>
       <View style={styles.tabBar}>
@@ -33,6 +35,10 @@ export default function FloatingTabBar({ state, descriptors, navigation }) {
               case 'Home':
                 return isFocused ? 'home' : 'home-outline';
               case 'Dashboard':
+                // Im FREE-Modus: Diamant-Icon (Premium), sonst Dashboard-Icon
+                if (isFree) {
+                  return isFocused ? 'diamond' : 'diamond-outline';
+                }
                 return isFocused ? 'bar-chart' : 'bar-chart-outline';
               case 'Search':
                 return isFocused ? 'search' : 'search-outline';

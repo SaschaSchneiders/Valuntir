@@ -13,13 +13,21 @@ import ConnectionRating from '../shared/ConnectionRating';
 import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 import FilterPills from '../shared/FilterPills';
 import DesktopLayout from '../components/DesktopLayout';
+import FreeHomeScreen from './FreeHomeScreen';
 import { useResponsive } from '../utils/responsive';
+import { usePackage } from '../context/PackageContext';
 
 export default function HomeScreen({ navigation }) {
   const { isDesktop } = useResponsive();
+  const { isFree } = usePackage();
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState(null);
+
+  // Im FREE-Modus: Trust & Explainer Screen zeigen
+  if (isFree) {
+    return <FreeHomeScreen />;
+  }
 
   // Mock-Daten für Connections die bewertet werden können (dynamisch basierend auf heute)
   const today = new Date();
