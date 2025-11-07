@@ -30,7 +30,7 @@ import BusinessPlanPromoScreen from './BusinessPlanPromoScreen';
 export default function ProfileScreen({ navigation: navProp }) {
   const { isDesktop } = useResponsive();
   const navigation = navProp || useNavigation();
-  const { isFree } = usePackage();
+  const { isFree, isPro, isBusiness } = usePackage();
   
   // All useState Hooks MUST come before any conditional returns
   const [isPublicView, setIsPublicView] = useState(false);
@@ -338,8 +338,9 @@ export default function ProfileScreen({ navigation: navProp }) {
     // TODO: Navigation zur Business-Checkout-Seite oder Unternehmenssuche
   };
   
-  // Wenn FreeMode → zeige BusinessPlanPromoScreen
-  if (isFree) {
+  // Wenn FreeMode ODER ProMode → zeige BusinessPlanPromoScreen
+  // Nur Business-User bekommen das eigene Unternehmensprofil
+  if (isFree || isPro) {
     return <BusinessPlanPromoScreen onRequestAccess={handleRequestBusinessAccess} />;
   }
 

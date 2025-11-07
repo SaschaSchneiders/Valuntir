@@ -246,6 +246,7 @@ export default function PublicProfileScreen({ route }) {
                   isPublic={provider.isConnectionMetricsPublic}
                   onTogglePublic={null}
                   isPublicView={true} // Im öffentlichen Profil: Kein Toggle, anderer Titel
+                  showPublicToggle={false} // Toggle nie in öffentlichen Profilen anzeigen
                 />
               </View>
             )}

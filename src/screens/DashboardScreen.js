@@ -165,49 +165,54 @@ export default function DashboardScreen({ navigation }) {
                 />
               )}
 
-        {/* Chart Card - Wiederverwendbare Komponente */}
-        <ChartCard
-          timeframeData={timeframeData}
-          title="Verlauf & Statistiken"
-          defaultTimeframe="6months"
-        />
+        {/* Business-Only: Charts, Statistiken, Profilmetrics */}
+        {isBusiness && (
+          <>
+            {/* Chart Card - Wiederverwendbare Komponente */}
+            <ChartCard
+              timeframeData={timeframeData}
+              title="Verlauf & Statistiken"
+              defaultTimeframe="6months"
+            />
 
-        {/* RateScale - AUSSERHALB der Card */}
-        <View style={styles.rateScaleSection}>
-          <RateScale 
-            rate={successRate} 
-            size="medium" 
-            showLabel={false}
-            title="Erfolgsquote"
-            totalRatings={totalRatings}
-          />
-        </View>
+            {/* RateScale - AUSSERHALB der Card */}
+            <View style={styles.rateScaleSection}>
+              <RateScale 
+                rate={successRate} 
+                size="medium" 
+                showLabel={false}
+                title="Erfolgsquote"
+                totalRatings={totalRatings}
+              />
+            </View>
 
-        {/* Bewertungsdetails - 4 Kernbereiche */}
-        <View style={{ marginBottom: 24 }}>
-          <RatingBreakdown
-            communication={87}
-            pricePerformance={92}
-            deliveryQuality={89}
-            reliability={94}
-            totalProjects={totalRatings}
-          />
-        </View>
+            {/* Bewertungsdetails - 4 Kernbereiche */}
+            <View style={{ marginBottom: 24 }}>
+              <RatingBreakdown
+                communication={87}
+                pricePerformance={92}
+                deliveryQuality={89}
+                reliability={94}
+                totalProjects={totalRatings}
+              />
+            </View>
 
-        {/* Profilaufrufe & Interaktionen Card */}
-        <View style={{ marginBottom: 24 }}>
-          <ProfileMetrics
-            profileViews={profileViews}
-            profileViewsChange={profileViewsChange}
-            profileInteractions={profileInteractions}
-            interactionsChange={interactionsChange}
-            totalLeads={totalLeads}
-            whatsappClicks={whatsappLeads}
-            calendarClicks={calendarLeads}
-            websiteClicks={websiteLeads}
-            phoneClicks={phoneLeads}
-          />
-        </View>
+            {/* Profilaufrufe & Interaktionen Card */}
+            <View style={{ marginBottom: 24 }}>
+              <ProfileMetrics
+                profileViews={profileViews}
+                profileViewsChange={profileViewsChange}
+                profileInteractions={profileInteractions}
+                interactionsChange={interactionsChange}
+                totalLeads={totalLeads}
+                whatsappClicks={whatsappLeads}
+                calendarClicks={calendarLeads}
+                websiteClicks={websiteLeads}
+                phoneClicks={phoneLeads}
+              />
+            </View>
+          </>
+        )}
 
         {/* First Mover Programm */}
         <View style={{ marginBottom: 24 }}>
@@ -229,33 +234,36 @@ export default function DashboardScreen({ navigation }) {
             isPublic={isConnectionMetricsPublic}
             onTogglePublic={handleToggleConnectionMetricsPublic}
             isPublicView={false} // Im Dashboard: Toggle sichtbar und editierbar
+            showPublicToggle={isBusiness} // Toggle nur im Business-Mode anzeigen
           />
         </View>
 
-        {/* Recent Activity */}
-        <View style={styles.activityCard}>
-          <Text style={styles.cardTitle}>Letzte Aktivität</Text>
-          
-          <View style={styles.activityItem}>
-            <View style={styles.activityIcon}>
-              <Ionicons name="star" size={22} color="#000000" />
+        {/* Recent Activity - Business Only */}
+        {isBusiness && (
+          <View style={styles.activityCard}>
+            <Text style={styles.cardTitle}>Letzte Aktivität</Text>
+            
+            <View style={styles.activityItem}>
+              <View style={styles.activityIcon}>
+                <Ionicons name="star" size={22} color="#000000" />
+              </View>
+              <View style={styles.activityContent}>
+                <Text style={styles.activityTitle}>Neue Bewertung erhalten</Text>
+                <Text style={styles.activitySubtitle}>Vor 2 Stunden</Text>
+              </View>
             </View>
-            <View style={styles.activityContent}>
-              <Text style={styles.activityTitle}>Neue Bewertung erhalten</Text>
-              <Text style={styles.activitySubtitle}>Vor 2 Stunden</Text>
-            </View>
-          </View>
 
-          <View style={styles.activityItem}>
-            <View style={styles.activityIcon}>
-              <Ionicons name="mail" size={22} color="#000000" />
-            </View>
-            <View style={styles.activityContent}>
-              <Text style={styles.activityTitle}>Connection gesendet</Text>
-              <Text style={styles.activitySubtitle}>Gestern</Text>
+            <View style={styles.activityItem}>
+              <View style={styles.activityIcon}>
+                <Ionicons name="mail" size={22} color="#000000" />
+              </View>
+              <View style={styles.activityContent}>
+                <Text style={styles.activityTitle}>Connection gesendet</Text>
+                <Text style={styles.activitySubtitle}>Gestern</Text>
+              </View>
             </View>
           </View>
-        </View>
+        )}
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
@@ -269,7 +277,7 @@ export default function DashboardScreen({ navigation }) {
         navigation={navigation}
         currentRoute="Dashboard"
         title="Dashboard"
-        subtitle="Deine Erfolgsquoten-Übersicht"
+        subtitle={isBusiness ? "Deine Erfolgsquoten-Übersicht" : "Deine Connection-Übersicht"}
       >
         {content}
       </DesktopLayout>

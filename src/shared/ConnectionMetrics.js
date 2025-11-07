@@ -9,6 +9,7 @@ export default function ConnectionMetrics({
   isPublic = false,
   onTogglePublic,
   isPublicView = false, // Gibt an, ob die Kachel in einem öffentlichen Profil angezeigt wird
+  showPublicToggle = true, // Gibt an, ob der Toggle angezeigt werden soll (nur Business-Mode)
 }) {
   const [isPublicLocal, setIsPublicLocal] = useState(isPublic);
   
@@ -39,7 +40,7 @@ export default function ConnectionMetrics({
           </Text>
           <Text style={styles.subtitle}>Status deiner Kontakte</Text>
         </View>
-        {!isPublicView && (
+        {!isPublicView && showPublicToggle && (
           <View style={styles.toggleContainer}>
             <Text style={styles.toggleLabel}>Öffentlich</Text>
             <Switch
