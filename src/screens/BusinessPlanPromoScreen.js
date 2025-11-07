@@ -165,7 +165,7 @@ export default function BusinessPlanPromoScreen({ onRequestAccess }) {
               </Text>
               
               <Text style={styles.subheadline}>
-                Gib deine Geschäfts-IBAN ein{'\n'}um dein Profil zu übernehmen:
+                Gib deine Geschäfts-IBAN ein, um dein{'\n'}Unternehmensprofil selbst zu kontrollieren:
               </Text>
               
               <View style={styles.searchContainer}>
