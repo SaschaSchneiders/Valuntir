@@ -34,15 +34,14 @@ export default function RatingBreakdown({
   ];
 
   const getBarColor = (value) => {
-    if (value >= 90) return ['#10B981', '#059669']; // Grün
-    if (value >= 75) return ['#F59E0B', '#D97706']; // Gelb/Orange
-    return ['#EF4444', '#DC2626']; // Rot
+    // Immer grün - einheitliche Farbe für alle Balken
+    return ['#10B981', '#059669']; // Grün
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
-        Bewertungsdetails <Text style={styles.subtitle}>(aus {totalProjects} Projekten)</Text>
+        Bewertungsdetails <Text style={styles.subtitle}>(aus {totalProjects} Connections)</Text>
       </Text>
       
       {categories.map((category, index) => (

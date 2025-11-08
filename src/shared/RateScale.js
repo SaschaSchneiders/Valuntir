@@ -11,7 +11,7 @@ import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
  * @param {string} size - Größe: 'small', 'medium', 'large' (default: 'medium')
  * @param {boolean} showLabel - Label anzeigen (default: true)
  * @param {string} title - Titel über der Skala (optional)
- * @param {number} totalRatings - Anzahl der Projekte für Subtitle (optional)
+ * @param {number} totalRatings - Anzahl der Connections für Subtitle (optional)
  */
 export default function RateScale({ 
   rate = 0, 
@@ -62,7 +62,7 @@ export default function RateScale({
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title} </Text>
           {totalRatings && (
-            <Text style={styles.subtitle}>(aus {totalRatings} Projekten)</Text>
+            <Text style={styles.subtitle}>(aus {totalRatings} Connections)</Text>
           )}
         </View>
       )}

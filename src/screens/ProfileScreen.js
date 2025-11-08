@@ -76,8 +76,8 @@ export default function ProfileScreen({ navigation: navProp }) {
     }
   };
 
-  // Mock Kommentare von bewerteten Projekten
-  const projectComments = [
+  // Mock Kommentare von bewerteten Connections
+  const connectionComments = [
     {
       id: 1,
       comment: "Familienstiftung steuerlich optimal umgesetzt. Sehr kompetente Beratung mit klarem Fokus auf langfristige Vermögenssicherung.",
@@ -410,8 +410,8 @@ export default function ProfileScreen({ navigation: navProp }) {
                   />
                 </View>
 
-                {/* Projekterfahrungen (Accordion) */}
-                <ProjectComments comments={projectComments} />
+                {/* Connection-Erfahrungen (Accordion) */}
+                <ProjectComments comments={connectionComments} />
 
                 {/* Kontakt & Social Media */}
                 <ContactSection

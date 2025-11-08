@@ -5,9 +5,9 @@ import { View, Text, StyleSheet, Switch } from 'react-native';
  * VolumeMetrics - Zeigt Umsatz-Metriken eines Anbieters (im ConnectionMetrics Stil)
  * 
  * @param {number} totalVolume - Gesamtvolumen in Euro
- * @param {number} totalProjects - Anzahl bewerteter Projekte
+ * @param {number} totalProjects - Anzahl bewerteter Connections
  * @param {number} averageValue - Durchschnittlicher Auftragswert in Euro
- * @param {number} largestProject - Größtes Projekt in Euro
+ * @param {number} largestProject - Größte Connection in Euro
  * @param {number} returningCustomers - Anzahl Stammkunden
  * @param {number} returningCustomersPercent - Prozentsatz Stammkunden
  * @param {boolean} isPublic - Ob die Metriken öffentlich sichtbar sind
@@ -54,7 +54,7 @@ export default function VolumeMetrics({
           <Text style={styles.title}>
             {isPublicView ? 'Bewertetes Volumen' : 'Dein bewertetes Volumen'}
           </Text>
-          <Text style={styles.subtitle}>aus {totalProjects} Projekten</Text>
+          <Text style={styles.subtitle}>aus {totalProjects} Connections</Text>
         </View>
         {!isPublicView && showPublicToggle && (
           <View style={styles.toggleContainer}>
@@ -87,10 +87,10 @@ export default function VolumeMetrics({
         {/* Divider */}
         <View style={styles.secondaryDivider} />
 
-        {/* Größtes Projekt */}
+        {/* Größte Connection */}
         <View style={styles.secondaryMetric}>
           <Text style={styles.secondaryMetricNumber}>{formatCurrency(largestProject)}</Text>
-          <Text style={styles.secondaryMetricLabel}>Größtes Projekt</Text>
+          <Text style={styles.secondaryMetricLabel}>Größte Connection</Text>
         </View>
       </View>
 

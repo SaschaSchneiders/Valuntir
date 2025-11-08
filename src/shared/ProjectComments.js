@@ -15,7 +15,7 @@ export default function ProjectComments({ comments = [] }) {
       >
         <View style={styles.headerLeft}>
           <Ionicons name="chatbubbles-outline" size={20} color="#000" />
-          <Text style={styles.headerTitle}>Projekterfahrungen</Text>
+          <Text style={styles.headerTitle}>Connection-Erfahrungen</Text>
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{comments.length}</Text>
           </View>

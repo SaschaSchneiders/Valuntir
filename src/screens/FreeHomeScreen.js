@@ -118,7 +118,7 @@ export default function FreeHomeScreen() {
               </View>
 
               <Text style={styles.uspFootnote}>
-                Du siehst die Performance echter Projekte – nicht das, was jemand behauptet.
+                Du siehst die Performance echter Connections – nicht das, was jemand behauptet.
               </Text>
             </View>
 

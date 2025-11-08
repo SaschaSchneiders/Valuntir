@@ -188,7 +188,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               <View style={styles.stepContent}>
                 {/* Frage 1: Ziel erreicht? */}
                 <View style={styles.questionContainer}>
-                  <Text style={styles.questionTitle}>Wurde das Ziel des Projekts erreicht?</Text>
+                  <Text style={styles.questionTitle}>Wurde das Ziel der Connection erreicht?</Text>
                   <RateScale
                     rate={goalAchieved}
                     size="medium"
@@ -209,7 +209,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
 
                 {/* Frage 2: Hat sich gelohnt? */}
                 <View style={styles.questionContainer}>
-                  <Text style={styles.questionTitle}>Hat sich das Projekt für dich gelohnt?</Text>
+                  <Text style={styles.questionTitle}>Hat sich die Connection für dich gelohnt?</Text>
                   <RateScale
                     rate={worthIt}
                     size="medium"
@@ -235,7 +235,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               <View style={styles.stepContent}>
                 <Text style={styles.sectionTitle}>Erfolgsscore</Text>
                 <Text style={styles.overallHint}>
-                  Berechnet aus deinen Angaben zum Projekterfolg
+                  Berechnet aus deinen Angaben zum Connection-Erfolg
                 </Text>
                 
                 {/* RateScale */}
@@ -250,13 +250,13 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                 <View style={styles.commentSection}>
                   <Text style={styles.sectionTitle}>Kommentar (optional)</Text>
                   <Text style={styles.commentHint}>
-                    Z.B. Projekterklärung: "Familienstiftung umgesetzt – steuerlich optimal."
+                    Z.B. Connection-Beschreibung: "Familienstiftung umgesetzt – steuerlich optimal."
                   </Text>
                   <TextInput
                     style={styles.commentInput}
                     value={comment}
                     onChangeText={setComment}
-                    placeholder="Dein Kommentar zum Projekt..."
+                    placeholder="Dein Kommentar zur Connection..."
                     placeholderTextColor="#999"
                     multiline
                     numberOfLines={4}

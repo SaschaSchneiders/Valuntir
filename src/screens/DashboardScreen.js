@@ -78,7 +78,7 @@ export default function DashboardScreen({ navigation }) {
   
   // Volume Metrics
   const averageProjectValue = Math.round(totalVolumeRated / connectionsRated); // Durchschnittlicher Auftragswert
-  const largestProject = 15000; // Größtes bewertetes Projekt in €
+  const largestProject = 15000; // Größte bewertete Connection in €
   const returningCustomers = 8; // Anzahl Stammkunden
   const returningCustomersPercent = Math.round((returningCustomers / connectionsRated) * 100); // Prozent Stammkunden
 

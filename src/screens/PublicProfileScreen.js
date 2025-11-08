@@ -262,7 +262,7 @@ export default function PublicProfileScreen({ route }) {
               />
             </View>
 
-            {/* Projekterfahrungen */}
+            {/* Connection-Erfahrungen */}
             <ProjectComments comments={provider.comments} />
 
             {/* Connection Metrics - nur wenn öffentlich */}
