@@ -177,7 +177,7 @@ export default function ProfileScreen({ navigation: navProp }) {
   const [linkedInValue, setLinkedInValue] = useState('https://linkedin.com/company/beratungszentrum-nord');
   const [instagramValue, setInstagramValue] = useState('https://instagram.com/beratungszentrum.nord');
   const [changeRequestMessage, setChangeRequestMessage] = useState('');
-  const [coverImageValue, setCoverImageValue] = useState(null); // Fallback-Titelbild wird verwendet
+  const [coverImageValue, setCoverImageValue] = useState('https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=200&fit=crop'); // Demo-Titelbild
   
   // Favorisierte Kontaktmöglichkeit für FAB
   const [favoriteContact, setFavoriteContact] = useState(null); // 'email', 'phone', 'whatsapp' oder null

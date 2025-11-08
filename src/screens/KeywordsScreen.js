@@ -13,17 +13,22 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function KeywordsScreen({ navigation }) {
   const [keywords, setKeywords] = useState([
-    'Unternehmensberatung',
-    'Strategieentwicklung',
-    'Change Management',
+    'Steuerberater',
+    'Jahresabschluss',
+    'Steuern sparen',
   ]);
   const [currentInput, setCurrentInput] = useState('');
+  const inputRef = React.useRef(null);
 
   const handleAddKeyword = () => {
     const trimmed = currentInput.trim();
     if (trimmed && keywords.length < 10) {
       setKeywords([...keywords, trimmed]);
       setCurrentInput('');
+      // Focus bleibt auf dem Input, damit die Tastatur offen bleibt
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
     }
   };
 
@@ -43,7 +48,7 @@ export default function KeywordsScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
+        colors={['#F8F9FA', '#FFFFFF']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
@@ -52,13 +57,18 @@ export default function KeywordsScreen({ navigation }) {
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity 
-              style={styles.backButton}
+              style={styles.cancelButton}
               onPress={() => navigation.goBack()}
             >
-              <Ionicons name="arrow-back" size={24} color="#000" />
+              <Text style={styles.cancelButtonText}>Abbrechen</Text>
             </TouchableOpacity>
-            <Text style={styles.title}>Such-Keywords</Text>
-            <View style={styles.placeholder} />
+                <Text style={styles.title}>Keywords</Text>
+            <TouchableOpacity 
+              style={styles.saveTextButton}
+              onPress={handleSave}
+            >
+              <Text style={styles.saveTextButtonText}>Speichern</Text>
+            </TouchableOpacity>
           </View>
 
           <ScrollView 
@@ -66,126 +76,80 @@ export default function KeywordsScreen({ navigation }) {
             contentContainerStyle={styles.contentContainer}
             showsVerticalScrollIndicator={false}
           >
-            {/* Info Box */}
-            <View style={styles.infoBox}>
-              <Ionicons name="search" size={24} color="#3B82F6" />
-              <Text style={styles.infoText}>
-                Füge relevante Suchbegriffe hinzu, damit potenzielle Kunden dich leichter finden. 
-                Verwende Begriffe, die deine Leistungen und Expertise beschreiben.
-              </Text>
-            </View>
+              {/* Info Badge - Dezent */}
+              <View style={styles.infoBadge}>
+                <Ionicons name="information-circle-outline" size={16} color="#999" />
+                <Text style={styles.infoBadgeText}>
+                  Füge relevante Suchbegriffe hinzu, damit potenzielle Kunden dich leichter finden.
+                  Verwende Begriffe, die deine Leistungen und Expertise beschreiben.
+                </Text>
+              </View>
 
             {/* Counter */}
-            <View style={styles.counterContainer}>
-              <Text style={styles.counterText}>
-                {keywords.length} / 10 Keywords
-              </Text>
-              {remainingSlots > 0 && (
-                <Text style={styles.remainingText}>
-                  (noch {remainingSlots} {remainingSlots === 1 ? 'Platz' : 'Plätze'} frei)
-                </Text>
-              )}
-            </View>
+            <Text style={styles.counterText}>
+              {keywords.length} / 10 Keywords {remainingSlots > 0 && `(noch ${remainingSlots} frei)`}
+            </Text>
 
-            {/* Keywords Display */}
-            {keywords.length > 0 && (
-              <View style={styles.keywordsContainer}>
+            {/* Tag Input - Keywords innerhalb des Textfelds */}
+            <View style={styles.tagInputContainer}>
+              <View style={styles.tagsWrapper}>
+                {/* Keywords als Chips im Input */}
                 {keywords.map((keyword, index) => (
-                  <View key={index} style={styles.keywordChip}>
-                    <Text style={styles.keywordText}>{keyword}</Text>
+                  <View key={index} style={styles.tagChip}>
+                    <Text style={styles.tagChipText}>{keyword}</Text>
                     <TouchableOpacity 
                       onPress={() => handleRemoveKeyword(index)}
-                      style={styles.removeChipButton}
+                      style={styles.removeTagButton}
                     >
-                      <Ionicons name="close" size={18} color="#666" />
+                      <Ionicons name="close" size={16} color="#3B82F6" />
                     </TouchableOpacity>
                   </View>
                 ))}
-              </View>
-            )}
-
-            {/* Add Keyword */}
-            {keywords.length < 10 && (
-              <View style={styles.addSection}>
-                <Text style={styles.sectionTitle}>Neues Keyword hinzufügen</Text>
                 
-                <View style={styles.inputRow}>
+                {/* Textfeld für neue Keywords */}
+                {keywords.length < 10 && (
                   <TextInput
-                    style={styles.input}
-                    placeholder="z.B. Digitalisierung"
+                    ref={inputRef}
+                    style={styles.tagInput}
+                    placeholder={keywords.length === 0 ? "z.B. Digitalisierung..." : ""}
+                    placeholderTextColor="#999"
                     value={currentInput}
                     onChangeText={setCurrentInput}
                     maxLength={30}
                     returnKeyType="done"
                     onSubmitEditing={handleAddKeyword}
+                    blurOnSubmit={false}
+                    multiline={false}
                   />
-                  <TouchableOpacity 
-                    style={[
-                      styles.addButton,
-                      !currentInput.trim() && styles.addButtonDisabled
-                    ]}
-                    onPress={handleAddKeyword}
-                    disabled={!currentInput.trim()}
-                  >
-                    <Ionicons name="add" size={24} color="#FFFFFF" />
-                  </TouchableOpacity>
-                </View>
-                
-                {currentInput.length > 0 && (
-                  <Text style={styles.charCount}>
-                    {currentInput.length} / 30 Zeichen
-                  </Text>
                 )}
               </View>
-            )}
+              <Text style={styles.inputHint}>Drücke Enter, um das Keyword hinzuzufügen</Text>
+            </View>
 
             {/* Beispiele */}
             <View style={styles.examplesSection}>
-              <View style={styles.examplesHeader}>
-                <Ionicons name="bulb-outline" size={20} color="#F59E0B" />
-                <Text style={styles.examplesTitle}>Beispiele für gute Keywords:</Text>
-              </View>
-              <View style={styles.examplesList}>
-                <View style={styles.exampleCategory}>
-                  <Text style={styles.exampleCategoryTitle}>Beratungsfelder:</Text>
-                  <Text style={styles.exampleText}>
-                    Strategieberatung, IT-Beratung, HR-Beratung, Finanzberatung
-                  </Text>
-                </View>
-                <View style={styles.exampleCategory}>
-                  <Text style={styles.exampleCategoryTitle}>Spezialisierungen:</Text>
-                  <Text style={styles.exampleText}>
-                    Digitale Transformation, Prozessoptimierung, Change Management
-                  </Text>
-                </View>
-                <View style={styles.exampleCategory}>
-                  <Text style={styles.exampleCategoryTitle}>Branchen:</Text>
-                  <Text style={styles.exampleText}>
-                    Automotive, Healthcare, E-Commerce, FinTech
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Tipps */}
-            <View style={styles.tipsSection}>
-              <Text style={styles.tipsTitle}>Tipps:</Text>
-              <Text style={styles.tipText}>✓ Verwende präzise und spezifische Begriffe</Text>
-              <Text style={styles.tipText}>✓ Denke an Synonyme und verwandte Begriffe</Text>
-              <Text style={styles.tipText}>✓ Fokussiere dich auf deine Kernkompetenzen</Text>
-              <Text style={styles.tipText}>✗ Vermeide zu allgemeine Begriffe wie "Beratung"</Text>
+              <Text style={styles.examplesTitle}>So baust du deine Keywords auf</Text>
+              <Text style={styles.exampleIntro}>
+                Kombiniere deine Berufsbezeichnung mit konkreten Leistungen und Spezialisierungen:
+              </Text>
+              
+              <Text style={styles.exampleText}>
+                <Text style={styles.exampleBold}>Steuerberater:</Text> Steuern sparen, Umstrukturierung, Familienstiftung, Betriebsprüfung, Nachfolgeplanung
+              </Text>
+              <Text style={styles.exampleText}>
+                <Text style={styles.exampleBold}>Elektroinstallateur:</Text> Photovoltaik, Wallbox, Smart Home, E-Check, Hausanschluss
+              </Text>
+              <Text style={styles.exampleText}>
+                <Text style={styles.exampleBold}>Schreinerei:</Text> Maßmöbel, Einbauküchen, Treppen, Türen, Restaurierung
+              </Text>
+              <Text style={styles.exampleText}>
+                <Text style={styles.exampleBold}>Marketing Agentur:</Text> Social Media, Content Marketing, SEO, Google Ads, Branding
+              </Text>
+              <Text style={styles.exampleText}>
+                <Text style={styles.exampleBold}>Anwalt:</Text> Arbeitsrecht, Vertragsrecht, Abfindung, Kündigungsschutz, Betriebsrat
+              </Text>
             </View>
           </ScrollView>
-
-          {/* Save Button */}
-          <View style={styles.saveButtonContainer}>
-            <TouchableOpacity 
-              style={styles.saveButton}
-              onPress={handleSave}
-            >
-              <Text style={styles.saveButtonText}>Speichern</Text>
-            </TouchableOpacity>
-          </View>
         </SafeAreaView>
       </LinearGradient>
     </View>
@@ -195,6 +159,7 @@ export default function KeywordsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   gradient: {
     flex: 1,
@@ -205,219 +170,157 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
     paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
+    position: 'relative',
   },
-  backButton: {
-    padding: 8,
+  cancelButton: {
+    position: 'absolute',
+    left: 16,
+    padding: 4,
+    zIndex: 10,
+  },
+  cancelButtonText: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#007AFF',
   },
   title: {
     fontSize: 18,
     fontWeight: '700',
     color: '#000',
+    textAlign: 'center',
   },
-  placeholder: {
-    width: 40,
+  saveTextButton: {
+    position: 'absolute',
+    right: 16,
+    padding: 4,
+    zIndex: 10,
+  },
+  saveTextButtonText: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#007AFF',
   },
   content: {
     flex: 1,
   },
   contentContainer: {
     padding: 20,
-    paddingBottom: 100,
+    paddingBottom: 40,
   },
-  infoBox: {
+  infoBadge: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-    borderRadius: 16,
-    padding: 16,
+    alignItems: 'flex-start',
     gap: 12,
+    backgroundColor: '#F5F5F5',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.2)',
+    borderColor: '#E5E5E5',
   },
-  infoText: {
+  infoBadgeText: {
     flex: 1,
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#1E40AF',
-    lineHeight: 20,
-  },
-  counterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    marginBottom: 24,
-  },
-  counterText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#000',
-  },
-  remainingText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
     color: '#666',
+    lineHeight: 18,
   },
-  keywordsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 32,
-  },
-  keywordChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingLeft: 16,
-    paddingRight: 10,
-    gap: 8,
-    borderWidth: 1.5,
-    borderColor: '#000',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  keywordText: {
+  counterText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#000',
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 20,
   },
-  removeChipButton: {
+  tagInputContainer: {
+    marginBottom: 24,
+  },
+  tagsWrapper: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    minHeight: 56,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  tagChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+    borderRadius: 12,
+    paddingVertical: 4,
+    paddingLeft: 10,
+    paddingRight: 6,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.3)',
+  },
+  tagChipText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1E40AF',
+  },
+  removeTagButton: {
     padding: 2,
   },
-  addSection: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#000',
-    marginBottom: 12,
-  },
-  inputRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 8,
-  },
-  input: {
+  tagInput: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
     fontSize: 15,
     fontWeight: '500',
     color: '#000',
-    borderWidth: 1.5,
-    borderColor: '#E5E5E5',
+    minWidth: 120,
+    paddingVertical: 4,
   },
-  addButton: {
-    width: 52,
-    height: 52,
-    backgroundColor: '#000000',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  addButtonDisabled: {
-    backgroundColor: '#CCCCCC',
-  },
-  charCount: {
+  inputHint: {
     fontSize: 12,
     fontWeight: '500',
     color: '#999',
-    textAlign: 'right',
+    marginTop: 8,
+    textAlign: 'center',
   },
   examplesSection: {
-    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.2)',
-    marginBottom: 20,
-  },
-  examplesHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 16,
+    borderColor: '#E5E5E5',
   },
   examplesTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#92400E',
-  },
-  examplesList: {
-    gap: 12,
-  },
-  exampleCategory: {
-    gap: 4,
-  },
-  exampleCategoryTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#92400E',
-  },
-  exampleText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#92400E',
-    lineHeight: 18,
-  },
-  tipsSection: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-  },
-  tipsTitle: {
-    fontSize: 15,
-    fontWeight: '700',
     color: '#000',
     marginBottom: 12,
   },
-  tipText: {
+  exampleIntro: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#666',
+    lineHeight: 20,
+    marginBottom: 20,
+  },
+  exampleText: {
     fontSize: 14,
     fontWeight: '500',
     color: '#666',
     lineHeight: 22,
-    marginBottom: 4,
+    marginBottom: 12,
   },
-  saveButtonContainer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
-  },
-  saveButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 16,
-    padding: 18,
-    alignItems: 'center',
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  saveButtonText: {
-    fontSize: 17,
-    fontWeight: '800',
-    color: '#FFFFFF',
+  exampleBold: {
+    fontWeight: '700',
+    color: '#000',
   },
 });
 

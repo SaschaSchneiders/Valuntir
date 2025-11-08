@@ -41,6 +41,7 @@ export default function ProfileCard({
             onValueChange={onToggleChange}
             trackColor={{ false: '#D1D5DB', true: '#000000' }}
             thumbColor="#FFFFFF"
+            style={{ transform: [{ scale: 0.85 }] }}
           />
           <Text style={styles.toggleLabel}>
             {isPublicView ? 'Öffentlich' : 'Anbieter'}
@@ -108,9 +109,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   toggleLabel: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#666',
-    marginTop: 4,
+    marginTop: 2,
     fontWeight: '600',
   },
   settingsButton: {
