@@ -21,9 +21,10 @@ export default function SearchScreen({ navigation: navProp }) {
   const navigation = navProp || useNavigation();
   const { isDesktop } = useResponsive();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [locationQuery, setLocationQuery] = useState('');
   const [radius, setRadius] = useState(50); // in km
+  const [isBundesweit, setIsBundesweit] = useState(false);
+  const [minSuccessRate, setMinSuccessRate] = useState(0); // Mindest-Erfolgsquote
   const [showFilters, setShowFilters] = useState(false);
   const [isLocationFocused, setIsLocationFocused] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -163,38 +164,32 @@ export default function SearchScreen({ navigation: navProp }) {
     },
   ];
 
-  const categories = [
-    { key: 'all', label: 'Alle' },
-    { key: 'steuerberatung', label: 'Steuer' },
-    { key: 'marketing', label: 'Marketing' },
-    { key: 'it', label: 'IT' },
-    { key: 'recht', label: 'Recht' },
-    { key: 'design', label: 'Design' },
-  ];
-
   const popularSearches = [
-    { id: 1, icon: 'trending-up', text: 'Steuern sparen', category: 'steuerberatung' },
-    { id: 2, icon: 'cash-outline', text: 'Fixkosten senken', category: 'all' },
-    { id: 3, icon: 'airplane-outline', text: 'Auswandern', category: 'recht' },
-    { id: 4, icon: 'business-outline', text: 'Unternehmen verkaufen', category: 'recht' },
-    { id: 5, icon: 'megaphone-outline', text: 'Online Marketing', category: 'marketing' },
+    { id: 1, icon: 'trending-up', text: 'Steuern sparen' },
+    { id: 2, icon: 'cash-outline', text: 'Fixkosten senken' },
+    { id: 3, icon: 'airplane-outline', text: 'Auswandern' },
+    { id: 4, icon: 'business-outline', text: 'Unternehmen verkaufen' },
+    { id: 5, icon: 'megaphone-outline', text: 'Online Marketing' },
   ];
 
   const filterProviders = () => {
     let filtered = providers;
 
-    if (selectedCategory !== 'all') {
+    // Filter nach Mindest-Erfolgsquote
+    if (minSuccessRate > 0) {
       filtered = filtered.filter(p => 
-        p.category.toLowerCase().includes(selectedCategory.toLowerCase())
+        p.hasActivePlan && p.successRate >= minSuccessRate
       );
     }
 
-    if (locationQuery.trim()) {
+    // Filter nach Standort (nur wenn nicht bundesweit)
+    if (!isBundesweit && locationQuery.trim()) {
       filtered = filtered.filter(p =>
         p.location.toLowerCase().includes(locationQuery.toLowerCase())
       );
     }
 
+    // Filter nach Suchbegriff
     if (searchQuery.trim()) {
       filtered = filtered.filter(p =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -211,11 +206,10 @@ export default function SearchScreen({ navigation: navProp }) {
   const content = (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
-        locations={[0, 0.3, 0.65, 1]}
+        colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        end={{ x: 0, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <ScrollView contentContainerStyle={styles.content}>
@@ -260,7 +254,7 @@ export default function SearchScreen({ navigation: navProp }) {
                   size={22} 
                   color="#000" 
                 />
-                {(locationQuery || selectedCategory !== 'all') && (
+                {(locationQuery || isBundesweit || minSuccessRate > 0) && (
                   <View style={styles.filterBadge} />
                 )}
               </TouchableOpacity>
@@ -365,7 +359,6 @@ export default function SearchScreen({ navigation: navProp }) {
                     style={styles.popularSearchItem}
                     onPress={() => {
                       setSearchQuery(search.text);
-                      setSelectedCategory(search.category);
                     }}
                   >
                     <Ionicons name="trending-up" size={16} color="rgba(255, 255, 255, 0.8)" style={styles.popularSearchIcon} />
@@ -413,15 +406,16 @@ export default function SearchScreen({ navigation: navProp }) {
                 <TouchableOpacity 
                   onPress={() => {
                     setLocationQuery('');
-                    setSelectedCategory('all');
+                    setIsBundesweit(false);
+                    setMinSuccessRate(0);
                     setRadius(50);
                   }}
-                  disabled={!(locationQuery || selectedCategory !== 'all')}
+                  disabled={!(locationQuery || isBundesweit || minSuccessRate > 0)}
                   style={styles.resetButton}
                 >
                   <Text style={[
                     styles.resetButtonText,
-                    !(locationQuery || selectedCategory !== 'all') && styles.resetButtonTextDisabled
+                    !(locationQuery || isBundesweit || minSuccessRate > 0) && styles.resetButtonTextDisabled
                   ]}>
                     Zurücksetzen
                   </Text>
@@ -430,30 +424,57 @@ export default function SearchScreen({ navigation: navProp }) {
 
               {/* Standort-Filter */}
               <View style={styles.filterSection}>
-              <Text style={styles.filterSectionTitle}>Standort</Text>
-              <View style={styles.locationInputContainer}>
-                <Ionicons name="location-outline" size={20} color="#999" style={styles.locationIcon} />
-                <TextInput
-                  style={styles.locationInput}
-                  placeholder="Stadt oder PLZ..."
-                  placeholderTextColor="#999"
-                  value={locationQuery}
-                  onChangeText={setLocationQuery}
-                  onFocus={() => setIsLocationFocused(true)}
-                  onBlur={() => setIsLocationFocused(false)}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  returnKeyType="done"
-                />
-                {locationQuery.length > 0 && (
-                  <TouchableOpacity onPress={() => setLocationQuery('')}>
-                    <Ionicons name="close-circle" size={20} color="#999" />
-                  </TouchableOpacity>
-                )}
+              <View style={styles.sectionTitleContainer}>
+                <Text style={styles.filterSectionTitle}>Standort</Text>
               </View>
+              
+              {/* Standort-Eingabe */}
+              {!isBundesweit && (
+                <View style={styles.locationInputContainer}>
+                  <Ionicons name="location-outline" size={20} color="#999" style={styles.locationIcon} />
+                  <TextInput
+                    style={styles.locationInput}
+                    placeholder="Stadt oder PLZ..."
+                    placeholderTextColor="#999"
+                    value={locationQuery}
+                    onChangeText={setLocationQuery}
+                    onFocus={() => setIsLocationFocused(true)}
+                    onBlur={() => setIsLocationFocused(false)}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    returnKeyType="done"
+                  />
+                  {locationQuery.length > 0 && (
+                    <TouchableOpacity onPress={() => setLocationQuery('')}>
+                      <Ionicons name="close-circle" size={20} color="#999" />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
 
-              {/* Radius Slider */}
-              {(locationQuery.length > 0 || isLocationFocused) && (
+              {/* Bundesweit Toggle - unter dem Textfeld */}
+              <TouchableOpacity 
+                style={styles.bundesweitToggle}
+                onPress={() => {
+                  setIsBundesweit(!isBundesweit);
+                  if (!isBundesweit) {
+                    setLocationQuery('');
+                  }
+                }}
+              >
+                <View style={[
+                  styles.checkbox,
+                  isBundesweit && styles.checkboxActive
+                ]}>
+                  {isBundesweit && (
+                    <Ionicons name="checkmark" size={16} color="#FFF" />
+                  )}
+                </View>
+                <Text style={styles.bundesweitText}>Bundesweit suchen</Text>
+              </TouchableOpacity>
+
+              {/* Radius Slider - nur wenn nicht bundesweit */}
+              {!isBundesweit && (locationQuery.length > 0 || isLocationFocused) && (
                 <View style={styles.radiusContainer}>
                   <View style={styles.radiusHeader}>
                     <Text style={styles.radiusLabel}>Umkreis</Text>
@@ -470,37 +491,80 @@ export default function SearchScreen({ navigation: navProp }) {
                     maximumTrackTintColor="#E5E5E5"
                     thumbTintColor="#000000"
                   />
-                  <View style={styles.radiusMarkers}>
-                    <Text style={styles.radiusMarker}>5 km</Text>
-                    <Text style={styles.radiusMarker}>200 km</Text>
-                  </View>
                 </View>
               )}
             </View>
 
-            {/* Kategorie Filter */}
+            {/* Erfolgsquoten Filter */}
             <View style={[styles.filterSection, { marginBottom: 0 }]}>
-              <Text style={styles.filterSectionTitle}>Branche</Text>
-              <View style={styles.categoryContainer}>
-                {categories.map((cat) => (
-                  <TouchableOpacity
-                    key={cat.key}
+              <View style={styles.sectionTitleContainer}>
+                <Text style={styles.filterSectionTitle}>Mindest-Erfolgsquote</Text>
+              </View>
+              <View style={styles.successRatePillsContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.successRatePill,
+                    minSuccessRate === 0 && styles.successRatePillActive
+                  ]}
+                  onPress={() => setMinSuccessRate(0)}
+                >
+                  <Text
                     style={[
-                      styles.categoryTab,
-                      selectedCategory === cat.key && styles.categoryTabActive
+                      styles.successRatePillText,
+                      minSuccessRate === 0 && styles.successRatePillTextActive
                     ]}
-                    onPress={() => setSelectedCategory(cat.key)}
                   >
-                    <Text
-                      style={[
-                        styles.categoryTabText,
-                        selectedCategory === cat.key && styles.categoryTabTextActive
-                      ]}
-                    >
-                      {cat.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                    Alle
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.successRatePill,
+                    minSuccessRate === 70 && styles.successRatePillActive
+                  ]}
+                  onPress={() => setMinSuccessRate(70)}
+                >
+                  <Text
+                    style={[
+                      styles.successRatePillText,
+                      minSuccessRate === 70 && styles.successRatePillTextActive
+                    ]}
+                  >
+                    70%
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.successRatePill,
+                    minSuccessRate === 80 && styles.successRatePillActive
+                  ]}
+                  onPress={() => setMinSuccessRate(80)}
+                >
+                  <Text
+                    style={[
+                      styles.successRatePillText,
+                      minSuccessRate === 80 && styles.successRatePillTextActive
+                    ]}
+                  >
+                    80%
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.successRatePill,
+                    minSuccessRate === 90 && styles.successRatePillActive
+                  ]}
+                  onPress={() => setMinSuccessRate(90)}
+                >
+                  <Text
+                    style={[
+                      styles.successRatePillText,
+                      minSuccessRate === 90 && styles.successRatePillTextActive
+                    ]}
+                  >
+                    90%
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
 
@@ -769,11 +833,38 @@ const styles = StyleSheet.create({
   filterSection: {
     marginBottom: 20,
   },
+  sectionTitleContainer: {
+    marginBottom: 12,
+  },
   filterSectionTitle: {
     fontSize: 16,
     fontWeight: '700',
     color: '#000',
-    marginBottom: 12,
+  },
+  bundesweitToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    marginTop: 8,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#CCCCCC',
+    marginRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkboxActive: {
+    backgroundColor: '#000000',
+    borderColor: '#000000',
+  },
+  bundesweitText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#000000',
   },
   locationInputContainer: {
     flexDirection: 'row',
@@ -822,39 +913,30 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
   },
-  radiusMarkers: {
+  successRatePillsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: -8,
-  },
-  radiusMarker: {
-    fontSize: 11,
-    color: '#999',
-    fontWeight: '500',
-  },
-  categoryContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 8,
   },
-  categoryTab: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+  successRatePill: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
     borderRadius: 20,
     backgroundColor: '#F5F5F5',
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.06)',
+    alignItems: 'center',
   },
-  categoryTabActive: {
+  successRatePillActive: {
     backgroundColor: '#000000',
     borderColor: '#000000',
   },
-  categoryTabText: {
-    fontSize: 14,
+  successRatePillText: {
+    fontSize: 13,
     fontWeight: '600',
     color: '#666666',
   },
-  categoryTabTextActive: {
+  successRatePillTextActive: {
     color: '#FFFFFF',
   },
   applyButton: {
