@@ -45,9 +45,9 @@ export default function Sidebar({ navigation, currentRoute }) {
       isTab: true 
     },
     { icon: 'search-outline', label: 'Suche', route: 'Search', isTab: true },
-    { icon: 'notifications-outline', label: 'Reminder', route: 'Reminders', isTab: false },
+    { icon: 'settings-outline', label: 'Einstellungen', route: 'Settings', isTab: true },
     { icon: 'person-outline', label: 'Profil', route: 'Profile', isTab: true },
-    { icon: 'settings-outline', label: 'Einstellungen', route: 'Settings', isTab: false },
+    { icon: 'notifications-outline', label: 'Reminder', route: 'Reminders', isTab: false },
   ];
 
   const handleNavigation = (item) => {

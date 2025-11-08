@@ -18,6 +18,7 @@ import RateScale from '../shared/RateScale';
 import RatingBreakdown from '../shared/RatingBreakdown';
 import CustomAlert from '../shared/CustomAlert';
 import ProfileFAB from '../shared/ProfileFAB';
+import ToggleSettingsFAB from '../shared/ToggleSettingsFAB';
 import ProfileDescription from '../shared/ProfileDescription';
 import QuickActionButtons from '../shared/QuickActionButtons';
 import ProjectComments from '../shared/ProjectComments';
@@ -362,6 +363,7 @@ export default function ProfileScreen({ navigation: navProp }) {
               onSettingsPress={() => navigation.navigate('Settings')}
               companyName="Beratungszentrum Nord GmbH"
               branch="Unternehmensberatung"
+              showControls={false}
               coverImage={coverImageValue}
             />
 
@@ -784,6 +786,13 @@ export default function ProfileScreen({ navigation: navProp }) {
           }}
         />
       )}
+
+      {/* Toggle FAB */}
+      <ToggleSettingsFAB
+        isPublicView={isPublicView}
+        onToggle={() => setIsPublicView(!isPublicView)}
+        bottom={isPublicView && favoriteContact ? 120 : 110}
+      />
 
       {/* Custom Alert */}
       <CustomAlert
