@@ -9,7 +9,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 import FilterPills from '../shared/FilterPills';
 import ConnectionCard from '../shared/ConnectionCard';
 import DesktopLayout from '../components/DesktopLayout';
@@ -123,39 +122,48 @@ export default function ReminderScreen({ navigation }) {
   const content = (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
-        locations={[0, 0.3, 0.65, 1]}
+        colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        end={{ x: 0, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
-          {/* Zurück-Button - nur auf Mobile */}
-          {!isDesktop && (
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
+          <View style={styles.screenContainer}>
+            {/* Sticky Header */}
+            <View style={styles.stickyHeader}>
+              {/* Zurück-Button + Titel in einer Zeile */}
+              {!isDesktop && (
+                <View style={styles.headerRow}>
+                  <TouchableOpacity 
+                    style={styles.backButton}
+                    onPress={() => navigation.goBack()}
+                  >
+                    <View style={styles.backButtonContainer}>
+                      <Ionicons name="chevron-back" size={24} color="#000" />
+                    </View>
+                  </TouchableOpacity>
+                  
+                  <Text style={styles.headerTitle}>Erinnerungen</Text>
+                </View>
+              )}
+              
+              {isDesktop && (
+                <Text style={styles.headerTitle}>Erinnerungen</Text>
+              )}
+              
+              <FilterPills 
+                tabs={filterTabs}
+                selectedFilter={selectedFilter}
+                onFilterChange={setSelectedFilter}
+              />
+            </View>
+
+            {/* Scrollable Content */}
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.content}
+              showsVerticalScrollIndicator={false}
             >
-              <View style={styles.backButtonContainer}>
-                <Ionicons name="chevron-back" size={28} color="#000" />
-              </View>
-            </TouchableOpacity>
-          )}
-
-          <ScrollView contentContainerStyle={styles.content}>
-            <HeaderWithSubtitle 
-              title="Erinnerungen" 
-              subtitle="Geplante Bewertungen"
-            />
-
-            <FilterPills 
-              tabs={filterTabs}
-              selectedFilter={selectedFilter}
-              onFilterChange={setSelectedFilter}
-            />
-
-            {/* Reminder Liste */}
-            <View style={styles.remindersList}>
               {filteredReminders.length === 0 ? (
                 <View style={styles.emptyState}>
                   <Ionicons name="notifications-off-outline" size={64} color="#999" />
@@ -163,16 +171,17 @@ export default function ReminderScreen({ navigation }) {
                 </View>
               ) : (
                 filteredReminders.map((reminder) => (
-                  <ConnectionCard
-                    key={reminder.id}
-                    connection={reminder}
-                    onPress={() => handleRateConnection(reminder)}
-                    isReminderMode={true}
-                  />
+                  <View key={reminder.id} style={styles.cardWrapper}>
+                    <ConnectionCard
+                      connection={reminder}
+                      onPress={() => handleRateConnection(reminder)}
+                      isReminderMode={true}
+                    />
+                  </View>
                 ))
               )}
-            </View>
-          </ScrollView>
+            </ScrollView>
+          </View>
         </SafeAreaView>
       </LinearGradient>
     </View>
@@ -185,7 +194,7 @@ export default function ReminderScreen({ navigation }) {
         navigation={navigation}
         currentRoute="Reminders"
         title="Erinnerungen"
-        subtitle="Anstehende Bewertungen"
+        subtitle="Deine anstehenden Bewertungen"
       >
         {content}
       </DesktopLayout>
@@ -205,17 +214,30 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
+  screenContainer: {
+    flex: 1,
+  },
+  stickyHeader: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 8,
+    backgroundColor: '#F8F9FA',
+    zIndex: 100,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 18,
+    paddingTop: 8,
+    gap: 12,
+  },
   backButton: {
-    position: 'absolute',
-    top: 60,
-    left: 20,
-    zIndex: 1000,
   },
   backButtonContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -223,14 +245,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.08)',
+  },
+  headerTitle: {
+    fontSize: 34,
+    fontWeight: '800',
+    color: '#000000',
+    letterSpacing: -0.5,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
-    padding: 20,
-    paddingTop: 60,
+    paddingHorizontal: 20,
+    paddingTop: 8,
     paddingBottom: 100,
   },
-  remindersList: {
-    gap: 10,
+  cardWrapper: {
+    marginBottom: 16,
   },
   emptyState: {
     alignItems: 'center',

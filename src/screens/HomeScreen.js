@@ -160,32 +160,37 @@ export default function HomeScreen({ navigation }) {
   const content = (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
-        locations={[0, 0.3, 0.65, 1]}
+        colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        end={{ x: 0, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
-          <ScrollView contentContainerStyle={styles.content}>
-            {!isDesktop && (
-              <HeaderWithSubtitle 
-                title="Valuntir" 
-                subtitle="Bewerte deine Connections"
-                showIcon={true}
-                iconName="notifications-outline"
-                onIconPress={() => navigation.navigate('Reminders')}
+          <View style={styles.container}>
+            {/* STICKY Header + Filter Pills */}
+            <View style={styles.stickyHeader}>
+              {!isDesktop && (
+                <HeaderWithSubtitle 
+                  title="Valuntir" 
+                  subtitle="Bewerte deine Connections"
+                  showIcon={true}
+                  iconName="notifications-outline"
+                  onIconPress={() => navigation.navigate('Reminders')}
+                />
+              )}
+              <FilterPills 
+                tabs={filterTabs}
+                selectedFilter={selectedFilter}
+                onFilterChange={setSelectedFilter}
               />
-            )}
+            </View>
 
-            <FilterPills 
-              tabs={filterTabs}
-              selectedFilter={selectedFilter}
-              onFilterChange={setSelectedFilter}
-            />
-
-            {/* Connection Liste */}
-            <View style={styles.connectionsList}>
+            {/* Scrollable Cards */}
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.content}
+              showsVerticalScrollIndicator={false}
+            >
               {filteredConnections.length === 0 ? (
                 <View style={styles.emptyState}>
                   <Ionicons name="checkmark-circle-outline" size={64} color="#999" />
@@ -193,16 +198,17 @@ export default function HomeScreen({ navigation }) {
                 </View>
               ) : (
                 filteredConnections.map((connection) => (
-                  <ConnectionCard
-                    key={connection.id}
-                    connection={connection}
-                    onPress={() => handleRateConnection(connection)}
-                    onSetReminder={handleSetReminder}
-                  />
+                  <View key={connection.id} style={styles.cardWrapper}>
+                    <ConnectionCard
+                      connection={connection}
+                      onPress={() => handleRateConnection(connection)}
+                      onSetReminder={handleSetReminder}
+                    />
+                  </View>
                 ))
               )}
-            </View>
-          </ScrollView>
+            </ScrollView>
+          </View>
         </SafeAreaView>
       </LinearGradient>
 
@@ -243,12 +249,26 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
+  container: {
+    flex: 1,
+  },
+  stickyHeader: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 8,
+    backgroundColor: '#F8F9FA',
+    zIndex: 100,
+  },
+  scrollView: {
+    flex: 1,
+  },
   content: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 8,
     paddingBottom: 100,
   },
-  connectionsList: {
-    gap: 10,
+  cardWrapper: {
+    marginBottom: 16,
   },
   emptyState: {
     alignItems: 'center',

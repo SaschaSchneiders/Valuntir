@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ConnectionCard({ connection, onPress, onSetReminder, isReminderMode = false }) {
@@ -88,10 +89,19 @@ export default function ConnectionCard({ connection, onPress, onSetReminder, isR
 
       {connection.status === 'pending' && (
         <View style={styles.actionRow}>
-          <TouchableOpacity style={styles.rateButton} onPress={onPress}>
-            <Text style={styles.rateButtonText}>Jetzt bewerten</Text>
-            <Ionicons name="arrow-forward" size={16} color="#FFF" />
-          </TouchableOpacity>
+          <View style={styles.rateButtonContainer}>
+            <LinearGradient
+              colors={['#3A3A3A', '#0F0F0F', '#3A3A3A']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0.8 }}
+              style={styles.rateButtonGradient}
+            >
+              <TouchableOpacity style={styles.rateButton} onPress={onPress} activeOpacity={0.85}>
+                <Text style={styles.rateButtonText}>Jetzt bewerten</Text>
+                <Ionicons name="arrow-forward" size={16} color="#FFF" />
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
           
           <TouchableOpacity 
             style={styles.reminderButton}
@@ -104,10 +114,19 @@ export default function ConnectionCard({ connection, onPress, onSetReminder, isR
       
       {connection.status === 'reminder' && (
         <View style={styles.actionRow}>
-          <TouchableOpacity style={styles.rateButton} onPress={onPress}>
-            <Text style={styles.rateButtonText}>Jetzt bewerten</Text>
-            <Ionicons name="arrow-forward" size={16} color="#FFF" />
-          </TouchableOpacity>
+          <View style={styles.rateButtonContainer}>
+            <LinearGradient
+              colors={['#3A3A3A', '#0F0F0F', '#3A3A3A']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0.8 }}
+              style={styles.rateButtonGradient}
+            >
+              <TouchableOpacity style={styles.rateButton} onPress={onPress} activeOpacity={0.85}>
+                <Text style={styles.rateButtonText}>Jetzt bewerten</Text>
+                <Ionicons name="arrow-forward" size={16} color="#FFF" />
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
         </View>
       )}
 
@@ -152,18 +171,18 @@ export default function ConnectionCard({ connection, onPress, onSetReminder, isR
 const styles = StyleSheet.create({
   connectionCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 24,
+    padding: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 5,
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
     borderWidth: 1,
-    borderColor: '#F0F0F0',
+    borderColor: 'rgba(0, 0, 0, 0.08)',
   },
   connectionHeader: {
     flexDirection: 'row',
@@ -173,15 +192,17 @@ const styles = StyleSheet.create({
   connectionIcon: {
     width: 40,
     height: 40,
-    borderRadius: 10,
-    backgroundColor: '#F5F5F5',
+    borderRadius: 20,
+    backgroundColor: 'rgba(248, 249, 250, 0.95)',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
     elevation: 2,
   },
   connectionInfo: {
@@ -204,7 +225,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: '#F0F0F0',
+    borderColor: 'rgba(0, 0, 0, 0.04)',
     marginBottom: 12,
   },
   connectionAmount: {
@@ -233,23 +254,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
-  rateButton: {
+  rateButtonContainer: {
     flex: 1,
-    backgroundColor: '#000000',
-    borderRadius: 12,
+    borderRadius: 32,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  rateButtonGradient: {
+    borderRadius: 32,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  rateButton: {
     paddingVertical: 12,
     paddingHorizontal: 18,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   rateButtonText: {
     color: '#FFFFFF',
@@ -259,37 +284,39 @@ const styles = StyleSheet.create({
   reminderButton: {
     width: 44,
     height: 44,
-    borderRadius: 12,
-    backgroundColor: '#F5F5F5',
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: 'rgba(0, 0, 0, 0.08)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
-    shadowRadius: 4,
+    shadowRadius: 6,
     elevation: 2,
   },
   // Modal Styles
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 24,
     width: '100%',
     maxWidth: 400,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
   },
   modalTitle: {
     fontSize: 20,
@@ -307,10 +334,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
     paddingHorizontal: 12,
-    borderRadius: 12,
+    borderRadius: 16,
     backgroundColor: '#F8F9FA',
     marginBottom: 10,
     gap: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.04)',
   },
   reminderOptionText: {
     flex: 1,

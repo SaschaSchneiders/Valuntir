@@ -30,7 +30,7 @@ export default function FilterPills({ tabs, selectedFilter, onFilterChange }) {
 const styles = StyleSheet.create({
   filterContainer: {
     flexDirection: 'row',
-    marginBottom: 24,
+    marginBottom: 6,
     gap: 6,
   },
   filterTab: {
@@ -38,14 +38,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 6,
     borderRadius: 20,
-    backgroundColor: 'rgba(245, 245, 245, 0.6)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.05)',
+    borderColor: 'rgba(0, 0, 0, 0.08)',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
   },
   filterTabActive: {
     backgroundColor: '#000000',
     borderColor: '#000000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
   },
   filterTabText: {
     fontSize: 12,

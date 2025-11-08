@@ -26,7 +26,7 @@ export default function HeaderWithSubtitle({
 
 const styles = StyleSheet.create({
   header: {
-    marginBottom: 24,
+    marginBottom: 18,
     paddingTop: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
