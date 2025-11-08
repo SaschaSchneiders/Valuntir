@@ -177,7 +177,7 @@ export default function ProfileScreen({ navigation: navProp }) {
   const [linkedInValue, setLinkedInValue] = useState('https://linkedin.com/company/beratungszentrum-nord');
   const [instagramValue, setInstagramValue] = useState('https://instagram.com/beratungszentrum.nord');
   const [changeRequestMessage, setChangeRequestMessage] = useState('');
-  const [coverImageValue, setCoverImageValue] = useState('https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=200&fit=crop'); // Beispiel-Titelbild
+  const [coverImageValue, setCoverImageValue] = useState(null); // Fallback-Titelbild wird verwendet
   
   // Favorisierte Kontaktmöglichkeit für FAB
   const [favoriteContact, setFavoriteContact] = useState(null); // 'email', 'phone', 'whatsapp' oder null
@@ -501,17 +501,23 @@ export default function ProfileScreen({ navigation: navProp }) {
                     />
                   </View>
           
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('LogoUpload')}
+          >
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="image-outline" size={20} color="#000" />
                       </View>
-                      <Text style={styles.menuText}>Logo hochladen</Text>
+                      <Text style={styles.menuText}>Profilbild hochladen</Text>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color="#999" />
           </TouchableOpacity>
           
-                  <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
+                  <TouchableOpacity 
+            style={[styles.menuItem, styles.menuItemLast]}
+            onPress={() => navigation.navigate('CoverImageUpload')}
+          >
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="images-outline" size={20} color="#000" />
@@ -526,14 +532,17 @@ export default function ProfileScreen({ navigation: navProp }) {
                 <View style={styles.menuCard}>
                   <Text style={styles.cardTitle}>Sichtbarkeit</Text>
                   
-                  <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
+                  <TouchableOpacity 
+            style={[styles.menuItem, styles.menuItemLast]}
+            onPress={() => navigation.navigate('Keywords')}
+          >
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="pricetag-outline" size={20} color="#000" />
                       </View>
                       <View>
                         <Text style={styles.menuText}>Such-Keywords</Text>
-                        <Text style={styles.menuSubtext}>Max. 8-10 Stichworte</Text>
+                        <Text style={styles.menuSubtext}>Erhöhe deine Sichtbarkeit in der Suche</Text>
                       </View>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color="#999" />

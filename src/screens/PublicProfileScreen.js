@@ -78,7 +78,7 @@ export default function PublicProfileScreen({ route }) {
       'marketing_xyz': {
         companyName: 'Marketing Agentur XYZ',
         branch: 'Marketing',
-        coverImage: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=200&fit=crop',
+        coverImage: null, // Fallback wird verwendet
         description: 'Full-Service Marketingagentur mit Schwerpunkt auf digitalem Marketing und Markenentwicklung. Wir helfen Unternehmen, ihre Zielgruppe zu erreichen und messbare Ergebnisse zu erzielen.',
         websiteUrl: 'https://marketing-xyz.de',
         calendarUrl: 'https://calendly.com/marketing-xyz',

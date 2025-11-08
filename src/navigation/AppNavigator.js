@@ -11,6 +11,9 @@ import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import PublicProfileScreen from '../screens/PublicProfileScreen';
 import ReminderScreen from '../screens/ReminderScreen';
+import LogoUploadScreen from '../screens/LogoUploadScreen';
+import CoverImageUploadScreen from '../screens/CoverImageUploadScreen';
+import KeywordsScreen from '../screens/KeywordsScreen';
 
 // Components
 import FloatingTabBar from '../components/FloatingTabBar';
@@ -81,6 +84,9 @@ export default function AppNavigator() {
         <Stack.Screen name="Main" component={TabNavigator} />
           <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
           <Stack.Screen name="Reminders" component={ReminderScreen} />
+          <Stack.Screen name="LogoUpload" component={LogoUploadScreen} />
+          <Stack.Screen name="CoverImageUpload" component={CoverImageUploadScreen} />
+          <Stack.Screen name="Keywords" component={KeywordsScreen} />
       </Stack.Navigator>
         <PackageBadge />
     </NavigationContainer>

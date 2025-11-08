@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Switch, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import FallbackCoverImage from './FallbackCoverImage';
 
 export default function ProfileCard({
   isPublicView,
@@ -14,9 +15,9 @@ export default function ProfileCard({
 }) {
   return (
     <View style={styles.profileCard}>
-      {/* Titelbild - nur wenn gesetzt */}
-      {coverImage && (
-        <View style={styles.coverImageContainer}>
+      {/* Titelbild - immer angezeigt (mit Fallback wenn nicht gesetzt) */}
+      <View style={styles.coverImageContainer}>
+        {coverImage ? (
           <ImageBackground
             source={{ uri: coverImage }}
             style={styles.coverImage}
@@ -27,8 +28,10 @@ export default function ProfileCard({
               style={styles.coverOverlay}
             />
           </ImageBackground>
-        </View>
-      )}
+        ) : (
+          <FallbackCoverImage />
+        )}
+      </View>
 
       {/* Toggle - Absolut positioniert - nur wenn showControls true */}
       {showControls && (
@@ -55,11 +58,8 @@ export default function ProfileCard({
         </TouchableOpacity>
       )}
 
-      {/* Avatar - überlappt Titelbild wenn vorhanden */}
-      <View style={[
-        styles.avatarContainer,
-        coverImage && styles.avatarContainerWithCover
-      ]}>
+      {/* Avatar - überlappt Titelbild immer */}
+      <View style={[styles.avatarContainer, styles.avatarContainerWithCover]}>
         <View style={styles.avatar}>
           <Ionicons name="business" size={48} color="#FFFFFF" />
         </View>
