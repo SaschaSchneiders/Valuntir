@@ -15,6 +15,7 @@ import RatingBreakdown from '../shared/RatingBreakdown';
 import ProfileMetrics from '../shared/ProfileMetrics';
 import ConnectionMetrics from '../shared/ConnectionMetrics';
 import FirstMoverMetrics from '../shared/FirstMoverMetrics';
+import VolumeMetrics from '../shared/VolumeMetrics';
 import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 import DesktopLayout from '../components/DesktopLayout';
 import { useResponsive } from '../utils/responsive';
@@ -22,9 +23,10 @@ import { usePackage } from '../context/PackageContext';
 import ProPlanPromoScreen from './ProPlanPromoScreen';
 
 export default function DashboardScreen({ navigation }) {
-  const { isDesktop, isLargeDesktop } = useResponsive();
+  const { isDesktop } = useResponsive();
   const { isBusiness, isPro, isFree } = usePackage();
   const [isConnectionMetricsPublic, setIsConnectionMetricsPublic] = useState(false);
+  const [isVolumeMetricsPublic, setIsVolumeMetricsPublic] = useState(false);
 
   // FREE-Modus: Zeige Pro-Plan Promotion
   if (isFree) {
@@ -73,6 +75,12 @@ export default function DashboardScreen({ navigation }) {
   const connectionsPending = 3;
   const connectionsRated = 20;
   const totalVolumeRated = 87350; // Gesamtvolumen der bewerteten Connections in €
+  
+  // Volume Metrics
+  const averageProjectValue = Math.round(totalVolumeRated / connectionsRated); // Durchschnittlicher Auftragswert
+  const largestProject = 15000; // Größtes bewertetes Projekt in €
+  const returningCustomers = 8; // Anzahl Stammkunden
+  const returningCustomersPercent = Math.round((returningCustomers / connectionsRated) * 100); // Prozent Stammkunden
 
   // First Mover Statistiken
   const totalFirstMovers = 7; // Anzahl Unternehmen, die als erster bewertet wurden
@@ -86,6 +94,13 @@ export default function DashboardScreen({ navigation }) {
     setIsConnectionMetricsPublic(value);
     // Hier könnte später ein API-Call erfolgen, um die Einstellung zu speichern
     console.log('Connection Metrics öffentlich:', value);
+  };
+
+  // Handler für den Public-Toggle der Volume Metrics
+  const handleToggleVolumeMetricsPublic = (value) => {
+    setIsVolumeMetricsPublic(value);
+    // Hier könnte später ein API-Call erfolgen, um die Einstellung zu speichern
+    console.log('Volume Metrics öffentlich:', value);
   };
   
   // Hilfsfunktion zum Generieren realistischer Daten mit erkennbarem Verlauf
@@ -183,6 +198,22 @@ export default function DashboardScreen({ navigation }) {
                 showLabel={false}
                 title="Erfolgsquote"
                 totalRatings={totalRatings}
+              />
+            </View>
+
+            {/* Volume Metrics - Bewertetes Umsatzvolumen */}
+            <View style={{ marginBottom: 24 }}>
+              <VolumeMetrics
+                totalVolume={totalVolumeRated}
+                totalProjects={connectionsRated}
+                averageValue={averageProjectValue}
+                largestProject={largestProject}
+                returningCustomers={returningCustomers}
+                returningCustomersPercent={returningCustomersPercent}
+                isPublic={isVolumeMetricsPublic}
+                onTogglePublic={handleToggleVolumeMetricsPublic}
+                isPublicView={false}
+                showPublicToggle={true}
               />
             </View>
 

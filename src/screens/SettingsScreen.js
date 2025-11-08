@@ -18,7 +18,7 @@ import { usePackage, PACKAGE_TYPES } from '../context/PackageContext';
 export default function SettingsScreen({ navigation: navProp }) {
   const navigation = navProp || useNavigation();
   const { isDesktop } = useResponsive();
-  const { currentPackage, switchPackage, isFree, isPro, isBusiness } = usePackage();
+  const { switchPackage, isFree, isPro, isBusiness } = usePackage();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
 

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { usePackage } from '../context/PackageContext';
 
 export default function PackageBadge() {
-  const { currentPackage, isFree, isPro, isBusiness } = usePackage();
+  const { isFree, isPro, isBusiness } = usePackage();
 
   const getBadgeStyle = () => {
     if (isFree) {

@@ -14,6 +14,7 @@ import ProjectComments from '../shared/ProjectComments';
 import ContactSection from '../shared/ContactSection';
 import ProfileFAB from '../shared/ProfileFAB';
 import ConnectionMetrics from '../shared/ConnectionMetrics';
+import VolumeMetrics from '../shared/VolumeMetrics';
 
 export default function PublicProfileScreen({ route }) {
   const navigation = useNavigation();
@@ -47,6 +48,12 @@ export default function PublicProfileScreen({ route }) {
         connectionsPending: 8,
         connectionsRated: 37,
         totalVolumeRated: 142500,
+        // Volume Metrics
+        isVolumeMetricsPublic: true,
+        averageProjectValue: 3851, // 142500 / 37
+        largestProject: 28000,
+        returningCustomers: 15,
+        returningCustomersPercent: 41, // 15 von 37
         comments: [
           {
             id: 1,
@@ -93,6 +100,12 @@ export default function PublicProfileScreen({ route }) {
         connectionsPending: 5,
         connectionsRated: 27,
         totalVolumeRated: 98750,
+        // Volume Metrics
+        isVolumeMetricsPublic: false, // Bei diesem Provider ist es deaktiviert
+        averageProjectValue: 3657, // 98750 / 27
+        largestProject: 18500,
+        returningCustomers: 11,
+        returningCustomersPercent: 41, // 11 von 27
         comments: [
           {
             id: 1,
@@ -220,6 +233,23 @@ export default function PublicProfileScreen({ route }) {
                 totalRatings={provider.totalRatings}
               />
             </View>
+
+            {/* Volume Metrics - nur wenn öffentlich */}
+            {provider.isVolumeMetricsPublic && (
+              <View style={{ marginBottom: 32 }}>
+                <VolumeMetrics
+                  totalVolume={provider.totalVolumeRated}
+                  totalProjects={provider.connectionsRated}
+                  averageValue={provider.averageProjectValue}
+                  largestProject={provider.largestProject}
+                  returningCustomers={provider.returningCustomers}
+                  returningCustomersPercent={provider.returningCustomersPercent}
+                  isPublic={provider.isVolumeMetricsPublic}
+                  isPublicView={true}
+                  showPublicToggle={false}
+                />
+              </View>
+            )}
 
             {/* Bewertungsdetails - 4 Kernbereiche */}
             <View style={{ marginBottom: 32 }}>

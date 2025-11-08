@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import ProviderCard from '../shared/ProviderCard';
@@ -22,7 +21,6 @@ export default function SearchScreen({ navigation: navProp }) {
   const { isDesktop } = useResponsive();
   const [searchQuery, setSearchQuery] = useState('');
   const [locationQuery, setLocationQuery] = useState('');
-  const [radius, setRadius] = useState(50); // in km
   const [isBundesweit, setIsBundesweit] = useState(false);
   const [minSuccessRate, setMinSuccessRate] = useState(0); // Mindest-Erfolgsquote
   const [showFilters, setShowFilters] = useState(false);
@@ -408,7 +406,6 @@ export default function SearchScreen({ navigation: navProp }) {
                     setLocationQuery('');
                     setIsBundesweit(false);
                     setMinSuccessRate(0);
-                    setRadius(50);
                   }}
                   disabled={!(locationQuery || isBundesweit || minSuccessRate > 0)}
                   style={styles.resetButton}
@@ -473,26 +470,6 @@ export default function SearchScreen({ navigation: navProp }) {
                 <Text style={styles.bundesweitText}>Bundesweit suchen</Text>
               </TouchableOpacity>
 
-              {/* Radius Slider - nur wenn nicht bundesweit */}
-              {!isBundesweit && (locationQuery.length > 0 || isLocationFocused) && (
-                <View style={styles.radiusContainer}>
-                  <View style={styles.radiusHeader}>
-                    <Text style={styles.radiusLabel}>Umkreis</Text>
-                    <Text style={styles.radiusValue}>{radius} km</Text>
-                  </View>
-                  <Slider
-                    style={styles.slider}
-                    minimumValue={5}
-                    maximumValue={200}
-                    step={5}
-                    value={radius}
-                    onValueChange={setRadius}
-                    minimumTrackTintColor="#000000"
-                    maximumTrackTintColor="#E5E5E5"
-                    thumbTintColor="#000000"
-                  />
-                </View>
-              )}
             </View>
 
             {/* Erfolgsquoten Filter */}
@@ -884,34 +861,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#000',
     fontWeight: '500',
-  },
-  radiusContainer: {
-    marginTop: 16,
-    backgroundColor: '#FAFAFA',
-    borderRadius: 20,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.05)',
-  },
-  radiusHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  radiusLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
-  },
-  radiusValue: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#000',
-  },
-  slider: {
-    width: '100%',
-    height: 40,
   },
   successRatePillsContainer: {
     flexDirection: 'row',
