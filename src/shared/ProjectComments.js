@@ -64,7 +64,7 @@ export default function ProjectComments({ comments = [] }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 20,
     marginBottom: 32,
     overflow: 'hidden',
     borderWidth: 1,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   badge: {
     backgroundColor: '#000',
-    borderRadius: 12,
+    borderRadius: 20,
     paddingHorizontal: 8,
     paddingVertical: 2,
     minWidth: 24,

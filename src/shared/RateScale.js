@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   },
   gradientBar: {
     width: '100%',
-    borderRadius: 16,
+    borderRadius: 24,
     position: 'relative',
     overflow: 'hidden',
     shadowColor: '#000',
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    borderRadius: 16,
+    borderRadius: 24,
   },
   markersContainer: {
     position: 'absolute',
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
   },
   bubble: {
-    borderRadius: 16,
+    borderRadius: 24,
     overflow: 'hidden',
     // Eleganter Schwebeffekt
     shadowColor: '#000',

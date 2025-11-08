@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 32,
     padding: 24,
     width: '90%',
     maxWidth: 400,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   modalInput: {
     backgroundColor: '#F5F5F5',
-    borderRadius: 12,
+    borderRadius: 24,
     padding: 16,
     fontSize: 16,
     marginBottom: 8,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   modalButtonSave: {
     width: '100%',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 24,
     backgroundColor: '#000000',
     alignItems: 'center',
   },

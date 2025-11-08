@@ -47,27 +47,27 @@ export default function SettingsScreen({ navigation: navProp }) {
                   onPress={() => navigation.goBack()}
                 >
                   <Ionicons name="arrow-back" size={24} color="#000" />
-                </TouchableOpacity>
+          </TouchableOpacity>
                 <Text style={styles.title}>⚙️ Einstellungen</Text>
-              </View>
+        </View>
             )}
-            
+        
             {/* App Section */}
-            <View style={styles.section}>
+        <View style={styles.section}>
               <Text style={styles.sectionTitle}>App</Text>
-              
-              <View style={styles.menuItem}>
+          
+          <View style={styles.menuItem}>
                 <View style={styles.menuLeft}>
                   <Ionicons name="notifications-outline" size={22} color="#000" />
-                  <Text style={styles.menuText}>Push-Benachrichtigungen</Text>
+            <Text style={styles.menuText}>Push-Benachrichtigungen</Text>
                 </View>
-                <Switch
-                  value={notificationsEnabled}
-                  onValueChange={setNotificationsEnabled}
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={setNotificationsEnabled}
                   trackColor={{ false: '#D1D5DB', true: '#000000' }}
                   thumbColor="#FFFFFF"
-                />
-              </View>
+            />
+          </View>
               
               <TouchableOpacity style={styles.menuItem}>
                 <View style={styles.menuLeft}>
@@ -77,7 +77,7 @@ export default function SettingsScreen({ navigation: navProp }) {
                 <View style={styles.menuRight}>
                   <Text style={styles.menuValue}>Deutsch</Text>
                   <Ionicons name="chevron-forward" size={20} color="#999" />
-                </View>
+        </View>
               </TouchableOpacity>
               
               <View style={[styles.menuItem, styles.menuItemLast]}>
@@ -85,63 +85,63 @@ export default function SettingsScreen({ navigation: navProp }) {
                   <Ionicons name="moon-outline" size={22} color="#000" />
                   <Text style={styles.menuText}>Dark Mode</Text>
                 </View>
-                <Switch
-                  value={darkModeEnabled}
-                  onValueChange={setDarkModeEnabled}
+            <Switch
+              value={darkModeEnabled}
+              onValueChange={setDarkModeEnabled}
                   trackColor={{ false: '#D1D5DB', true: '#000000' }}
                   thumbColor="#FFFFFF"
-                />
-              </View>
-            </View>
-            
+            />
+          </View>
+        </View>
+        
             {/* Konto Section */}
-            <View style={styles.section}>
+        <View style={styles.section}>
               <Text style={styles.sectionTitle}>Konto</Text>
-              
-              <TouchableOpacity style={styles.menuItem}>
+          
+          <TouchableOpacity style={styles.menuItem}>
                 <View style={styles.menuLeft}>
                   <Ionicons name="card-outline" size={22} color="#000" />
                   <Text style={styles.menuText}>Bankverbindung</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#999" />
-              </TouchableOpacity>
-              
-              <TouchableOpacity style={styles.menuItem}>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.menuItem}>
                 <View style={styles.menuLeft}>
                   <Ionicons name="receipt-outline" size={22} color="#000" />
                   <Text style={styles.menuText}>Mein Abo</Text>
-                </View>
+        </View>
                 <Ionicons name="chevron-forward" size={20} color="#999" />
-              </TouchableOpacity>
-              
+          </TouchableOpacity>
+          
               <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
                 <View style={styles.menuLeft}>
                   <Ionicons name="log-out-outline" size={22} color="#EF4444" />
                   <Text style={[styles.menuText, styles.logoutText]}>Logout</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#999" />
-              </TouchableOpacity>
-            </View>
-            
+          </TouchableOpacity>
+        </View>
+        
             {/* Rechtliches Section (diskret) */}
             <View style={styles.legalSection}>
               <TouchableOpacity>
                 <Text style={styles.legalText}>Datenschutz</Text>
-              </TouchableOpacity>
-              
+          </TouchableOpacity>
+          
               <Text style={styles.legalSeparator}>•</Text>
               
               <TouchableOpacity>
                 <Text style={styles.legalText}>AGB</Text>
-              </TouchableOpacity>
-              
+          </TouchableOpacity>
+          
               <Text style={styles.legalSeparator}>•</Text>
               
               <TouchableOpacity>
                 <Text style={styles.legalText}>Impressum</Text>
-              </TouchableOpacity>
-            </View>
-            
+          </TouchableOpacity>
+        </View>
+        
             {/* Demo-Modus - Paket-Switcher */}
             <View style={styles.demoSection}>
               <Text style={styles.demoTitle}>Demo-Modus</Text>
@@ -153,8 +153,8 @@ export default function SettingsScreen({ navigation: navProp }) {
                   <Text style={[styles.packageButtonCompactText, isFree && styles.packageButtonCompactTextActive]}>
                     Free
                   </Text>
-                </TouchableOpacity>
-
+          </TouchableOpacity>
+          
                 <TouchableOpacity
                   style={[styles.packageButtonCompact, isPro && styles.packageButtonCompactActive]}
                   onPress={() => switchPackage(PACKAGE_TYPES.PRO)}
@@ -162,8 +162,8 @@ export default function SettingsScreen({ navigation: navProp }) {
                   <Text style={[styles.packageButtonCompactText, isPro && styles.packageButtonCompactTextActive]}>
                     Pro
                   </Text>
-                </TouchableOpacity>
-
+          </TouchableOpacity>
+          
                 <TouchableOpacity
                   style={[styles.packageButtonCompact, isBusiness && styles.packageButtonCompactActive]}
                   onPress={() => switchPackage(PACKAGE_TYPES.BUSINESS)}
@@ -171,14 +171,14 @@ export default function SettingsScreen({ navigation: navProp }) {
                   <Text style={[styles.packageButtonCompactText, isBusiness && styles.packageButtonCompactTextActive]}>
                     Business
                   </Text>
-                </TouchableOpacity>
+          </TouchableOpacity>
               </View>
-            </View>
-            
+        </View>
+        
             {/* Platz für TabBar */}
             <View style={{ height: 100 }} />
-          </ScrollView>
-        </SafeAreaView>
+      </ScrollView>
+    </SafeAreaView>
 
         {/* Schwebende TabBar - nur auf Mobile */}
         {!isDesktop && (

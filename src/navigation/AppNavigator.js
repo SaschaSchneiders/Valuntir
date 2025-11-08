@@ -69,15 +69,15 @@ function TabNavigator() {
 export default function AppNavigator() {
   return (
     <PackageProvider>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Main" component={TabNavigator} />
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Main" component={TabNavigator} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
           <Stack.Screen name="Reminders" component={ReminderScreen} />
-        </Stack.Navigator>
+      </Stack.Navigator>
         <PackageBadge />
-      </NavigationContainer>
+    </NavigationContainer>
     </PackageProvider>
   );
 }

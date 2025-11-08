@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: 'rgba(245, 245, 245, 0.95)',
-    borderRadius: 12,
+    borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 8,
     zIndex: 10,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     top: 12,
     right: -8, // Angepasst für negative Margins
     backgroundColor: 'rgba(245, 245, 245, 0.95)',
-    borderRadius: 12,
+    borderRadius: 22,
     width: 44,
     height: 44,
     justifyContent: 'center',
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20,
+    borderRadius: 24,
     gap: 6,
   },
   branchText: {

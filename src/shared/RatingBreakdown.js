@@ -76,7 +76,7 @@ export default function RatingBreakdown({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 32,
     height: 32,
-    borderRadius: 8,
+    borderRadius: 16,
     backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',

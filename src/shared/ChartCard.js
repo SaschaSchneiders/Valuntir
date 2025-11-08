@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   miniStat: {
     flex: 1,
     backgroundColor: '#F8F9FA',
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 16,
     alignItems: 'center',
   },

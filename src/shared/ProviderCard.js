@@ -20,9 +20,9 @@ export default function ProviderCard({ provider, onPress }) {
       <View style={styles.cardHeader}>
         <View style={styles.iconContainer}>
           <Ionicons 
-            name="briefcase" 
+            name="business" 
             size={22} 
-            color="#000"
+            color="#FFFFFF"
           />
         </View>
 
@@ -84,7 +84,7 @@ export default function ProviderCard({ provider, onPress }) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 24,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.08)',
@@ -103,12 +103,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(248, 249, 250, 0.95)',
+    backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
+    borderColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
