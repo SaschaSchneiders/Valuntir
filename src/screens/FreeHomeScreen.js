@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -58,16 +58,20 @@ export default function FreeHomeScreen() {
         end={{ x: 0, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
-          <ScrollView 
-            style={styles.scrollView}
-            contentContainerStyle={styles.content}
-            contentInsetAdjustmentBehavior="never"
-            showsVerticalScrollIndicator={false}
-          >
+          <View style={styles.content}>
                 {/* Hero Section */}
                 <View style={styles.hero}>
+                  <View style={styles.badge}>
+                    <Image 
+                      source={require('../../assets/V - transparent.png')} 
+                      style={styles.badgeIcon}
+                      resizeMode="contain"
+                    />
+                    <Text style={styles.badgeText}>Valuntir</Text>
+                  </View>
+                  
                   <Text style={styles.headline}>
-                    Verbrenne kein Geld{'\n'}durch schlechte Anbieter
+                    Die besten Partner{'\n'}aus jeder Branche
                   </Text>
 
                   <Text style={styles.subheadline}>
@@ -175,7 +179,7 @@ export default function FreeHomeScreen() {
                     })}
                   </ScrollView>
                 </View>
-          </ScrollView>
+          </View>
         </SafeAreaView>
       </LinearGradient>
     </View>
@@ -192,19 +196,17 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  scrollView: {
-    flex: 1,
-  },
   content: {
+    flex: 1,
     paddingHorizontal: 20,
   },
   carouselFullWidth: {
     marginHorizontal: -20,
-    marginBottom: 48,
     backgroundColor: 'transparent',
   },
   carouselScrollView: {
     backgroundColor: 'transparent',
+    flexGrow: 0,
   },
   hero: {
     alignItems: 'center',
@@ -215,18 +217,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: '#E5E5E5',
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  badgeIcon: {
+    width: 16,
+    height: 16,
   },
   badgeText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#666666',
+    color: '#000000',
   },
   headline: {
     fontSize: 36,
@@ -260,6 +266,7 @@ const styles = StyleSheet.create({
     paddingLeft: SIDE_PADDING,
     paddingRight: SIDE_PADDING + CARD_OVERLAP,
     backgroundColor: 'transparent',
+    alignItems: 'flex-start',
   },
   carouselCardWrapper: {
     width: CARD_WIDTH,
@@ -328,7 +335,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   platformMetrics: {
-    marginBottom: 48,
+    marginBottom: 40,
   },
   metricsHeader: {
     flexDirection: 'row',
