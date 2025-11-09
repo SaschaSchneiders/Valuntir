@@ -42,15 +42,69 @@ export default function SettingsScreen({ navigation: navProp }) {
             {/* Header - nur auf Mobile */}
             {!isDesktop && (
               <View style={styles.header}>
-                <TouchableOpacity 
-                  style={styles.backButton}
-                  onPress={() => navigation.goBack()}
-                >
-                  <Ionicons name="arrow-back" size={24} color="#000" />
-          </TouchableOpacity>
-                <Text style={styles.title}>⚙️ Einstellungen</Text>
+                <Text style={styles.title}>Einstellungen</Text>
         </View>
             )}
+        
+            {/* Valuntir Section */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Valuntir</Text>
+              
+              <TouchableOpacity 
+                style={styles.menuItem}
+                onPress={() => navigation.navigate('AboutValuntir')}
+              >
+                <View style={styles.menuLeft}>
+                  <Ionicons name="information-circle-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Über Valuntir</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.menuItem}
+                onPress={() => navigation.navigate('InviteFriends')}
+              >
+                <View style={styles.menuLeft}>
+                  <Ionicons name="people-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Freunde einladen</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.menuItem}
+                onPress={() => navigation.navigate('FirstMoverSystem')}
+              >
+                <View style={styles.menuLeft}>
+                  <Ionicons name="rocket-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>First Mover System</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.menuItem}
+                onPress={() => navigation.navigate('TrustAndSafety')}
+              >
+                <View style={styles.menuLeft}>
+                  <Ionicons name="shield-checkmark-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Vertrauen & Sicherheit</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.menuItem, styles.menuItemLast]}
+                onPress={() => navigation.navigate('FAQ')}
+              >
+                <View style={styles.menuLeft}>
+                  <Ionicons name="help-circle-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Häufige Fragen</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+            </View>
         
             {/* App Section */}
         <View style={styles.section}>
@@ -106,7 +160,10 @@ export default function SettingsScreen({ navigation: navProp }) {
                 <Ionicons name="chevron-forward" size={20} color="#999" />
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('MySubscription')}
+          >
                 <View style={styles.menuLeft}>
                   <Ionicons name="receipt-outline" size={22} color="#000" />
                   <Text style={styles.menuText}>Mein Abo</Text>
@@ -231,13 +288,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
     marginBottom: 24,
-  },
-  backButton: {
-    marginRight: 12,
-    padding: 8,
   },
   title: {
     fontSize: 26,

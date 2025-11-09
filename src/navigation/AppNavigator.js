@@ -14,6 +14,12 @@ import ReminderScreen from '../screens/ReminderScreen';
 import LogoUploadScreen from '../screens/LogoUploadScreen';
 import CoverImageUploadScreen from '../screens/CoverImageUploadScreen';
 import KeywordsScreen from '../screens/KeywordsScreen';
+import AboutValuntirScreen from '../screens/AboutValuntirScreen';
+import InviteFriendsScreen from '../screens/InviteFriendsScreen';
+import FirstMoverSystemScreen from '../screens/FirstMoverSystemScreen';
+import TrustAndSafetyScreen from '../screens/TrustAndSafetyScreen';
+import FAQScreen from '../screens/FAQScreen';
+import MySubscriptionScreen from '../screens/MySubscriptionScreen';
 
 // Components
 import FloatingTabBar from '../components/FloatingTabBar';
@@ -87,6 +93,12 @@ export default function AppNavigator() {
           <Stack.Screen name="LogoUpload" component={LogoUploadScreen} />
           <Stack.Screen name="CoverImageUpload" component={CoverImageUploadScreen} />
           <Stack.Screen name="Keywords" component={KeywordsScreen} />
+          <Stack.Screen name="AboutValuntir" component={AboutValuntirScreen} />
+          <Stack.Screen name="InviteFriends" component={InviteFriendsScreen} />
+          <Stack.Screen name="FirstMoverSystem" component={FirstMoverSystemScreen} />
+          <Stack.Screen name="TrustAndSafety" component={TrustAndSafetyScreen} />
+          <Stack.Screen name="FAQ" component={FAQScreen} />
+          <Stack.Screen name="MySubscription" component={MySubscriptionScreen} />
       </Stack.Navigator>
         <PackageBadge />
     </NavigationContainer>
