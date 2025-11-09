@@ -1,28 +1,51 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_WIDTH = SCREEN_WIDTH * 0.72;
+const CARD_HEIGHT = 170;
+const CARD_OVERLAP = 60;
+const SNAP_DISTANCE = CARD_WIDTH - CARD_OVERLAP;
+const SIDE_PADDING = (SCREEN_WIDTH - CARD_WIDTH) / 2;
 
 export default function FreeHomeScreen() {
-  const features = [
+  const navigation = useNavigation();
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+
+  const quickLinks = [
     {
-      icon: 'bar-chart',
-      title: 'Erfolgsraten sehen',
-      description: 'Sieh objektive Zahlen statt subjektiver Meinungen – wie oft hat ein Anbieter wirklich geliefert?',
-      isPrimary: true,
+      icon: 'information-circle',
+      title: 'Über Valuntir',
+      description: '100% verifizierte Erfolgsquoten für fundierte Entscheidungen',
+      screen: 'AboutValuntir',
     },
     {
       icon: 'shield-checkmark',
-      title: 'Verifizierte Daten',
-      description: 'Jede Erfolgsrate basiert auf einer echten Geschäftstransaktion – Fake ist technisch unmöglich',
-      isPrimary: true,
+      title: 'Vertrauen & Sicherheit',
+      description: 'DSGVO-konform & sicher verschlüsselt für deine Daten',
+      screen: 'TrustAndSafety',
+    },
+    {
+      icon: 'rocket',
+      title: 'First Mover Bonus',
+      description: 'Sichere dir passives Einkommen, das monatlich landet',
+      screen: 'FirstMoverSystem',
     },
     {
       icon: 'people',
-      title: 'Community-Power',
-      description: 'Profitiere von den Erfahrungen anderer Unternehmer und triff informierte Entscheidungen',
-      isPrimary: true,
+      title: 'Freunde einladen',
+      description: 'Teile Valuntir & profitiere gemeinsam mit deinen Freunden',
+      screen: 'InviteFriends',
+    },
+    {
+      icon: 'help-circle',
+      title: 'FAQ',
+      description: 'Die wichtigsten Antworten auf deine Fragen im Überblick',
+      screen: 'FAQ',
     },
   ];
 
@@ -38,134 +61,120 @@ export default function FreeHomeScreen() {
           <ScrollView 
             style={styles.scrollView}
             contentContainerStyle={styles.content}
+            contentInsetAdjustmentBehavior="never"
             showsVerticalScrollIndicator={false}
           >
-            {/* Hero Section */}
-            <View style={styles.hero}>
-              <View style={styles.badge}>
-                <Ionicons name="star" size={16} color="#666666" />
-                <Text style={styles.badgeText}>Free Version</Text>
-              </View>
-              
-              <Text style={styles.headline}>
-                Sieh Erfolgsraten,{'\n'}bevor du dich entscheidest
-              </Text>
-              
-              <Text style={styles.subheadline}>
-                Valuntir zeigt dir objektive Zahlen statt{'\n'}gefakter Bewertungen
-              </Text>
-            </View>
+                {/* Hero Section */}
+                <View style={styles.hero}>
+                  <Text style={styles.headline}>
+                    Verbrenne kein Geld{'\n'}durch schlechte Anbieter
+                  </Text>
 
-            {/* Features Grid */}
-            <View style={styles.featuresSection}>
-              {features.map((feature, index) => (
-                <View 
-                  key={index} 
-                  style={[
-                    styles.featureCard,
-                    feature.isPrimary && styles.featureCardPrimary
-                  ]}
-                >
-                  <View style={[
-                    styles.iconContainer,
-                    feature.isPrimary && styles.iconContainerPrimary
-                  ]}>
-                    <Ionicons 
-                      name={feature.icon} 
-                      size={24} 
-                      color={feature.isPrimary ? '#000000' : '#666666'}
-                    />
+                  <Text style={styles.subheadline}>
+                    Valuntirs verifizierte Erfolgsraten zeigen dir{'\n'}schwarz auf weiß, wer wirklich liefert.
+                  </Text>
+                </View>
+
+                {/* Platform Activity Metrics */}
+                <View style={styles.platformMetrics}>
+                  <View style={styles.metricsHeader}>
+                    <Ionicons name="pulse" size={16} color="#10B981" />
+                    <Text style={styles.metricsHeaderText}>Live auf der Plattform</Text>
                   </View>
-                  <Text style={styles.featureTitle}>{feature.title}</Text>
-                  <Text style={styles.featureDescription}>{feature.description}</Text>
+
+                  <View style={styles.metricsGrid}>
+                    <View style={styles.metricItem}>
+                      <Text style={styles.metricNumber}>12.589</Text>
+                      <Text style={styles.metricLabel}>Verifizierte Bewertungen</Text>
+                      <View style={styles.metricGrowth}>
+                        <Ionicons name="trending-up" size={12} color="#10B981" />
+                        <Text style={styles.metricGrowthText}>+18% in 30 Tagen</Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.metricDivider}>
+                      <View style={styles.metricDividerLine} />
+                    </View>
+
+                    <View style={styles.metricItem}>
+                      <Text style={styles.metricNumber}>683.479€</Text>
+                      <Text style={styles.metricLabel}>Bewertetes Volumen</Text>
+                      <View style={styles.metricGrowth}>
+                        <Ionicons name="trending-up" size={12} color="#10B981" />
+                        <Text style={styles.metricGrowthText}>+24% in 30 Tagen</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <View style={styles.metricsFooter}>
+                    <View style={styles.footerItem}>
+                      <Ionicons name="checkmark-circle" size={14} color="#3B82F6" />
+                      <Text style={styles.footerText}>500+ öffentliche Erfolgsraten</Text>
+                    </View>
+                  </View>
                 </View>
-              ))}
-            </View>
 
-            {/* USP Explanation */}
-            <View style={styles.uspSection}>
-              <View style={styles.uspHeader}>
-                <Ionicons name="bar-chart" size={24} color="#000000" />
-                <Text style={styles.uspTitle}>Warum Erfolgsraten?</Text>
-              </View>
-              
-              <Text style={styles.uspDescription}>
-                Valuntir ist keine weitere Bewertungsplattform. Wir zeigen dir Erfolgsraten: 
-                Objektive Zahlen, die auf echten Geschäftstransaktionen basieren.
-              </Text>
-
-              <View style={styles.exampleBox}>
-                <View style={styles.exampleRow}>
-                  <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                  <Text style={styles.exampleText}>
-                    <Text style={styles.exampleBold}>Nur echte Kunden</Text> können bewerten
-                  </Text>
+                {/* Quick Links / Features - Simple Carousel */}
+                <View style={styles.carouselFullWidth}>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    decelerationRate="fast"
+                    snapToInterval={SNAP_DISTANCE}
+                    contentContainerStyle={styles.carouselContent}
+                    style={styles.carouselScrollView}
+                    bounces={false}
+                    scrollEventThrottle={16}
+                    onScroll={(event) => {
+                      const scrollX = event.nativeEvent.contentOffset.x;
+                      const currentIndex = Math.round(scrollX / SNAP_DISTANCE);
+                      setActiveCardIndex(currentIndex);
+                    }}
+                  >
+                    {quickLinks.map((item, index) => {
+                      const isActive = index === activeCardIndex;
+                      const scale = isActive ? 1 : 0.92;
+                      return (
+                        <View
+                          key={index}
+                          style={[
+                            styles.carouselCardWrapper,
+                            { 
+                              zIndex: isActive ? 999 : (quickLinks.length - index),
+                              transform: [{ scale }]
+                            }
+                          ]}
+                        >
+                          <TouchableOpacity
+                            style={[
+                              styles.carouselCard,
+                              !isActive && styles.carouselCardInactive
+                            ]}
+                            onPress={() => navigation.navigate(item.screen)}
+                            activeOpacity={0.9}
+                          >
+                            <View style={styles.carouselCardTop}>
+                              <View style={styles.carouselIconContainer}>
+                                <Ionicons 
+                                  name={item.icon} 
+                                  size={24} 
+                                  color="#3B82F6"
+                                />
+                              </View>
+                              <View style={styles.carouselCardArrow}>
+                                <Ionicons name="arrow-forward" size={18} color="#3B82F6" />
+                              </View>
+                            </View>
+                            <View style={styles.carouselCardContent}>
+                              <Text style={styles.carouselCardTitle}>{item.title}</Text>
+                              <Text style={styles.carouselCardDescription} numberOfLines={2}>{item.description}</Text>
+                            </View>
+                          </TouchableOpacity>
+                        </View>
+                      );
+                    })}
+                  </ScrollView>
                 </View>
-
-                <View style={styles.exampleRow}>
-                  <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                  <Text style={styles.exampleText}>
-                    <Text style={styles.exampleBold}>Jede Zahl</Text> basiert auf einer verifizierten Zahlung
-                  </Text>
-                </View>
-
-                <View style={styles.exampleRow}>
-                  <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                  <Text style={styles.exampleText}>
-                    <Text style={styles.exampleBold}>Fake-Bewertungen</Text> sind technisch unmöglich
-                  </Text>
-                </View>
-              </View>
-
-              <Text style={styles.uspFootnote}>
-                Du siehst die Performance echter Connections – nicht das, was jemand behauptet.
-              </Text>
-            </View>
-
-            {/* How it works */}
-            <View style={styles.howSection}>
-              <Text style={styles.sectionTitle}>So funktioniert's</Text>
-              
-              <View style={styles.stepCard}>
-                <Text style={styles.stepTitle}>Anbieter suchen</Text>
-                <Text style={styles.stepDescription}>
-                  Finde Unternehmen in deiner Branche und sieh ihre echte Erfolgsrate
-                </Text>
-              </View>
-
-              <View style={styles.stepCard}>
-                <Text style={styles.stepTitle}>Erfolgsraten analysieren</Text>
-                <Text style={styles.stepDescription}>
-                  Vergleiche objektive Zahlen: Kommunikation, Lieferqualität, Preis-Leistung
-                </Text>
-              </View>
-
-              <View style={styles.stepCard}>
-                <Text style={styles.stepTitle}>Sicher entscheiden</Text>
-                <Text style={styles.stepDescription}>
-                  Wähle den Anbieter, der nachweislich liefert – nicht nur schön redet
-                </Text>
-              </View>
-            </View>
-
-            {/* Trust Elements */}
-            <View style={styles.trustSection}>
-              <View style={styles.trustItem}>
-                <Ionicons name="lock-closed" size={18} color="#666666" />
-                <Text style={styles.trustText}>Verschlüsselt & sicher</Text>
-              </View>
-              <View style={styles.trustItem}>
-                <Ionicons name="shield-checkmark" size={18} color="#666666" />
-                <Text style={styles.trustText}>DSGVO-konform</Text>
-              </View>
-              <View style={styles.trustItem}>
-                <Ionicons name="globe" size={18} color="#666666" />
-                <Text style={styles.trustText}>Made in Germany</Text>
-              </View>
-            </View>
-
-            {/* Bottom Spacer */}
-            <View style={{ height: 100 }} />
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
@@ -188,6 +197,14 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
+  },
+  carouselFullWidth: {
+    marginHorizontal: -20,
+    marginBottom: 48,
+    backgroundColor: 'transparent',
+  },
+  carouselScrollView: {
+    backgroundColor: 'transparent',
   },
   hero: {
     alignItems: 'center',
@@ -227,154 +244,164 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
   },
-  featuresSection: {
-    marginBottom: 48,
-    gap: 16,
-  },
-  featureCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 3,
-  },
-  featureCardPrimary: {
-    borderColor: '#E5E5E5',
-    backgroundColor: '#FAFAFA',
-  },
-  iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: '#F5F5F5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  iconContainerPrimary: {
-    backgroundColor: '#F0F0F0',
-  },
-  featureTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 8,
-    letterSpacing: -0.3,
-  },
-  featureDescription: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#666666',
-    lineHeight: 22,
-  },
-  uspSection: {
-    backgroundColor: '#FAFAFA',
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 48,
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-  },
-  uspHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 16,
-  },
-  uspTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
-    letterSpacing: -0.3,
-  },
-  uspDescription: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#333333',
-    lineHeight: 22,
+  carouselSection: {
     marginBottom: 20,
+    backgroundColor: 'transparent',
   },
-  exampleBox: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    gap: 12,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-  },
-  exampleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  exampleText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#666666',
-    flex: 1,
-  },
-  exampleBold: {
-    fontWeight: '700',
-    color: '#000000',
-  },
-  uspFootnote: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#999999',
-    fontStyle: 'italic',
-    textAlign: 'center',
-  },
-  howSection: {
-    marginBottom: 48,
-  },
-  sectionTitle: {
-    fontSize: 24,
+  carouselTitle: {
+    fontSize: 20,
     fontWeight: '800',
     color: '#000000',
-    marginBottom: 24,
+    marginBottom: 20,
+    paddingHorizontal: 0,
     letterSpacing: -0.5,
   },
-  stepCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
+  carouselContent: {
+    paddingLeft: SIDE_PADDING,
+    paddingRight: SIDE_PADDING + CARD_OVERLAP,
+    backgroundColor: 'transparent',
   },
-  stepTitle: {
-    fontSize: 16,
-    fontWeight: '700',
+  carouselCardWrapper: {
+    width: CARD_WIDTH,
+    marginRight: -CARD_OVERLAP,
+    overflow: 'visible',
+    backgroundColor: 'transparent',
+  },
+  carouselCard: {
+    height: CARD_HEIGHT,
+    width: CARD_WIDTH,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 18,
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.2)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  carouselCardInactive: {
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  carouselCardTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 0,
+  },
+  carouselIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#E0EFFE',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  carouselCardContent: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    marginTop: 16,
+  },
+  carouselCardTitle: {
+    fontSize: 18,
+    fontWeight: '800',
     color: '#000000',
-    marginBottom: 8,
+    marginBottom: 6,
     letterSpacing: -0.3,
   },
-  stepDescription: {
+  carouselCardDescription: {
     fontSize: 14,
     fontWeight: '500',
     color: '#666666',
     lineHeight: 20,
+    minHeight: 40,
   },
-  trustSection: {
-    flexDirection: 'row',
+  carouselCardArrow: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#F5F5F5',
     justifyContent: 'center',
-    flexWrap: 'wrap',
-    gap: 20,
+    alignItems: 'center',
+  },
+  platformMetrics: {
+    marginBottom: 48,
+  },
+  metricsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     marginBottom: 24,
   },
-  trustItem: {
+  metricsHeaderText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#10B981',
+  },
+  metricsGrid: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  metricItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  metricDivider: {
+    width: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  metricDividerLine: {
+    width: 1,
+    height: 60,
+    backgroundColor: '#E5E5E5',
+  },
+  metricNumber: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: '#000000',
+    marginBottom: 4,
+    letterSpacing: -1,
+  },
+  metricLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: 8,
+    lineHeight: 18,
+  },
+  metricGrowth: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  metricGrowthText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#10B981',
+  },
+  metricsFooter: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  footerItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  trustText: {
-    fontSize: 13,
+  footerText: {
+    fontSize: 12,
     fontWeight: '600',
     color: '#666666',
   },
