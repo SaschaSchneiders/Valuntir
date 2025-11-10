@@ -28,6 +28,8 @@ export default function TrustAndSafetyScreen({ navigation }) {
             >
               <Ionicons name="chevron-back" size={28} color="#000" />
             </TouchableOpacity>
+            <Text style={styles.headerTitle}>Sicherheit</Text>
+            <View style={styles.headerSpacer} />
           </View>
 
           <ScrollView 
@@ -37,80 +39,65 @@ export default function TrustAndSafetyScreen({ navigation }) {
           >
             {/* Hero */}
             <View style={styles.heroSection}>
-              <View style={styles.shieldContainer}>
-                <LinearGradient
-                  colors={['#10B981', '#059669']}
-                  style={styles.shieldBadge}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                >
-                  <Ionicons name="shield-checkmark" size={40} color="#FFFFFF" />
-                </LinearGradient>
-              </View>
-              <Text style={styles.headline}>
-                Vertrauen & Sicherheit
-              </Text>
-              <Text style={styles.subheadline}>
-                Deine Daten und Transaktionen sind bei uns in sicheren Händen
-              </Text>
+              <Text style={styles.heroHeadline}>VALUNTIR{'\n'}SECURITY-SYSTEM</Text>
+              <Text style={styles.heroSubheadline}>Entwickelt für maximalen Schutz</Text>
             </View>
 
-            {/* Versprechen */}
-            <View style={styles.promiseCard}>
-              <Text style={styles.promiseTitle}>Unser Versprechen an dich</Text>
-              <Text style={styles.promiseText}>
-                Bei Valuntir steht Sicherheit und Vertrauen an erster Stelle. Wir verwenden modernste 
-                Technologien und strenge Richtlinien, um deine Daten zu schützen und ein faires, 
-                transparentes Umfeld für alle zu schaffen.
+            {/* Intro */}
+            <View style={styles.introSection}>
+              <Text style={styles.introText}>
+                Da wir mit Banken zusammenarbeiten, müssen unsere Sicherheits-Standards auf dem gleichen 
+                Level sein. Deshalb nutzen wir den exakt gleichen Standard, den alle großen Banken verwenden.
+                {'\n\n'}
+                Das Valuntir Security-System basiert auf Open Banking – bewährt, geprüft und absolut sicher.
               </Text>
             </View>
 
             {/* Sicherheitsfeatures */}
             <View style={styles.featuresSection}>
-              <Text style={styles.sectionTitle}>Wie wir dich schützen</Text>
+              <Text style={styles.sectionTitle}>Das System</Text>
 
               <View style={styles.featureCard}>
                 <View style={styles.featureIcon}>
-                  <Ionicons name="lock-closed" size={28} color="#10B981" />
-                </View>
-                <View style={styles.featureContent}>
-                  <Text style={styles.featureTitle}>End-zu-End Verschlüsselung</Text>
-                  <Text style={styles.featureText}>
-                    Alle sensiblen Daten werden mit Bank-Level-Verschlüsselung (256-bit SSL) geschützt. 
-                    Deine Informationen sind immer sicher übertragen.
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.featureCard}>
-                <View style={styles.featureIcon}>
-                  <Ionicons name="checkmark-done" size={28} color="#10B981" />
+                  <Ionicons name="checkmark-done" size={28} color="#3B82F6" />
                 </View>
                 <View style={styles.featureContent}>
                   <Text style={styles.featureTitle}>Verifizierte Identitäten</Text>
                   <Text style={styles.featureText}>
-                    Jeder Anbieter durchläuft einen strengen Verifizierungsprozess. Nur echte, 
-                    geprüfte Unternehmen können Bewertungen erhalten.
+                    Jeder Nutzer und jeder Anbieter wird durch echte Zahlungen verifiziert. 
+                    Nur wer tatsächlich Geschäftsbeziehungen hat, kann bewerten.
                   </Text>
                 </View>
               </View>
 
               <View style={styles.featureCard}>
                 <View style={styles.featureIcon}>
-                  <Ionicons name="eye-off" size={28} color="#10B981" />
+                  <Ionicons name="lock-closed" size={28} color="#3B82F6" />
                 </View>
                 <View style={styles.featureContent}>
-                  <Text style={styles.featureTitle}>Volle Datenkontrolle</Text>
+                  <Text style={styles.featureTitle}>Bank-Level-Verschlüsselung</Text>
                   <Text style={styles.featureText}>
-                    Du entscheidest, was öffentlich ist und was privat bleibt. Jederzeit volle 
-                    Kontrolle über deine Daten und Sichtbarkeit.
+                    Alle Daten werden mit der gleichen 256-bit SSL-Verschlüsselung geschützt, 
+                    die auch im Online-Banking zum Einsatz kommt.
                   </Text>
                 </View>
               </View>
 
               <View style={styles.featureCard}>
                 <View style={styles.featureIcon}>
-                  <Ionicons name="server" size={28} color="#10B981" />
+                  <Ionicons name="bar-chart" size={28} color="#3B82F6" />
+                </View>
+                <View style={styles.featureContent}>
+                  <Text style={styles.featureTitle}>Verlässliche Erfolgsquoten</Text>
+                  <Text style={styles.featureText}>
+                    Alle Erfolgsraten basieren auf verifizierten Geschäftsbeziehungen. Dabei werden ausschließlich echte Zahlungen erfasst und unser Algorithmus garantiert 100% Betrugsschutz.
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.featureCard}>
+                <View style={styles.featureIcon}>
+                  <Ionicons name="server" size={28} color="#3B82F6" />
                 </View>
                 <View style={styles.featureContent}>
                   <Text style={styles.featureTitle}>DSGVO-konform</Text>
@@ -123,134 +110,16 @@ export default function TrustAndSafetyScreen({ navigation }) {
 
               <View style={styles.featureCard}>
                 <View style={styles.featureIcon}>
-                  <Ionicons name="shield-half" size={28} color="#10B981" />
+                  <Ionicons name="eye-off" size={28} color="#3B82F6" />
                 </View>
                 <View style={styles.featureContent}>
-                  <Text style={styles.featureTitle}>Betrugsschutz</Text>
+                  <Text style={styles.featureTitle}>Read-only Zugriff</Text>
                   <Text style={styles.featureText}>
-                    Automatische Erkennung von Fake-Bewertungen und manipulierten Profilen durch 
-                    KI-gestützte Algorithmen.
+                    Das System kann nur Transaktionen auslesen. Zahlungen durchführen oder 
+                    Kontodaten ändern ist technisch unmöglich.
                   </Text>
                 </View>
               </View>
-
-              <View style={styles.featureCard}>
-                <View style={styles.featureIcon}>
-                  <Ionicons name="card" size={28} color="#10B981" />
-                </View>
-                <View style={styles.featureContent}>
-                  <Text style={styles.featureTitle}>Sichere Zahlungen</Text>
-                  <Text style={styles.featureText}>
-                    Alle Zahlungen laufen über zertifizierte Payment-Provider (Stripe). 
-                    Deine Zahlungsdaten werden niemals bei uns gespeichert.
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Fair Play */}
-            <View style={styles.fairPlaySection}>
-              <Text style={styles.sectionTitle}>Faire Spielregeln für alle</Text>
-
-              <View style={styles.ruleCard}>
-                <View style={styles.ruleHeader}>
-                  <Ionicons name="people-circle" size={24} color="#3B82F6" />
-                  <Text style={styles.ruleTitle}>Echte Bewertungen</Text>
-                </View>
-                <Text style={styles.ruleText}>
-                  Nur verifizierte Geschäftsbeziehungen können bewertet werden. Jede Bewertung ist 
-                  nachweisbar und kann nicht gekauft oder gefälscht werden.
-                </Text>
-              </View>
-
-              <View style={styles.ruleCard}>
-                <View style={styles.ruleHeader}>
-                  <Ionicons name="eye" size={24} color="#3B82F6" />
-                  <Text style={styles.ruleTitle}>Transparenz</Text>
-                </View>
-                <Text style={styles.ruleText}>
-                  Alle Kennzahlen basieren auf echten Daten. Keine geschönten Zahlen, keine versteckten 
-                  Informationen – nur nachweisbare Fakten.
-                </Text>
-              </View>
-
-              <View style={styles.ruleCard}>
-                <View style={styles.ruleHeader}>
-                  <Ionicons name="scale" size={24} color="#3B82F6" />
-                  <Text style={styles.ruleTitle}>Gleichberechtigung</Text>
-                </View>
-                <Text style={styles.ruleText}>
-                  Jeder Anbieter hat die gleichen Chancen. Erfolg basiert ausschließlich auf Qualität 
-                  und echten Erfolgsquoten – nicht auf Budget.
-                </Text>
-              </View>
-            </View>
-
-            {/* Garantien */}
-            <View style={styles.guaranteeSection}>
-              <Text style={styles.sectionTitle}>Unsere Garantien</Text>
-
-              <View style={styles.guaranteesList}>
-                <View style={styles.guaranteeItem}>
-                  <Ionicons name="checkmark-circle" size={22} color="#10B981" />
-                  <Text style={styles.guaranteeText}>
-                    <Text style={styles.guaranteeBold}>Keine versteckten Kosten:</Text> Was du siehst, ist was du zahlst
-                  </Text>
-                </View>
-
-                <View style={styles.guaranteeItem}>
-                  <Ionicons name="checkmark-circle" size={22} color="#10B981" />
-                  <Text style={styles.guaranteeText}>
-                    <Text style={styles.guaranteeBold}>Jederzeit kündbar:</Text> Keine Vertragsbindung, keine Kündigungsfrist
-                  </Text>
-                </View>
-
-                <View style={styles.guaranteeItem}>
-                  <Ionicons name="checkmark-circle" size={22} color="#10B981" />
-                  <Text style={styles.guaranteeText}>
-                    <Text style={styles.guaranteeBold}>Geld-zurück-Garantie:</Text> 30 Tage Testphase, volle Rückerstattung
-                  </Text>
-                </View>
-
-                <View style={styles.guaranteeItem}>
-                  <Ionicons name="checkmark-circle" size={22} color="#10B981" />
-                  <Text style={styles.guaranteeText}>
-                    <Text style={styles.guaranteeBold}>24/7 Support:</Text> Wir sind immer für dich da
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Zertifizierungen */}
-            <View style={styles.certificationsCard}>
-              <Text style={styles.certificationsTitle}>Zertifizierungen & Standards</Text>
-              <View style={styles.certificationsList}>
-                <View style={styles.certBadge}>
-                  <Text style={styles.certText}>🇪🇺 DSGVO</Text>
-                </View>
-                <View style={styles.certBadge}>
-                  <Text style={styles.certText}>🔒 ISO 27001</Text>
-                </View>
-                <View style={styles.certBadge}>
-                  <Text style={styles.certText}>✓ SSL</Text>
-                </View>
-                <View style={styles.certBadge}>
-                  <Text style={styles.certText}>🛡️ TÜV</Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Contact CTA */}
-            <View style={styles.contactCard}>
-              <Ionicons name="mail" size={28} color="#666" />
-              <Text style={styles.contactTitle}>Noch Fragen zur Sicherheit?</Text>
-              <Text style={styles.contactText}>
-                Unser Team beantwortet gerne alle deine Fragen zu Datenschutz und Sicherheit.
-              </Text>
-              <TouchableOpacity style={styles.contactButton}>
-                <Text style={styles.contactButtonText}>Kontakt aufnehmen</Text>
-                <Ionicons name="arrow-forward" size={18} color="#3B82F6" />
-              </TouchableOpacity>
             </View>
 
             <View style={{ height: 40 }} />
@@ -275,11 +144,21 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   backButton: {
     padding: 4,
+    width: 36,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#000',
+  },
+  headerSpacer: {
+    width: 36,
   },
   content: {
     flex: 1,
@@ -289,61 +168,32 @@ const styles = StyleSheet.create({
   },
   heroSection: {
     alignItems: 'center',
-    marginBottom: 32,
-    marginTop: 20,
+    marginBottom: 40,
   },
-  shieldContainer: {
-    marginBottom: 20,
-  },
-  shieldBadge: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 6,
-  },
-  headline: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#000',
+  heroHeadline: {
+    fontSize: 36,
+    fontWeight: '900',
+    color: '#000000',
     textAlign: 'center',
-    lineHeight: 36,
-    marginBottom: 12,
+    marginBottom: 4,
+    letterSpacing: -1,
+    lineHeight: 42,
   },
-  subheadline: {
+  heroSubheadline: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#666',
+    color: '#3B82F6',
     textAlign: 'center',
     lineHeight: 24,
-    paddingHorizontal: 20,
   },
-  promiseCard: {
-    backgroundColor: 'rgba(16, 185, 129, 0.05)',
-    borderRadius: 20,
-    padding: 24,
-    marginBottom: 32,
-    borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.2)',
+  introSection: {
+    marginBottom: 40,
   },
-  promiseTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  promiseText: {
-    fontSize: 15,
+  introText: {
+    fontSize: 16,
     fontWeight: '500',
-    color: '#666',
-    lineHeight: 24,
-    textAlign: 'center',
+    color: '#333',
+    lineHeight: 26,
   },
   featuresSection: {
     marginBottom: 32,
@@ -373,7 +223,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
   },
