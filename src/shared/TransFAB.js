@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -8,7 +8,9 @@ export default function TransFAB({
   scrollY, 
   bottom = 120,
   text = "Auf Valuntir Pro upgraden",
-  icon = "sparkles"
+  icon = "sparkles",
+  useCustomIcon = false,
+  customIconSource = null
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const screenWidth = Dimensions.get('window').width;
@@ -66,7 +68,15 @@ export default function TransFAB({
         >
           {/* Icon (sichtbar wenn rund) */}
           <Animated.View style={{ opacity: iconOpacity }}>
-            <Ionicons name={icon} size={28} color="#FFFFFF" />
+            {useCustomIcon && customIconSource ? (
+              <Image 
+                source={customIconSource} 
+                style={styles.customIcon}
+                resizeMode="contain"
+              />
+            ) : (
+              <Ionicons name={icon} size={28} color="#FFFFFF" />
+            )}
           </Animated.View>
           
           {/* Text (sichtbar wenn breit) */}
@@ -79,7 +89,15 @@ export default function TransFAB({
               }
             ]}
           >
-            <Ionicons name={icon} size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+            {useCustomIcon && customIconSource ? (
+              <Image 
+                source={customIconSource} 
+                style={styles.customIconSmall}
+                resizeMode="contain"
+              />
+            ) : (
+              <Ionicons name={icon} size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+            )}
             <Text style={styles.fabText}>{text}</Text>
           </Animated.View>
         </TouchableOpacity>
@@ -128,6 +146,15 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+  },
+  customIcon: {
+    width: 28,
+    height: 28,
+  },
+  customIconSmall: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
   },
 });
 

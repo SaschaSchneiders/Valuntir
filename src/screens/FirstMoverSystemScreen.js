@@ -198,6 +198,7 @@ export default function FirstMoverSystemScreen({ navigation }) {
             bottom={40} 
             onPress={handleUpgrade}
             text="Auf Valuntir Pro upgraden"
+            icon="diamond"
           />
         </SafeAreaView>
       </LinearGradient>

@@ -60,7 +60,7 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
             {/* Hero Section */}
             <View style={styles.hero}>
               <View style={styles.badge}>
-                <Ionicons name="sparkles" size={16} color="#3B82F6" />
+                <Ionicons name="diamond" size={16} color="#3B82F6" />
                 <Text style={styles.badgeText}>Valuntir Pro</Text>
               </View>
               
@@ -192,7 +192,7 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
             scrollY={scrollY}
             onPress={onUpgrade}
             text="Auf Valuntir Pro upgraden"
-            icon="sparkles"
+            icon="diamond"
             bottom={120}
           />
         </SafeAreaView>
