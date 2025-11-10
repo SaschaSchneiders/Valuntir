@@ -1,16 +1,30 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
+  Animated,
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import TransFAB from '../shared/TransFAB';
 
 export default function FirstMoverSystemScreen({ navigation }) {
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  // Scroll Handler für Animated ScrollView
+  const handleScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+    { useNativeDriver: false }
+  );
+
+  const handleUpgrade = () => {
+    navigation.navigate('ProPlanPromo');
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -28,152 +42,163 @@ export default function FirstMoverSystemScreen({ navigation }) {
             >
               <Ionicons name="chevron-back" size={28} color="#000" />
             </TouchableOpacity>
+            <Text style={styles.headerTitle}>First Mover Programm</Text>
+            <View style={styles.headerSpacer} />
           </View>
 
           <ScrollView 
             style={styles.content}
             contentContainerStyle={styles.contentContainer}
             showsVerticalScrollIndicator={false}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
           >
             {/* Hero */}
             <View style={styles.heroSection}>
-              <View style={styles.badgeContainer}>
-                <LinearGradient
-                  colors={['#F59E0B', '#EF4444']}
-                  style={styles.badge}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                >
-                  <Ionicons name="rocket" size={32} color="#FFFFFF" />
-                </LinearGradient>
-              </View>
-              <Text style={styles.headline}>
-                First Mover System
-              </Text>
-              <Text style={styles.subheadline}>
-                Sichere dir exklusive Vorteile als Early Adopter
+              <Text style={styles.heroHeadline}>FIRST MOVER{'\n'}PROGRAMM</Text>
+              <Text style={styles.heroSubheadline}>Passives Einkommen aufbauen</Text>
+            </View>
+
+            {/* Intro */}
+            <View style={styles.introSection}>
+              <Text style={styles.introText}>
+                Sei der Erste, der einen Anbieter bewertet, und profitiere dauerhaft davon. 
+                Sobald dieser Anbieter sein Profil aktiviert, erhältst du 10% seines monatlichen 
+                Abo-Preises. Automatisch und unbegrenzt, solange beide Accounts aktiv sind.
               </Text>
             </View>
 
-            {/* Was ist das? */}
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="information-circle" size={24} color="#3B82F6" />
-                <Text style={styles.cardTitle}>Was ist das First Mover System?</Text>
+            {/* Wie es funktioniert */}
+            <View style={styles.featuresSection}>
+              <Text style={styles.sectionTitle}>So funktioniert's</Text>
+
+              <View style={styles.featureCard}>
+                <View style={styles.featureIcon}>
+                  <Ionicons name="diamond" size={28} color="#3B82F6" />
+                </View>
+                <View style={styles.featureContent}>
+                  <Text style={styles.featureTitle}>1. Werde Pro-Mitglied</Text>
+                  <Text style={styles.featureText}>
+                    Nur mit einem aktiven Pro-Abo kannst du am First Mover Programm teilnehmen 
+                    und durch deine Bewertungen passives Einkommen aufbauen.
+                  </Text>
+                </View>
               </View>
-              <Text style={styles.cardText}>
-                Als Dankeschön für dein frühes Vertrauen in Valuntir belohnen wir dich mit dauerhaften 
-                Vorteilen. Je früher du dabei bist, desto mehr profitierst du – ein Leben lang.
-              </Text>
+
+              <View style={styles.featureCard}>
+                <View style={styles.featureIcon}>
+                  <Ionicons name="star" size={28} color="#3B82F6" />
+                </View>
+                <View style={styles.featureContent}>
+                  <Text style={styles.featureTitle}>2. Als Erster bewerten</Text>
+                  <Text style={styles.featureText}>
+                    Bewerte einen Anbieter als Erster nach einer echten Transaktion. 
+                    Du wirst automatisch als First Mover registriert.
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.featureCard}>
+                <View style={styles.featureIcon}>
+                  <Ionicons name="cash" size={28} color="#3B82F6" />
+                </View>
+                <View style={styles.featureContent}>
+                  <Text style={styles.featureTitle}>3. Provision erhalten</Text>
+                  <Text style={styles.featureText}>
+                    Sobald der Anbieter sein Profil aktiviert, erhältst du automatisch 10% 
+                    seines monatlichen Abo-Preises. Dauerhaft und ohne weiteren Aufwand.
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Beispielrechnung */}
+            <View style={styles.calculationSection}>
+              <LinearGradient
+                colors={['rgba(59, 130, 246, 0.08)', 'rgba(59, 130, 246, 0.02)']}
+                style={styles.calculationGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+              >
+                <View style={styles.calculationHeader}>
+                  <Ionicons name="calculator" size={24} color="#3B82F6" />
+                  <Text style={styles.calculationTitle}>Beispielrechnung</Text>
+                </View>
+                
+                <View style={styles.calculationRow}>
+                  <Text style={styles.calculationLabel}>Anbieter-Abo:</Text>
+                  <Text style={styles.calculationValue}>49,00 €/Monat</Text>
+                </View>
+                
+                <View style={styles.calculationRow}>
+                  <Text style={styles.calculationLabel}>Deine Provision (10%):</Text>
+                  <Text style={styles.calculationHighlight}>4,90 €/Monat</Text>
+                </View>
+                
+                <View style={styles.calculationDivider} />
+                
+                <View style={styles.calculationResult}>
+                  <Text style={styles.calculationResultLabel}>Bei 10 First Mover Bewertungen:</Text>
+                  <Text style={styles.calculationResultValue}>49,00 €/Monat</Text>
+                  <Text style={styles.calculationResultYear}>588,00 € pro Jahr</Text>
+                </View>
+              </LinearGradient>
             </View>
 
             {/* Vorteile */}
-            <View style={styles.tierSection}>
-              <Text style={styles.sectionTitle}>Deine First Mover Vorteile</Text>
-              
-              {/* Tier 1 */}
-              <View style={[styles.tierCard, styles.tierGold]}>
-                <View style={styles.tierHeader}>
-                  <View style={styles.tierBadge}>
-                    <Ionicons name="trophy" size={24} color="#F59E0B" />
-                  </View>
-                  <View style={styles.tierHeaderText}>
-                    <Text style={styles.tierTitle}>Gold Pioneer</Text>
-                    <Text style={styles.tierSubtitle}>Registrierung in ersten 500</Text>
-                  </View>
-                </View>
-                
-                <View style={styles.benefitsList}>
-                  <View style={styles.benefitItem}>
-                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                    <Text style={styles.benefitItemText}>Lebenslang 50% Rabatt auf Pro & Business</Text>
-                  </View>
-                  <View style={styles.benefitItem}>
-                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                    <Text style={styles.benefitItemText}>Exklusives "Gold Pioneer" Badge</Text>
-                  </View>
-                  <View style={styles.benefitItem}>
-                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                    <Text style={styles.benefitItemText}>Vorrang im Support</Text>
-                  </View>
-                  <View style={styles.benefitItem}>
-                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                    <Text style={styles.benefitItemText}>Zugang zu Beta-Features</Text>
-                  </View>
-                </View>
+            <View style={styles.benefitsSection}>
+              <Text style={styles.sectionTitle}>Deine Vorteile</Text>
+
+              <View style={styles.benefitRow}>
+                <Ionicons name="infinite" size={24} color="#10B981" />
+                <Text style={styles.benefitText}>
+                  Unbegrenzte Laufzeit solange der Anbieter sein Abo behält
+                </Text>
               </View>
 
-              {/* Tier 2 */}
-              <View style={[styles.tierCard, styles.tierSilver]}>
-                <View style={styles.tierHeader}>
-                  <View style={styles.tierBadge}>
-                    <Ionicons name="medal" size={24} color="#94A3B8" />
-                  </View>
-                  <View style={styles.tierHeaderText}>
-                    <Text style={styles.tierTitle}>Silver Pioneer</Text>
-                    <Text style={styles.tierSubtitle}>Registrierung in ersten 2.000</Text>
-                  </View>
-                </View>
-                
-                <View style={styles.benefitsList}>
-                  <View style={styles.benefitItem}>
-                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                    <Text style={styles.benefitItemText}>Lebenslang 30% Rabatt auf Pro & Business</Text>
-                  </View>
-                  <View style={styles.benefitItem}>
-                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                    <Text style={styles.benefitItemText}>Exklusives "Silver Pioneer" Badge</Text>
-                  </View>
-                  <View style={styles.benefitItem}>
-                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                    <Text style={styles.benefitItemText}>Frühzeitiger Zugang zu neuen Features</Text>
-                  </View>
-                </View>
+              <View style={styles.benefitRow}>
+                <Ionicons name="trending-up" size={24} color="#10B981" />
+                <Text style={styles.benefitText}>
+                  Passives Einkommen ohne weiteren Aufwand
+                </Text>
               </View>
 
-              {/* Tier 3 */}
-              <View style={[styles.tierCard, styles.tierBronze]}>
-                <View style={styles.tierHeader}>
-                  <View style={styles.tierBadge}>
-                    <Ionicons name="ribbon" size={24} color="#CD7F32" />
-                  </View>
-                  <View style={styles.tierHeaderText}>
-                    <Text style={styles.tierTitle}>Bronze Pioneer</Text>
-                    <Text style={styles.tierSubtitle}>Registrierung in ersten 5.000</Text>
-                  </View>
-                </View>
-                
-                <View style={styles.benefitsList}>
-                  <View style={styles.benefitItem}>
-                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                    <Text style={styles.benefitItemText}>Lebenslang 15% Rabatt auf Pro & Business</Text>
-                  </View>
-                  <View style={styles.benefitItem}>
-                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                    <Text style={styles.benefitItemText}>Exklusives "Bronze Pioneer" Badge</Text>
-                  </View>
-                </View>
+              <View style={styles.benefitRow}>
+                <Ionicons name="flash" size={24} color="#10B981" />
+                <Text style={styles.benefitText}>
+                  Automatische monatliche Gutschrift
+                </Text>
+              </View>
+
+              <View style={styles.benefitRow}>
+                <Ionicons name="people" size={24} color="#10B981" />
+                <Text style={styles.benefitText}>
+                  Unterstütze die Community und werde belohnt
+                </Text>
               </View>
             </View>
 
             {/* Important Note */}
             <View style={styles.noteCard}>
-              <Ionicons name="information-circle-outline" size={24} color="#666" />
+              <Ionicons name="information-circle" size={20} color="#666" />
               <Text style={styles.noteText}>
-                <Text style={styles.noteBold}>Wichtig:</Text> Dein First Mover Status wird automatisch 
-                bei der Registrierung vergeben und ist lebenslang gültig. Die Vorteile gelten auch für 
-                alle zukünftigen Produkte und Services von Valuntir.
+                Deine First Mover Bewertungen bleiben dauerhaft in deinem Profil sichtbar. 
+                Du erhältst die Provision nur, wenn dein Account zum Zeitpunkt der 
+                Abo-Aktivierung des Anbieters aktiv ist.
               </Text>
             </View>
 
-            {/* CTA */}
-            <TouchableOpacity style={styles.ctaButton}>
-              <Text style={styles.ctaButtonText}>Jetzt registrieren & Vorteile sichern</Text>
-              <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
-            </TouchableOpacity>
-
-            <View style={{ height: 40 }} />
+            {/* Bottom Spacer für FAB */}
+            <View style={{ height: 180 }} />
           </ScrollView>
+
+          {/* TransFAB */}
+          <TransFAB 
+            scrollY={scrollY} 
+            bottom={40} 
+            onPress={handleUpgrade}
+            text="Auf Valuntir Pro upgraden"
+          />
         </SafeAreaView>
       </LinearGradient>
     </View>
@@ -194,11 +219,21 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   backButton: {
     padding: 4,
+    width: 36,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#000',
+  },
+  headerSpacer: {
+    width: 36,
   },
   content: {
     flex: 1,
@@ -208,66 +243,34 @@ const styles = StyleSheet.create({
   },
   heroSection: {
     alignItems: 'center',
-    marginBottom: 32,
-    marginTop: 20,
+    marginBottom: 40,
   },
-  badgeContainer: {
-    marginBottom: 20,
-  },
-  badge: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headline: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#000',
+  heroHeadline: {
+    fontSize: 36,
+    fontWeight: '900',
+    color: '#000000',
     textAlign: 'center',
-    lineHeight: 36,
-    marginBottom: 12,
+    marginBottom: 4,
+    letterSpacing: -1,
+    lineHeight: 42,
   },
-  subheadline: {
+  heroSubheadline: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#666',
+    color: '#3B82F6',
     textAlign: 'center',
     lineHeight: 24,
   },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
-    marginBottom: 32,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
+  introSection: {
+    marginBottom: 40,
   },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 12,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000',
-    flex: 1,
-  },
-  cardText: {
-    fontSize: 15,
+  introText: {
+    fontSize: 16,
     fontWeight: '500',
-    color: '#666',
-    lineHeight: 24,
+    color: '#333',
+    lineHeight: 26,
   },
-  tierSection: {
+  featuresSection: {
     marginBottom: 32,
   },
   sectionTitle: {
@@ -276,84 +279,135 @@ const styles = StyleSheet.create({
     color: '#000',
     marginBottom: 20,
   },
-  tierCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
-    marginBottom: 16,
-    borderWidth: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  tierGold: {
-    borderColor: '#F59E0B',
-    backgroundColor: '#FFFBEB',
-  },
-  tierSilver: {
-    borderColor: '#94A3B8',
-    backgroundColor: '#F8FAFC',
-  },
-  tierBronze: {
-    borderColor: '#CD7F32',
-    backgroundColor: '#FEF3C7',
-  },
-  tierHeader: {
+  featureCard: {
     flexDirection: 'row',
-    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
     gap: 16,
-    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
   },
-  tierBadge: {
+  featureIcon: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
-  tierHeaderText: {
+  featureContent: {
     flex: 1,
+    justifyContent: 'center',
   },
-  tierTitle: {
-    fontSize: 20,
-    fontWeight: '800',
+  featureTitle: {
+    fontSize: 16,
+    fontWeight: '700',
     color: '#000',
-    marginBottom: 4,
+    marginBottom: 6,
   },
-  tierSubtitle: {
-    fontSize: 13,
-    fontWeight: '600',
+  featureText: {
+    fontSize: 14,
+    fontWeight: '500',
     color: '#666',
+    lineHeight: 20,
   },
-  benefitsList: {
-    gap: 12,
+  calculationSection: {
+    marginBottom: 32,
   },
-  benefitItem: {
+  calculationGradient: {
+    borderRadius: 24,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.15)',
+  },
+  calculationHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    marginBottom: 20,
   },
-  benefitItemText: {
-    fontSize: 14,
+  calculationTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#000',
+    letterSpacing: -0.3,
+  },
+  calculationRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  calculationLabel: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#666',
+  },
+  calculationValue: {
+    fontSize: 15,
     fontWeight: '600',
     color: '#000',
+  },
+  calculationHighlight: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#3B82F6',
+  },
+  calculationDivider: {
+    height: 1,
+    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+    marginVertical: 16,
+  },
+  calculationResult: {
+    alignItems: 'center',
+    paddingTop: 8,
+  },
+  calculationResultLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#666',
+    marginBottom: 8,
+  },
+  calculationResultValue: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: '#3B82F6',
+    letterSpacing: -1,
+    marginBottom: 4,
+  },
+  calculationResultYear: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#10B981',
+  },
+  benefitsSection: {
+    marginBottom: 32,
+  },
+  benefitRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 16,
+  },
+  benefitText: {
     flex: 1,
-    lineHeight: 20,
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#333',
+    lineHeight: 22,
   },
   noteCard: {
     flexDirection: 'row',
     backgroundColor: '#F5F5F5',
     borderRadius: 16,
     padding: 20,
-    marginBottom: 24,
     gap: 12,
     borderWidth: 1,
     borderColor: '#E5E5E5',
@@ -365,29 +419,4 @@ const styles = StyleSheet.create({
     color: '#666',
     lineHeight: 22,
   },
-  noteBold: {
-    fontWeight: '700',
-    color: '#000',
-  },
-  ctaButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#000',
-    borderRadius: 16,
-    paddingVertical: 18,
-    paddingHorizontal: 32,
-    gap: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  ctaButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
 });
-

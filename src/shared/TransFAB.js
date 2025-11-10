@@ -16,29 +16,30 @@ export default function TransFAB({
   // Animierte Werte - smooth mit clamp
   const buttonBorderRadius = 32; // Immer komplett rund (wie ProfileFAB)
 
-  const buttonLeft = scrollY.interpolate({
+  // Wenn kein scrollY übergeben wird, statische Werte verwenden
+  const buttonLeft = scrollY !== undefined ? scrollY.interpolate({
     inputRange: [0, 1200, 1400],
     outputRange: [screenWidth - 84, screenWidth - 84, 20], // Rund rechts → breit links
     extrapolate: 'clamp',
-  });
+  }) : screenWidth - 84;
 
-  const buttonRight = scrollY.interpolate({
+  const buttonRight = scrollY !== undefined ? scrollY.interpolate({
     inputRange: [0, 1200, 1400],
     outputRange: [20, 20, 20], // Immer 20
     extrapolate: 'clamp',
-  });
+  }) : 20;
 
-  const iconOpacity = scrollY.interpolate({
+  const iconOpacity = scrollY !== undefined ? scrollY.interpolate({
     inputRange: [0, 1200, 1300],
     outputRange: [1, 1, 0],
     extrapolate: 'clamp',
-  });
+  }) : 1;
 
-  const textOpacity = scrollY.interpolate({
+  const textOpacity = scrollY !== undefined ? scrollY.interpolate({
     inputRange: [1200, 1300, 1400],
     outputRange: [0, 0.5, 1],
     extrapolate: 'clamp',
-  });
+  }) : 0;
 
   return (
     <Animated.View

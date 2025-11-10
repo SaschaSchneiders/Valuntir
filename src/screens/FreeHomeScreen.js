@@ -25,14 +25,14 @@ export default function FreeHomeScreen() {
     },
     {
       icon: 'shield-checkmark',
-      title: 'Vertrauen & Sicherheit',
-      description: 'DSGVO-konform & sicher verschlüsselt für deine Daten',
+      title: 'Valuntir Security-System',
+      description: 'Bank-Level-Verschlüsselung & vollständiger Betrugsschutz',
       screen: 'TrustAndSafety',
     },
     {
       icon: 'rocket',
-      title: 'First Mover Bonus',
-      description: 'Sichere dir passives Einkommen, das monatlich landet',
+      title: 'First Mover Programm',
+      description: 'Verdiene passiv durch alltägliche Zahlungen die du sowieso machst',
       screen: 'FirstMoverSystem',
     },
     {
