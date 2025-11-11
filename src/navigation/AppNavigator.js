@@ -20,6 +20,7 @@ import FirstMoverSystemScreen from '../screens/FirstMoverSystemScreen';
 import TrustAndSafetyScreen from '../screens/TrustAndSafetyScreen';
 import SupportChatScreen from '../screens/SupportChatScreen';
 import MySubscriptionScreen from '../screens/MySubscriptionScreen';
+import ArchivedConnectionsScreen from '../screens/ArchivedConnectionsScreen';
 
 // Components
 import FloatingTabBar from '../components/FloatingTabBar';
@@ -99,6 +100,7 @@ export default function AppNavigator() {
           <Stack.Screen name="TrustAndSafety" component={TrustAndSafetyScreen} />
           <Stack.Screen name="SupportChat" component={SupportChatScreen} />
           <Stack.Screen name="MySubscription" component={MySubscriptionScreen} />
+          <Stack.Screen name="ArchivedConnections" component={ArchivedConnectionsScreen} />
       </Stack.Navigator>
         <PackageBadge />
     </NavigationContainer>

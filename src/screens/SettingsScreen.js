@@ -123,6 +123,17 @@ export default function SettingsScreen({ navigation: navProp }) {
             />
           </View>
               
+              <TouchableOpacity 
+                style={styles.menuItem}
+                onPress={() => navigation.navigate('ArchivedConnections')}
+              >
+                <View style={styles.menuLeft}>
+                  <Ionicons name="archive-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Archiv</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+              
               <TouchableOpacity style={styles.menuItem}>
                 <View style={styles.menuLeft}>
                   <Ionicons name="globe-outline" size={22} color="#000" />

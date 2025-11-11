@@ -31,7 +31,7 @@ export default function HomeScreen({ navigation }) {
 
   // Mock-Daten für Connections die bewertet werden können (dynamisch basierend auf heute)
   const today = new Date();
-  const connections = [
+  const [connections, setConnections] = useState([
     {
       id: 1,
       company: 'Webdesign Studio Nord',
@@ -88,7 +88,7 @@ export default function HomeScreen({ navigation }) {
       category: 'Content Creation',
       status: 'rated',
     },
-  ];
+  ]);
 
   const filterTabs = [
     { key: 'all', label: 'Alle' },
@@ -132,7 +132,9 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  const filteredConnections = filterConnections(connections, selectedFilter);
+  const filteredConnections = filterConnections(connections, selectedFilter).filter(
+    (conn) => !conn.archived
+  );
 
   const handleRateConnection = (connection) => {
     setSelectedConnection(connection);
@@ -155,6 +157,15 @@ export default function HomeScreen({ navigation }) {
     console.log(`Erinnerung gesetzt für Connection ${connectionId} in ${days} Tagen`);
     // TODO: Backend API Call
     // Hier würde die Erinnerung gespeichert werden
+  };
+
+  const handleArchiveConnection = (connectionId) => {
+    setConnections((prevConnections) =>
+      prevConnections.map((conn) =>
+        conn.id === connectionId ? { ...conn, archived: true } : conn
+      )
+    );
+    console.log(`Connection ${connectionId} archiviert`);
   };
 
   const content = (
@@ -203,6 +214,7 @@ export default function HomeScreen({ navigation }) {
                       connection={connection}
                       onPress={() => handleRateConnection(connection)}
                       onSetReminder={handleSetReminder}
+                      onArchive={handleArchiveConnection}
                     />
                   </View>
                 ))

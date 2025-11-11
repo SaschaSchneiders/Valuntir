@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
-export default function ConnectionCard({ connection, onPress, onSetReminder, isReminderMode = false }) {
+export default function ConnectionCard({ connection, onPress, onSetReminder, onArchive, isReminderMode = false }) {
   const [showReminderModal, setShowReminderModal] = useState(false);
+  const swipeableRef = useRef(null);
 
   const reminderOptions = [
     { label: 'In 1 Woche', days: 7 },
@@ -19,6 +21,30 @@ export default function ConnectionCard({ connection, onPress, onSetReminder, isR
       onSetReminder(connection.id, days);
     }
     setShowReminderModal(false);
+  };
+
+  const handleArchive = () => {
+    if (onArchive) {
+      onArchive(connection.id);
+    }
+  };
+
+  const renderRightActions = (progress, dragX) => {
+    return (
+      <View style={styles.archiveActionContainer}>
+        <LinearGradient
+          colors={['rgba(249, 115, 22, 0.4)', 'rgba(249, 115, 22, 0.15)', 'rgba(249, 115, 22, 0)']}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={styles.archiveGradient}
+        >
+          <View style={styles.archiveContent}>
+            <Ionicons name="archive-outline" size={28} color="#F97316" />
+            <Text style={styles.archiveText}>Archivieren</Text>
+          </View>
+        </LinearGradient>
+      </View>
+    );
   };
 
   // Hilfsfunktion für Datumsformatierung
@@ -54,8 +80,22 @@ export default function ConnectionCard({ connection, onPress, onSetReminder, isR
     }).format(amount);
   };
 
+  const isRated = connection.status === 'rated';
+
   return (
-    <View style={styles.connectionCard}>
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={renderRightActions}
+      overshootRight={false}
+      rightThreshold={80}
+      friction={2}
+      onSwipeableOpen={(direction) => {
+        if (direction === 'right') {
+          handleArchive();
+        }
+      }}
+    >
+      <View style={[styles.connectionCard, isRated && styles.connectionCardRated]}>
       <View style={styles.connectionHeader}>
         <View style={styles.connectionIcon}>
           <Ionicons name="business" size={22} color="#000" />
@@ -69,11 +109,13 @@ export default function ConnectionCard({ connection, onPress, onSetReminder, isR
           </Text>
         </View>
         {connection.status === 'rated' && (
-          <Ionicons name="checkmark-circle" size={22} color="#22C55E" />
+          <View style={styles.ratedBadge}>
+            <Ionicons name="checkmark-circle" size={24} color="#10B981" />
+          </View>
         )}
       </View>
 
-      <View style={styles.connectionDetails}>
+      <View style={[styles.connectionDetails, isRated && styles.connectionDetailsRated]}>
         <View style={styles.connectionAmount}>
           <Text style={styles.connectionAmountLabel}>Betrag</Text>
           <Text style={styles.connectionAmountValue}>
@@ -164,7 +206,8 @@ export default function ConnectionCard({ connection, onPress, onSetReminder, isR
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
-    </View>
+      </View>
+    </Swipeable>
   );
 }
 
@@ -183,6 +226,13 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.08)',
+  },
+  connectionCardRated: {
+    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    borderColor: 'rgba(16, 185, 129, 0.3)',
+    borderWidth: 1.5,
+    shadowColor: '#10B981',
+    shadowOpacity: 0.15,
   },
   connectionHeader: {
     flexDirection: 'row',
@@ -218,6 +268,16 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#666666',
   },
+  ratedBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.3)',
+  },
   connectionDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -227,6 +287,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.04)',
     marginBottom: 12,
+  },
+  connectionDetailsRated: {
+    marginBottom: 0,
+    borderBottomWidth: 0,
   },
   connectionAmount: {
     flex: 1,
@@ -346,6 +410,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#000',
+  },
+  // Swipe Archive Action - Schweif-Effekt
+  archiveActionContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    marginLeft: 12,
+  },
+  archiveGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 20,
+    borderTopRightRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  archiveContent: {
+    alignItems: 'center',
+    gap: 6,
+    paddingRight: 20,
+  },
+  archiveText: {
+    color: '#F97316',
+    fontSize: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });
 
