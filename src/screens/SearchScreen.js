@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Animated,
 } from 'react-native';
+import Slider from '@react-native-community/slider';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -22,6 +23,7 @@ export default function SearchScreen({ navigation: navProp }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [locationQuery, setLocationQuery] = useState('');
   const [isBundesweit, setIsBundesweit] = useState(false);
+  const [searchRadius, setSearchRadius] = useState(25); // Suchradius in km
   const [minSuccessRate, setMinSuccessRate] = useState(0); // Mindest-Erfolgsquote
   const [showFilters, setShowFilters] = useState(false);
   const [isLocationFocused, setIsLocationFocused] = useState(false);
@@ -252,7 +254,7 @@ export default function SearchScreen({ navigation: navProp }) {
                   size={22} 
                   color="#000" 
                 />
-                {(locationQuery || isBundesweit || minSuccessRate > 0) && (
+                {(locationQuery || isBundesweit || searchRadius !== 25 || minSuccessRate > 0) && (
                   <View style={styles.filterBadge} />
                 )}
               </TouchableOpacity>
@@ -405,14 +407,15 @@ export default function SearchScreen({ navigation: navProp }) {
                   onPress={() => {
                     setLocationQuery('');
                     setIsBundesweit(false);
+                    setSearchRadius(25);
                     setMinSuccessRate(0);
                   }}
-                  disabled={!(locationQuery || isBundesweit || minSuccessRate > 0)}
+                  disabled={!(locationQuery || isBundesweit || searchRadius !== 25 || minSuccessRate > 0)}
                   style={styles.resetButton}
                 >
                   <Text style={[
                     styles.resetButtonText,
-                    !(locationQuery || isBundesweit || minSuccessRate > 0) && styles.resetButtonTextDisabled
+                    !(locationQuery || isBundesweit || searchRadius !== 25 || minSuccessRate > 0) && styles.resetButtonTextDisabled
                   ]}>
                     Zurücksetzen
                   </Text>
@@ -449,7 +452,28 @@ export default function SearchScreen({ navigation: navProp }) {
                 </View>
               )}
 
-              {/* Bundesweit Toggle - unter dem Textfeld */}
+              {/* Radius Slider - nur wenn nicht bundesweit */}
+              {!isBundesweit && locationQuery && (
+                <View style={styles.radiusContainer}>
+                  <View style={styles.radiusHeader}>
+                    <Text style={styles.radiusLabel}>Umkreis</Text>
+                    <Text style={styles.radiusValue}>{searchRadius} km</Text>
+                  </View>
+                  <Slider
+                    style={styles.slider}
+                    minimumValue={5}
+                    maximumValue={200}
+                    step={5}
+                    value={searchRadius}
+                    onValueChange={setSearchRadius}
+                    minimumTrackTintColor="#000000"
+                    maximumTrackTintColor="rgba(0, 0, 0, 0.1)"
+                    thumbTintColor="#000000"
+                  />
+                </View>
+              )}
+
+              {/* Bundesweit Toggle - nach dem Slider */}
               <TouchableOpacity 
                 style={styles.bundesweitToggle}
                 onPress={() => {
@@ -464,7 +488,7 @@ export default function SearchScreen({ navigation: navProp }) {
                   isBundesweit && styles.checkboxActive
                 ]}>
                   {isBundesweit && (
-                    <Ionicons name="checkmark" size={16} color="#FFF" />
+                    <Ionicons name="checkmark" size={16} color="#000" />
                   )}
                 </View>
                 <Text style={styles.bundesweitText}>Bundesweit suchen</Text>
@@ -828,15 +852,22 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#CCCCCC',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.15)',
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
     marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
   checkboxActive: {
-    backgroundColor: '#000000',
-    borderColor: '#000000',
+    backgroundColor: 'rgba(0, 0, 0, 0.15)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(0, 0, 0, 0.3)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
   },
   bundesweitText: {
     fontSize: 15,
@@ -846,12 +877,17 @@ const styles = StyleSheet.create({
   locationInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
+    borderColor: 'rgba(0, 0, 0, 0.08)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 2,
+    elevation: 1,
   },
   locationIcon: {
     marginRight: 10,
@@ -871,14 +907,25 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 8,
     borderRadius: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
+    borderColor: 'rgba(0, 0, 0, 0.08)',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 2,
+    elevation: 1,
   },
   successRatePillActive: {
-    backgroundColor: '#000000',
-    borderColor: '#000000',
+    backgroundColor: 'rgba(0, 0, 0, 0.15)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(0, 0, 0, 0.3)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 8,
   },
   successRatePillText: {
     fontSize: 13,
@@ -886,7 +933,31 @@ const styles = StyleSheet.create({
     color: '#666666',
   },
   successRatePillTextActive: {
-    color: '#FFFFFF',
+    color: '#000000',
+    fontWeight: '700',
+  },
+  radiusContainer: {
+    marginTop: 12,
+  },
+  radiusHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  radiusLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666666',
+  },
+  radiusValue: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#000000',
+  },
+  slider: {
+    width: '100%',
+    height: 40,
   },
   applyButton: {
     backgroundColor: '#000000',
