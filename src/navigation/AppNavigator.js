@@ -18,7 +18,7 @@ import AboutValuntirScreen from '../screens/AboutValuntirScreen';
 import InviteFriendsScreen from '../screens/InviteFriendsScreen';
 import FirstMoverSystemScreen from '../screens/FirstMoverSystemScreen';
 import TrustAndSafetyScreen from '../screens/TrustAndSafetyScreen';
-import FAQScreen from '../screens/FAQScreen';
+import SupportChatScreen from '../screens/SupportChatScreen';
 import MySubscriptionScreen from '../screens/MySubscriptionScreen';
 
 // Components
@@ -97,7 +97,7 @@ export default function AppNavigator() {
           <Stack.Screen name="InviteFriends" component={InviteFriendsScreen} />
           <Stack.Screen name="FirstMoverSystem" component={FirstMoverSystemScreen} />
           <Stack.Screen name="TrustAndSafety" component={TrustAndSafetyScreen} />
-          <Stack.Screen name="FAQ" component={FAQScreen} />
+          <Stack.Screen name="SupportChat" component={SupportChatScreen} />
           <Stack.Screen name="MySubscription" component={MySubscriptionScreen} />
       </Stack.Navigator>
         <PackageBadge />

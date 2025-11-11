@@ -42,10 +42,10 @@ export default function FreeHomeScreen() {
       screen: 'InviteFriends',
     },
     {
-      icon: 'help-circle',
-      title: 'FAQ',
-      description: 'Die wichtigsten Antworten auf deine Fragen im Überblick',
-      screen: 'FAQ',
+      icon: 'chatbubble-ellipses',
+      title: 'Support & FAQ',
+      description: 'Schnelle Hilfe per Chat oder häufige Fragen durchstöbern',
+      screen: 'SupportChat',
     },
   ];
 

@@ -17,7 +17,7 @@ export default function InviteFriendsScreen({ navigation }) {
   const [copiedLink, setCopiedLink] = useState(false);
   
   // User-spezifischer Einladungslink (später dynamisch)
-  const referralLink = 'https://valuntir.app/invite/abc123xyz';
+  const referralLink = 'https://valuntir.com/invite/abc123xyz';
   
   const handleCopyLink = () => {
     Clipboard.setString(referralLink);
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   },
   linkCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 24,
     padding: 20,
     borderWidth: 1,
     borderColor: '#E5E5E5',
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   },
   linkTextContainer: {
     backgroundColor: '#F5F5F5',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 16,
     marginBottom: 16,
   },
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     backgroundColor: 'rgba(59, 130, 246, 0.1)',
-    borderRadius: 12,
+    borderRadius: 16,
     paddingVertical: 12,
     paddingHorizontal: 20,
   },
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   qrContainer: {
     backgroundColor: '#FFFFFF',
     padding: 20,
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 2,
     borderColor: '#E5E5E5',
     marginBottom: 16,
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
   featureCard: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 20,
     marginBottom: 12,
     borderWidth: 1,
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#3B82F6',
-    borderRadius: 16,
+    borderRadius: 28,
     paddingVertical: 18,
     paddingHorizontal: 32,
     gap: 12,
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
   noteCard: {
     flexDirection: 'row',
     backgroundColor: '#F5F5F5',
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 20,
     gap: 12,
     borderWidth: 1,

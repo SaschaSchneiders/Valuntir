@@ -96,11 +96,11 @@ export default function SettingsScreen({ navigation: navProp }) {
               
               <TouchableOpacity 
                 style={[styles.menuItem, styles.menuItemLast]}
-                onPress={() => navigation.navigate('FAQ')}
+                onPress={() => navigation.navigate('SupportChat')}
               >
                 <View style={styles.menuLeft}>
-                  <Ionicons name="help-circle-outline" size={22} color="#000" />
-                  <Text style={styles.menuText}>Häufige Fragen</Text>
+                  <Ionicons name="chatbubble-ellipses-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Support & FAQ</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#999" />
               </TouchableOpacity>
