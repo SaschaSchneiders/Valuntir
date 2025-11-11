@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import RateScale from '../shared/RateScale';
 import ChartCard from '../shared/ChartCard';
 import RatingBreakdown from '../shared/RatingBreakdown';
+import NetworkStrengthMetrics from '../shared/NetworkStrengthMetrics';
 import ProfileMetrics from '../shared/ProfileMetrics';
 import ConnectionMetrics from '../shared/ConnectionMetrics';
 import FirstMoverMetrics from '../shared/FirstMoverMetrics';
@@ -225,6 +226,14 @@ export default function DashboardScreen({ navigation }) {
                 deliveryQuality={89}
                 reliability={94}
                 totalProjects={totalRatings}
+              />
+            </View>
+
+            {/* Netzwerkstärke & Entscheidungskompetenz */}
+            <View style={{ marginBottom: 24 }}>
+              <NetworkStrengthMetrics
+                totalConnections={connectionsRated}
+                averageSuccessRate={83}
               />
             </View>
 
