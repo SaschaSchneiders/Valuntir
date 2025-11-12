@@ -165,9 +165,7 @@ export default function ChartCard({
                   fill="#999999"
                   textAnchor="end"
                   fontWeight="500"
-                >
-                  {line.value}
-                </SvgText>
+                >{`${line.value}%`}</SvgText>
               ))}
               
               {/* X-Axis Labels */}
@@ -206,12 +204,14 @@ export default function ChartCard({
 
 const styles = StyleSheet.create({
   successCard: {
+    marginTop: 0,
     marginBottom: 20,
   },
   successHeader: {
     marginBottom: 8,
   },
   successHeaderNoTitle: {
+    marginTop: 0,
     marginBottom: 0,
   },
   cardTitle: {

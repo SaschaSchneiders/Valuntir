@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Switch,
+  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -31,20 +32,38 @@ export default function SettingsScreen({ navigation: navProp }) {
 
   const content = (
     <View style={styles.container}>
+      <StatusBar backgroundColor="#F8F9FA" barStyle="dark-content" />
+      <View style={styles.statusBarFill} />
       <LinearGradient
         colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <SafeAreaView style={styles.safeArea} edges={['top']}>
-          <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.screenContainer}>
+          <SafeAreaView style={styles.safeArea} edges={[]}>
             {/* Header - nur auf Mobile */}
             {!isDesktop && (
-              <View style={styles.header}>
-                <Text style={styles.title}>Einstellungen</Text>
-        </View>
+              <LinearGradient
+                colors={[
+                  'rgba(248, 249, 250, 1)',
+                  'rgba(248, 249, 250, 0.95)',
+                  'rgba(248, 249, 250, 0.7)',
+                  'rgba(248, 249, 250, 0)',
+                ]}
+                locations={[0, 0.4, 0.7, 1]}
+                style={styles.stickyHeader}
+              >
+                <View style={styles.header}>
+                  <Text style={styles.title}>Einstellungen</Text>
+                </View>
+              </LinearGradient>
             )}
+
+            <ScrollView 
+              style={styles.scrollView}
+              contentContainerStyle={styles.content}
+            >
         
             {/* Valuntir Section */}
             <View style={styles.section}>
@@ -243,27 +262,28 @@ export default function SettingsScreen({ navigation: navProp }) {
               </View>
         </View>
         
-            {/* Platz für TabBar */}
-            <View style={{ height: 100 }} />
-      </ScrollView>
-    </SafeAreaView>
+              {/* Platz für TabBar */}
+              <View style={{ height: 100 }} />
+            </ScrollView>
+          </SafeAreaView>
 
-        {/* Schwebende TabBar - nur auf Mobile */}
-        {!isDesktop && (
-          <View style={styles.floatingTabBarContainer}>
-            <View style={styles.floatingTabBar}>
-              {tabs.map((tab) => (
-                <TouchableOpacity
-                  key={tab.name}
-                  style={styles.tabButton}
-                  onPress={() => navigation.navigate('Main', { screen: tab.name })}
-                >
-                  <Ionicons name={tab.icon} size={24} color="#666666" />
-                </TouchableOpacity>
-              ))}
+          {/* Schwebende TabBar - nur auf Mobile */}
+          {!isDesktop && (
+            <View style={styles.floatingTabBarContainer}>
+              <View style={styles.floatingTabBar}>
+                {tabs.map((tab) => (
+                  <TouchableOpacity
+                    key={tab.name}
+                    style={styles.tabButton}
+                    onPress={() => navigation.navigate('Main', { screen: tab.name })}
+                  >
+                    <Ionicons name={tab.icon} size={24} color="#666666" />
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
-          </View>
-        )}
+          )}
+        </View>
       </LinearGradient>
     </View>
   );
@@ -289,20 +309,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  statusBarFill: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 50,
+    backgroundColor: '#F8F9FA',
+    zIndex: 1000,
+  },
+  screenContainer: {
+    flex: 1,
+    overflow: 'visible',
+  },
   gradient: {
     flex: 1,
   },
   safeArea: {
     flex: 1,
+    paddingTop: 50,
+  },
+  stickyHeader: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 20,
+    zIndex: 100,
+  },
+  scrollView: {
+    flex: 1,
+    overflow: 'visible',
   },
   content: {
     padding: 20,
+    paddingTop: 0,
+    overflow: 'visible',
   },
   header: {
-    marginBottom: 24,
+    marginBottom: 0,
   },
   title: {
-    fontSize: 26,
+    fontSize: 34,
     fontWeight: '800',
     color: '#000',
   },

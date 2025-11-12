@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     overflow: 'visible',
   },
   header: {
-    marginBottom: 24,
+    marginBottom: 4,
   },
   headerTitle: {
     fontSize: 34,
