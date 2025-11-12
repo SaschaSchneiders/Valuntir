@@ -89,6 +89,8 @@ export default function ConnectionCard({ connection, onPress, onSetReminder, onA
       overshootRight={false}
       rightThreshold={80}
       friction={2}
+      containerStyle={{ overflow: 'visible' }}
+      childrenContainerStyle={{ overflow: 'visible' }}
       onSwipeableOpen={(direction) => {
         if (direction === 'right') {
           handleArchive();
@@ -219,20 +221,22 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 8,
     },
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    elevation: 4,
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 12,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.08)',
+    borderColor: 'rgba(0, 0, 0, 0.06)',
   },
   connectionCardRated: {
     backgroundColor: 'rgba(16, 185, 129, 0.08)',
     borderColor: 'rgba(16, 185, 129, 0.3)',
     borderWidth: 1.5,
     shadowColor: '#10B981',
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 10,
   },
   connectionHeader: {
     flexDirection: 'row',
