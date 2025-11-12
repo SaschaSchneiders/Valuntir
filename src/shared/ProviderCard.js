@@ -22,7 +22,7 @@ export default function ProviderCard({ provider, onPress }) {
           <Ionicons 
             name="business" 
             size={22} 
-            color="#FFFFFF"
+            color="#000"
           />
         </View>
 
@@ -103,12 +103,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#000000',
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     borderWidth: 1,
-    borderColor: '#FFFFFF',
+    borderColor: 'rgba(0, 0, 0, 0.08)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
