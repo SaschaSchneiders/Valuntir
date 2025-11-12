@@ -61,17 +61,6 @@ export default function ProfileCard({
         </TouchableOpacity>
       )}
 
-      {/* Share Button - unter Titelbild, rechts */}
-      <TouchableOpacity 
-        style={styles.shareButton}
-        onPress={() => {
-          // TODO: Share Funktionalität implementieren
-          console.log('Share Profile');
-        }}
-      >
-        <Ionicons name="share-outline" size={20} color="#666" />
-      </TouchableOpacity>
-
       {/* Content Container */}
       <View style={styles.contentContainer}>
         {/* Avatar - links positioniert, überlappt Titelbild */}
@@ -83,16 +72,21 @@ export default function ProfileCard({
         <View style={styles.companyInfo}>
           <Text style={styles.companyName}>{companyName}</Text>
           
-          <View style={styles.badgeRow}>
-            <View style={styles.branchBadge}>
-              <Ionicons name="briefcase-outline" size={14} color="#666" />
-              <Text style={styles.branchText}>{branch}</Text>
-            </View>
+          <View style={styles.infoRow}>
             {location && (
-              <View style={styles.locationBadge}>
-                <Ionicons name="location-outline" size={14} color="#666" />
-                <Text style={styles.locationText}>{location}</Text>
-              </View>
+              <>
+                <Ionicons name="location" size={13} color="#999" />
+                <Text style={styles.infoText}>{location}</Text>
+              </>
+            )}
+            {location && branch && (
+              <Text style={styles.separator}>•</Text>
+            )}
+            {branch && (
+              <>
+                <Ionicons name="briefcase" size={13} color="#999" />
+                <Text style={styles.infoText}>{branch}</Text>
+              </>
             )}
           </View>
         </View>
@@ -105,6 +99,7 @@ const styles = StyleSheet.create({
   profileCard: {
     paddingVertical: 20,
     position: 'relative',
+    marginBottom: 0,
   },
   coverImageContainer: {
     position: 'absolute',
@@ -151,20 +146,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 10,
   },
-  shareButton: {
-    position: 'absolute',
-    top: 140,
-    right: 4,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.03)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.08)',
-    zIndex: 5,
-  },
   contentContainer: {
     marginTop: 50,
     paddingLeft: 0,
@@ -183,39 +164,22 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#000',
     textAlign: 'left',
-    marginBottom: 6,
+    marginBottom: 4,
   },
-  badgeRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  branchBadge: {
+  infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 24,
-    gap: 6,
+    gap: 4,
   },
-  branchText: {
+  infoText: {
     fontSize: 13,
-    color: '#666',
+    color: '#999',
     fontWeight: '500',
   },
-  locationBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 24,
-    gap: 6,
-  },
-  locationText: {
+  separator: {
     fontSize: 13,
-    color: '#666',
-    fontWeight: '500',
+    color: '#CCC',
+    marginHorizontal: 2,
   },
 });
 

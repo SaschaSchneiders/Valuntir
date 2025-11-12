@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,6 +12,7 @@ import RateScale from '../shared/RateScale';
 import RatingBreakdown from '../shared/RatingBreakdown';
 import ProjectComments from '../shared/ProjectComments';
 import ContactSection from '../shared/ContactSection';
+import SocialMediaSection from '../shared/SocialMediaSection';
 import ProfileFAB from '../shared/ProfileFAB';
 import ConnectionMetrics from '../shared/ConnectionMetrics';
 import VolumeMetrics from '../shared/VolumeMetrics';
@@ -216,7 +217,8 @@ export default function PublicProfileScreen({ route }) {
             {/* Quick Action Buttons */}
             <QuickActionButtons
               websiteUrl={provider.websiteUrl}
-              calendarUrl={provider.calendarUrl}
+              onWebsitePress={() => console.log('Open Website:', provider.websiteUrl)}
+              onSharePress={() => console.log('Share Profile')}
             />
 
             {/* Chart & Statistiken */}
@@ -284,11 +286,28 @@ export default function PublicProfileScreen({ route }) {
               </View>
             )}
 
-            {/* Kontakt & Social Media */}
+            {/* Kontakt */}
             <ContactSection
               email={provider.email}
               phone={provider.phone}
               whatsapp={provider.whatsapp}
+            />
+
+            {/* Book Appointment Button */}
+            {provider.calendarUrl && (
+              <View style={{ marginBottom: 32 }}>
+                <TouchableOpacity
+                  style={styles.bookAppointmentButton}
+                  onPress={() => console.log('Book Appointment:', provider.calendarUrl)}
+                >
+                  <Ionicons name="calendar" size={22} color="#FFFFFF" />
+                  <Text style={styles.bookAppointmentButtonText}>Termin buchen</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* Social Media */}
+            <SocialMediaSection
               linkedin={provider.linkedin}
               instagram={provider.instagram}
             />
@@ -346,6 +365,27 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  bookAppointmentButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: '#3B82F6',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 28,
+    shadowColor: '#3B82F6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  bookAppointmentButtonText: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: 0.3,
   },
 });
 

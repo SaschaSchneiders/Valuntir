@@ -2,9 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function QuickActionButtons({ websiteUrl, calendarUrl, onWebsitePress, onCalendarPress }) {
-  if (!websiteUrl && !calendarUrl) return null;
-
+export default function QuickActionButtons({ websiteUrl, onWebsitePress, onSharePress }) {
   return (
     <View style={styles.container}>
       {websiteUrl && (
@@ -16,15 +14,15 @@ export default function QuickActionButtons({ websiteUrl, calendarUrl, onWebsiteP
           <Text style={styles.buttonText}>Webseite</Text>
         </TouchableOpacity>
       )}
-      {calendarUrl && (
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={onCalendarPress || (() => console.log('Open Calendar:', calendarUrl))}
-        >
-          <Ionicons name="calendar-outline" size={20} color="#000" />
-          <Text style={styles.buttonText}>Termin buchen</Text>
-        </TouchableOpacity>
-      )}
+      
+      {/* Share Button */}
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={onSharePress || (() => console.log('Share Profile'))}
+      >
+        <Ionicons name="share-outline" size={20} color="#000" />
+        <Text style={styles.buttonText}>Teilen</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -32,7 +30,8 @@ export default function QuickActionButtons({ websiteUrl, calendarUrl, onWebsiteP
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    gap: 12,
+    alignItems: 'center',
+    gap: 10,
     marginBottom: 24,
   },
   button: {
@@ -40,11 +39,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: 6,
     backgroundColor: '#FFFFFF',
     paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 20,
+    paddingHorizontal: 12,
+    borderRadius: 28,
     borderWidth: 1,
     borderColor: '#E0E0E0',
     shadowColor: '#000',

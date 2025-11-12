@@ -13,7 +13,7 @@ export default function ProfileDescription({ description }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   description: {
     fontSize: 15,
