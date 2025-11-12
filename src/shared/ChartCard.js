@@ -37,8 +37,8 @@ export default function ChartCard({
   return (
     <View style={styles.successCard}>
       {/* Header mit Titel und Tabs */}
-      <View style={styles.successHeader}>
-        <Text style={styles.cardTitle}>{title}</Text>
+      <View style={[styles.successHeader, !title && styles.successHeaderNoTitle]}>
+        {title && <Text style={styles.cardTitle}>{title}</Text>}
         
         {/* Kompakte Tab-Pills */}
         <View style={styles.timeframePills}>
@@ -206,10 +206,13 @@ export default function ChartCard({
 
 const styles = StyleSheet.create({
   successCard: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   successHeader: {
     marginBottom: 8,
+  },
+  successHeaderNoTitle: {
+    marginBottom: 0,
   },
   cardTitle: {
     fontSize: 22,

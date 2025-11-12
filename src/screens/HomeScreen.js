@@ -278,22 +278,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   headerLeft: {
     flex: 1,
   },
   headerTitle: {
-    fontSize: 32,
-    fontWeight: '900',
-    color: '#000',
+    fontSize: 34,
+    fontWeight: '800',
+    color: '#000000',
     letterSpacing: -0.5,
     marginBottom: 4,
   },
   headerSubtitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '500',
-    color: '#666',
+    color: '#666666',
   },
   iconButton: {
     width: 40,

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,7 +18,6 @@ import ProfileMetrics from '../shared/ProfileMetrics';
 import ConnectionMetrics from '../shared/ConnectionMetrics';
 import FirstMoverMetrics from '../shared/FirstMoverMetrics';
 import VolumeMetrics from '../shared/VolumeMetrics';
-import HeaderWithSubtitle from '../shared/HeaderWithSubtitle';
 import DesktopLayout from '../components/DesktopLayout';
 import { useResponsive } from '../utils/responsive';
 import { usePackage } from '../context/PackageContext';
@@ -165,6 +165,8 @@ export default function DashboardScreen({ navigation }) {
   
   const content = (
     <View style={styles.container}>
+      <StatusBar backgroundColor="#F5F7FA" barStyle="dark-content" />
+      <View style={styles.statusBarFill} />
       <LinearGradient
         colors={['#F5F7FA', '#FFFFFF', '#F8F9FB', '#FAFBFC']}
         locations={[0, 0.3, 0.65, 1]}
@@ -172,22 +174,35 @@ export default function DashboardScreen({ navigation }) {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <SafeAreaView style={styles.safeArea} edges={['top']}>
-          <ScrollView contentContainerStyle={styles.content}>
-              {!isDesktop && (
-                <HeaderWithSubtitle 
-                  title="Valuntir" 
-                  subtitle="Top Tier Value"
-                />
-              )}
+        <SafeAreaView style={styles.safeArea} edges={[]}>
+          <View style={styles.screenContainer}>
+            {/* Header mit Gradient-Übergang */}
+            {!isDesktop && (
+              <LinearGradient
+                colors={['rgba(245, 247, 250, 1)', 'rgba(245, 247, 250, 0.95)', 'rgba(245, 247, 250, 0.7)', 'rgba(245, 247, 250, 0)']}
+                locations={[0, 0.4, 0.7, 1]}
+                style={styles.stickyHeader}
+              >
+                <View style={styles.header}>
+                  <Text style={styles.headerTitle}>Valuntir</Text>
+                  <Text style={styles.headerSubtitle}>Deine Performance im Überblick</Text>
+                </View>
+              </LinearGradient>
+            )}
 
-        {/* Business-Only: Charts, Statistiken, Profilmetrics */}
+            {/* Scrollable Content */}
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.content}
+              showsVerticalScrollIndicator={false}
+            >
+              {/* Business-Only: Charts, Statistiken, Profilmetrics */}
         {isBusiness && (
           <>
             {/* Chart Card - Wiederverwendbare Komponente */}
             <ChartCard
               timeframeData={timeframeData}
-              title="Verlauf & Statistiken"
+              title={null}
               defaultTimeframe="6months"
             />
 
@@ -304,7 +319,8 @@ export default function DashboardScreen({ navigation }) {
             </View>
           </View>
         )}
-          </ScrollView>
+            </ScrollView>
+          </View>
         </SafeAreaView>
       </LinearGradient>
     </View>
@@ -333,13 +349,56 @@ const styles = StyleSheet.create({
   },
   gradient: {
     flex: 1,
+    overflow: 'visible',
+  },
+  statusBarFill: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 50,
+    backgroundColor: '#F5F7FA',
+    zIndex: 1000,
   },
   safeArea: {
     flex: 1,
+    overflow: 'visible',
+    paddingTop: 50,
+  },
+  screenContainer: {
+    flex: 1,
+    overflow: 'visible',
+  },
+  stickyHeader: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 20,
+    zIndex: 100,
+  },
+  scrollView: {
+    flex: 1,
+    overflow: 'visible',
   },
   content: {
     padding: 20,
+    paddingTop: 0,
     paddingBottom: 100,
+    overflow: 'visible',
+  },
+  header: {
+    marginBottom: 24,
+  },
+  headerTitle: {
+    fontSize: 34,
+    fontWeight: '800',
+    color: '#000000',
+    letterSpacing: -0.5,
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#666666',
+    fontWeight: '500',
   },
   rateScaleSection: {
     marginBottom: 24,

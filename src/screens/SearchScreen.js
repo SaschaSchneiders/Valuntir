@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Animated,
+  StatusBar,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -205,23 +206,30 @@ export default function SearchScreen({ navigation: navProp }) {
 
   const content = (
     <View style={styles.container}>
+      <StatusBar backgroundColor="#F8F9FA" barStyle="dark-content" />
+      <View style={styles.statusBarFill} />
       <LinearGradient
         colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
       >
-        <SafeAreaView style={styles.safeArea} edges={['top']}>
-          <ScrollView contentContainerStyle={styles.content}>
+        <SafeAreaView style={styles.safeArea} edges={[]}>
+          <View style={styles.screenContainer}>
+            {/* Header mit Gradient-Übergang */}
             {!isDesktop && (
-              <View style={styles.header}>
-                <Text style={styles.title}>Anbieter Suchen</Text>
-                <Text style={styles.subtitle}>Finde vertrauenswürdige Partner</Text>
-              </View>
-            )}
+              <LinearGradient
+                colors={['rgba(248, 249, 250, 1)', 'rgba(248, 249, 250, 0.95)', 'rgba(248, 249, 250, 0.7)', 'rgba(248, 249, 250, 0)']}
+                locations={[0, 0.4, 0.7, 1]}
+                style={styles.stickyHeader}
+              >
+                <View style={styles.header}>
+                  <Text style={styles.title}>Anbieter Suchen</Text>
+                  <Text style={styles.subtitle}>Finde vertrauenswürdige Partner</Text>
+                </View>
 
-            {/* Suchfeld + Filter in einer Zeile */}
-            <View style={styles.searchFilterRow}>
+                {/* Suchfeld + Filter in einer Zeile */}
+                <View style={styles.searchFilterRow}>
               {/* Suchfeld */}
               <TouchableOpacity 
                 style={styles.searchContainer}
@@ -258,10 +266,18 @@ export default function SearchScreen({ navigation: navProp }) {
                   <View style={styles.filterBadge} />
                 )}
               </TouchableOpacity>
-            </View>
+                </View>
+              </LinearGradient>
+            )}
 
-            {/* Anbieter Liste */}
-            <View style={styles.providersList}>
+            {/* Scrollable Content */}
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.content}
+              showsVerticalScrollIndicator={false}
+            >
+              {/* Anbieter Liste */}
+              <View style={styles.providersList}>
               {filteredProviders.length === 0 ? (
                 <View style={styles.emptyState}>
                   <Ionicons name="search-outline" size={64} color="#999" />
@@ -284,14 +300,15 @@ export default function SearchScreen({ navigation: navProp }) {
               )}
             </View>
 
-            {/* Info Box */}
-            <View style={styles.infoBox}>
-              <Ionicons name="information-circle" size={20} color="#666" />
-              <Text style={styles.infoText}>
-                Erfolgsquoten sind nur für Anbieter mit aktivem Valuntir-Abo sichtbar.
-              </Text>
-            </View>
-          </ScrollView>
+              {/* Info Box */}
+              <View style={styles.infoBox}>
+                <Ionicons name="information-circle" size={20} color="#666" />
+                <Text style={styles.infoText}>
+                  Erfolgsquoten sind nur für Anbieter mit aktivem Valuntir-Abo sichtbar.
+                </Text>
+              </View>
+            </ScrollView>
+          </View>
         </SafeAreaView>
       </LinearGradient>
 
@@ -610,16 +627,43 @@ const styles = StyleSheet.create({
   },
   gradient: {
     flex: 1,
+    overflow: 'visible',
+  },
+  statusBarFill: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 50,
+    backgroundColor: '#F8F9FA',
+    zIndex: 1000,
   },
   safeArea: {
     flex: 1,
+    overflow: 'visible',
+    paddingTop: 50,
+  },
+  screenContainer: {
+    flex: 1,
+    overflow: 'visible',
+  },
+  stickyHeader: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 20,
+    zIndex: 100,
+  },
+  scrollView: {
+    flex: 1,
+    overflow: 'visible',
   },
   content: {
     padding: 20,
+    paddingTop: 0,
+    overflow: 'visible',
   },
   header: {
     marginBottom: 24,
-    paddingTop: 8,
   },
   title: {
     fontSize: 34,
@@ -639,7 +683,6 @@ const styles = StyleSheet.create({
   searchFilterRow: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 20,
   },
   searchContainer: {
     flex: 1,
