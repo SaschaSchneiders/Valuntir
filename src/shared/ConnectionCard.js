@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, Animated } from 'react
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import ProfileImageFallback from './ProfileImageFallback';
 
 export default function ConnectionCard({ connection, onPress, onSetReminder, onArchive, isReminderMode = false }) {
   const [showReminderModal, setShowReminderModal] = useState(false);
@@ -99,9 +100,7 @@ export default function ConnectionCard({ connection, onPress, onSetReminder, onA
     >
       <View style={[styles.connectionCard, isRated && styles.connectionCardRated]}>
       <View style={styles.connectionHeader}>
-        <View style={styles.connectionIcon}>
-          <Ionicons name="business" size={22} color="#000" />
-        </View>
+        <ProfileImageFallback size={40} iconSize={22} style={styles.connectionIcon} />
         <View style={styles.connectionInfo}>
           <Text style={styles.connectionCompany}>
             {connection.company}
@@ -244,20 +243,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   connectionIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.03)',
-    alignItems: 'center',
-    justifyContent: 'center',
     marginRight: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.08)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
   },
   connectionInfo: {
     flex: 1,

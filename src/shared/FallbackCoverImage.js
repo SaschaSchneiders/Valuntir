@@ -1,27 +1,23 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function FallbackCoverImage() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#dbeafe', '#bfdbfe', '#93c5fd']}
+        colors={['#FAFAFA', '#F0F0F0', '#E5E5E5']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
       >
         {/* Hauptslogan - zentral und prominent */}
         <View style={styles.sloganContainer}>
-          <Text style={styles.slogan}>Echte Erfolgsquoten für{'\n'}fundierte Entscheidungen</Text>
+          <Text style={styles.slogan}>Sieh schwarz auf weiß{'\n'}wer wirklich liefert</Text>
         </View>
         
-        {/* Logo - klein und subtil unten rechts */}
-        <Image 
-          source={require('../../assets/VALUNTIR.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        {/* Valuntir Text - klein und subtil unten rechts */}
+        <Text style={styles.brandText}>Valuntir</Text>
       </LinearGradient>
     </View>
   );
@@ -47,18 +43,19 @@ const styles = StyleSheet.create({
   slogan: {
     fontSize: 16,
     fontWeight: '700',
-    color: 'rgba(0, 0, 0, 0.85)',
+    color: '#000000',
     letterSpacing: 0.2,
     textAlign: 'center',
     lineHeight: 22,
   },
-  logo: {
+  brandText: {
     position: 'absolute',
-    bottom: 12,
-    right: 16,
-    width: 90,
-    height: 20,
-    opacity: 1,
+    bottom: 14,
+    right: 18,
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'rgba(0, 0, 0, 0.4)',
+    letterSpacing: 0.5,
   },
 });
 

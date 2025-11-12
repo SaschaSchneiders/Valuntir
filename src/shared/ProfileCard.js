@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Switch, ImageBackground } fro
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import FallbackCoverImage from './FallbackCoverImage';
+import ProfileImageFallback from './ProfileImageFallback';
 
 export default function ProfileCard({
   isPublicView,
@@ -61,9 +62,7 @@ export default function ProfileCard({
 
       {/* Avatar - überlappt Titelbild immer */}
       <View style={[styles.avatarContainer, styles.avatarContainerWithCover]}>
-        <View style={styles.avatar}>
-          <Ionicons name="business" size={48} color="#FFFFFF" />
-        </View>
+        <ProfileImageFallback size={100} iconSize={48} variant="profile" />
       </View>
 
       <Text style={styles.companyName}>{companyName}</Text>
@@ -131,16 +130,6 @@ const styles = StyleSheet.create({
   },
   avatarContainerWithCover: {
     marginTop: 50, // Avatar überlappt das Titelbild zur Hälfte
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#000000',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#FFFFFF', // Weißer Ring für Kontrast
   },
   companyName: {
     fontSize: 22,

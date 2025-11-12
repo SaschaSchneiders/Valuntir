@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import ProfileImageFallback from './ProfileImageFallback';
 
 export default function ProviderCard({ provider, onPress }) {
   const getSuccessRateColor = (rate) => {
@@ -18,13 +19,7 @@ export default function ProviderCard({ provider, onPress }) {
     >
       {/* Header mit Icon, Name und Chevron */}
       <View style={styles.cardHeader}>
-        <View style={styles.iconContainer}>
-          <Ionicons 
-            name="business" 
-            size={22} 
-            color="#000"
-          />
-        </View>
+        <ProfileImageFallback size={40} iconSize={22} style={styles.iconContainer} />
 
         <View style={styles.info}>
           <Text style={styles.name} numberOfLines={1}>{provider.name}</Text>
@@ -103,20 +98,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.03)',
-    justifyContent: 'center',
-    alignItems: 'center',
     marginRight: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.08)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
   },
   info: {
     flex: 1,
