@@ -25,11 +25,6 @@ export default function HomeScreen({ navigation }) {
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState(null);
 
-  // Im FREE-Modus: Trust & Explainer Screen zeigen
-  if (isFree) {
-    return <FreeHomeScreen />;
-  }
-
   // Mock-Daten für Connections die bewertet werden können (dynamisch basierend auf heute)
   const today = new Date();
   const [connections, setConnections] = useState([
@@ -149,6 +144,11 @@ export default function HomeScreen({ navigation }) {
     );
     console.log(`Connection ${connectionId} archiviert`);
   };
+
+  // Im FREE-Modus: Trust & Explainer Screen zeigen
+  if (isFree) {
+    return <FreeHomeScreen />;
+  }
 
   const content = (
     <View style={styles.container}>
