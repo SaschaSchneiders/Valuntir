@@ -11,6 +11,7 @@ export default function ProfileCard({
   onSettingsPress,
   companyName,
   branch,
+  location,
   coverImage = null, // URL zum Titelbild (optional)
   showControls = true, // Toggle und Settings Button anzeigen
 }) {
@@ -60,15 +61,41 @@ export default function ProfileCard({
         </TouchableOpacity>
       )}
 
-      {/* Avatar - überlappt Titelbild immer */}
-      <View style={[styles.avatarContainer, styles.avatarContainerWithCover]}>
-        <ProfileImageFallback size={100} iconSize={48} variant="profile" />
-      </View>
+      {/* Share Button - unter Titelbild, rechts */}
+      <TouchableOpacity 
+        style={styles.shareButton}
+        onPress={() => {
+          // TODO: Share Funktionalität implementieren
+          console.log('Share Profile');
+        }}
+      >
+        <Ionicons name="share-outline" size={20} color="#666" />
+      </TouchableOpacity>
 
-      <Text style={styles.companyName}>{companyName}</Text>
-      <View style={styles.branchBadge}>
-        <Ionicons name="briefcase-outline" size={14} color="#666" />
-        <Text style={styles.branchText}>{branch}</Text>
+      {/* Content Container */}
+      <View style={styles.contentContainer}>
+        {/* Avatar - links positioniert, überlappt Titelbild */}
+        <View style={styles.avatarWrapper}>
+          <ProfileImageFallback size={100} iconSize={48} variant="profile" />
+        </View>
+
+        {/* Firmeninfo - ganz linksbündig */}
+        <View style={styles.companyInfo}>
+          <Text style={styles.companyName}>{companyName}</Text>
+          
+          <View style={styles.badgeRow}>
+            <View style={styles.branchBadge}>
+              <Ionicons name="briefcase-outline" size={14} color="#666" />
+              <Text style={styles.branchText}>{branch}</Text>
+            </View>
+            {location && (
+              <View style={styles.locationBadge}>
+                <Ionicons name="location-outline" size={14} color="#666" />
+                <Text style={styles.locationText}>{location}</Text>
+              </View>
+            )}
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -76,16 +103,15 @@ export default function ProfileCard({
 
 const styles = StyleSheet.create({
   profileCard: {
-    alignItems: 'center',
     paddingVertical: 20,
     position: 'relative',
   },
   coverImageContainer: {
     position: 'absolute',
-    top: -20, // Negatives Margin um das Screen-Padding zu kompensieren
+    top: -20,
     left: -20,
     right: -20,
-    height: 140, // Erhöht von 80px auf 140px
+    height: 140,
     overflow: 'hidden',
   },
   coverImage: {
@@ -98,7 +124,7 @@ const styles = StyleSheet.create({
   toggleContainer: {
     position: 'absolute',
     top: 12,
-    left: -8, // Angepasst für negative Margins
+    left: -8,
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: 'rgba(245, 245, 245, 0.95)',
@@ -116,7 +142,7 @@ const styles = StyleSheet.create({
   settingsButton: {
     position: 'absolute',
     top: 12,
-    right: -8, // Angepasst für negative Margins
+    right: -8,
     backgroundColor: 'rgba(245, 245, 245, 0.95)',
     borderRadius: 22,
     width: 44,
@@ -125,18 +151,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 10,
   },
-  avatarContainer: {
-    marginBottom: 12,
+  shareButton: {
+    position: 'absolute',
+    top: 140,
+    right: 4,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.08)',
+    zIndex: 5,
   },
-  avatarContainerWithCover: {
-    marginTop: 50, // Avatar überlappt das Titelbild zur Hälfte
+  contentContainer: {
+    marginTop: 50,
+    paddingLeft: 0,
+    alignItems: 'flex-start',
+  },
+  avatarWrapper: {
+    marginBottom: 12,
+    marginLeft: 20,
+  },
+  companyInfo: {
+    alignItems: 'flex-start',
+    paddingLeft: 0,
   },
   companyName: {
     fontSize: 22,
     fontWeight: '800',
     color: '#000',
-    textAlign: 'center',
-    marginBottom: 8,
+    textAlign: 'left',
+    marginBottom: 6,
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    gap: 8,
   },
   branchBadge: {
     flexDirection: 'row',
@@ -148,6 +199,20 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   branchText: {
+    fontSize: 13,
+    color: '#666',
+    fontWeight: '500',
+  },
+  locationBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 24,
+    gap: 6,
+  },
+  locationText: {
     fontSize: 13,
     color: '#666',
     fontWeight: '500',

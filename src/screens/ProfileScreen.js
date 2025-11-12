@@ -363,6 +363,7 @@ export default function ProfileScreen({ navigation: navProp }) {
               onSettingsPress={() => navigation.navigate('Settings')}
               companyName="Beratungszentrum Nord GmbH"
               branch="Unternehmensberatung"
+              location="Hamburg"
               showControls={false}
               coverImage={coverImageValue}
             />

@@ -26,6 +26,7 @@ export default function PublicProfileScreen({ route }) {
       'steuerberater_schmidt': {
         companyName: 'Steuerberater Schmidt',
         branch: 'Steuerberatung',
+        location: 'Berlin',
         coverImage: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=200&fit=crop',
         description: 'Spezialisiert auf Unternehmenssteuerrecht und Vermögensplanung. Wir beraten mittelständische Unternehmen und Privatpersonen in allen steuerlichen Angelegenheiten mit Fokus auf nachhaltige Optimierung.',
         websiteUrl: 'https://steuerberater-schmidt.de',
@@ -76,8 +77,9 @@ export default function PublicProfileScreen({ route }) {
         ],
       },
       'marketing_xyz': {
-        companyName: 'Marketing Agentur XYZ',
+        companyName: 'Digital Partners GmbH',
         branch: 'Marketing',
+        location: 'München',
         coverImage: null, // Fallback wird verwendet
         description: 'Full-Service Marketingagentur mit Schwerpunkt auf digitalem Marketing und Markenentwicklung. Wir helfen Unternehmen, ihre Zielgruppe zu erreichen und messbare Ergebnisse zu erzielen.',
         websiteUrl: 'https://marketing-xyz.de',
@@ -203,6 +205,7 @@ export default function PublicProfileScreen({ route }) {
               onSettingsPress={() => {}}
               companyName={provider.companyName}
               branch={provider.branch}
+              location={provider.location}
               coverImage={provider.coverImage}
               showControls={false}
             />
