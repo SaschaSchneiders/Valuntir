@@ -26,7 +26,7 @@ export default function ToggleSettingsFAB({
             <View style={styles.iconCircle}>
               <Ionicons 
                 name={isPublicView ? 'globe-outline' : 'briefcase-outline'} 
-                size={17} 
+                size={16} 
                 color="#FFFFFF" 
               />
             </View>
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     elevation: 20,
   },
   fabBlur: {
-    borderRadius: 28,
+    borderRadius: 24,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
@@ -61,26 +61,26 @@ const styles = StyleSheet.create({
     elevation: 16,
   },
   gradientOverlay: {
-    borderRadius: 28,
+    borderRadius: 24,
   },
   toggleSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingLeft: 10,
-    paddingRight: 14,
-    gap: 9,
+    paddingVertical: 6,
+    paddingLeft: 8,
+    paddingRight: 12,
+    gap: 7,
   },
   iconCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   toggleText: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
     color: '#FFFFFF',
     letterSpacing: -0.3,
