@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -14,9 +14,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function TrustBadgeScreen({ navigation }) {
-  const [selectedTheme, setSelectedTheme] = useState('light'); // light or dark
-  const [selectedSize, setSelectedSize] = useState('medium'); // small, medium, large
-
   // Mock-Daten (später von API)
   const badgeData = {
     companyName: 'Dein Unternehmen',
@@ -27,18 +24,12 @@ export default function TrustBadgeScreen({ navigation }) {
   };
 
   const getBadgeHTML = () => {
-    const sizeMap = {
-      small: '240',
-      medium: '280',
-      large: '320',
-    };
-    
-    const width = sizeMap[selectedSize];
-    const height = Math.round(width * 1.2); // Kompaktes Siegel-Format
+    const width = 280; // Standard-Breite
+    const height = 336; // 1.2 Aspect Ratio
     
     return `<!-- Valuntir Trust-Badge -->
 <iframe 
-  src="https://valuntir.com/badge/${badgeData.userId}?theme=${selectedTheme}" 
+  src="https://valuntir.com/badge/${badgeData.userId}" 
   width="${width}" 
   height="${height}" 
   frameborder="0" 
@@ -97,181 +88,47 @@ export default function TrustBadgeScreen({ navigation }) {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Live-Vorschau</Text>
               
-              <View style={[
-                styles.badgePreview,
-                selectedTheme === 'dark' && styles.badgePreviewDark
-              ]}>
+              <View style={styles.badgePreview}>
                 {/* Badge Content */}
-                <View style={[
-                  styles.badge,
-                  selectedTheme === 'dark' && styles.badgeDark,
-                  selectedSize === 'small' && styles.badgeSmall,
-                  selectedSize === 'large' && styles.badgeLarge,
-                ]}>
+                <View style={styles.badge}>
                   {/* V-Logo als Wasserzeichen */}
                   <Image 
                     source={require('../../assets/V - transparent.png')}
-                    style={[
-                      styles.watermarkLogo,
-                      selectedTheme === 'dark' && styles.watermarkLogoDark
-                    ]}
+                    style={styles.watermarkLogo}
                     resizeMode="contain"
                   />
                   
                   {/* Main Content */}
                   <View style={styles.badgeContent}>
                     {/* Erfolgsquote - die Zahl ist das Wichtigste */}
-                    <Text style={[
-                      styles.successRate,
-                      selectedTheme === 'dark' && styles.successRateDark
-                    ]}>
+                    <Text style={styles.successRate}>
                       {badgeData.successRate}%
                     </Text>
                     
-                    <Text style={[
-                      styles.successRateLabel,
-                      selectedTheme === 'dark' && styles.successRateLabelDark
-                    ]}>
+                    <Text style={styles.successRateLabel}>
                       Erfolgsquote
                     </Text>
                     
                     {/* Valuntir Brand */}
-                    <View style={[
-                      styles.brandContainer,
-                      selectedTheme === 'dark' && styles.brandContainerDark
-                    ]}>
-                      <Text style={[
-                        styles.brandText,
-                        selectedTheme === 'dark' && styles.brandTextDark
-                      ]}>
+                    <View style={styles.brandContainer}>
+                      <Text style={styles.brandText}>
                         Valuntir
                       </Text>
                     </View>
                     
                     {/* Proof - minimalistisch */}
                     <View style={styles.proofContainer}>
-                      <Text style={[
-                        styles.proofText,
-                        selectedTheme === 'dark' && styles.proofTextDark
-                      ]}>
+                      <Text style={styles.proofText}>
                         {badgeData.reviewCount} Bewertungen
                       </Text>
-                      <Text style={[
-                        styles.proofDivider,
-                        selectedTheme === 'dark' && styles.proofDividerDark
-                      ]}>
+                      <Text style={styles.proofDivider}>
                         •
                       </Text>
-                      <Text style={[
-                        styles.proofText,
-                        selectedTheme === 'dark' && styles.proofTextDark
-                      ]}>
+                      <Text style={styles.proofText}>
                         {badgeData.lastUpdated}
                       </Text>
                     </View>
                   </View>
-                </View>
-              </View>
-            </View>
-
-            {/* Anpassungen */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Anpassungen</Text>
-              
-              {/* Theme Auswahl */}
-              <View style={styles.optionGroup}>
-                <Text style={styles.optionLabel}>Design</Text>
-                <View style={styles.optionButtons}>
-                  <TouchableOpacity
-                    style={[
-                      styles.optionButton,
-                      selectedTheme === 'light' && styles.optionButtonActive
-                    ]}
-                    onPress={() => setSelectedTheme('light')}
-                  >
-                    <Ionicons 
-                      name="sunny" 
-                      size={20} 
-                      color={selectedTheme === 'light' ? '#000' : '#666'} 
-                    />
-                    <Text style={[
-                      styles.optionButtonText,
-                      selectedTheme === 'light' && styles.optionButtonTextActive
-                    ]}>
-                      Hell
-                    </Text>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity
-                    style={[
-                      styles.optionButton,
-                      selectedTheme === 'dark' && styles.optionButtonActive
-                    ]}
-                    onPress={() => setSelectedTheme('dark')}
-                  >
-                    <Ionicons 
-                      name="moon" 
-                      size={20} 
-                      color={selectedTheme === 'dark' ? '#000' : '#666'} 
-                    />
-                    <Text style={[
-                      styles.optionButtonText,
-                      selectedTheme === 'dark' && styles.optionButtonTextActive
-                    ]}>
-                      Dunkel
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              {/* Größe Auswahl */}
-              <View style={styles.optionGroup}>
-                <Text style={styles.optionLabel}>Größe</Text>
-                <View style={styles.optionButtons}>
-                  <TouchableOpacity
-                    style={[
-                      styles.optionButton,
-                      selectedSize === 'small' && styles.optionButtonActive
-                    ]}
-                    onPress={() => setSelectedSize('small')}
-                  >
-                    <Text style={[
-                      styles.optionButtonText,
-                      selectedSize === 'small' && styles.optionButtonTextActive
-                    ]}>
-                      Klein
-                    </Text>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity
-                    style={[
-                      styles.optionButton,
-                      selectedSize === 'medium' && styles.optionButtonActive
-                    ]}
-                    onPress={() => setSelectedSize('medium')}
-                  >
-                    <Text style={[
-                      styles.optionButtonText,
-                      selectedSize === 'medium' && styles.optionButtonTextActive
-                    ]}>
-                      Mittel
-                    </Text>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity
-                    style={[
-                      styles.optionButton,
-                      selectedSize === 'large' && styles.optionButtonActive
-                    ]}
-                    onPress={() => setSelectedSize('large')}
-                  >
-                    <Text style={[
-                      styles.optionButtonText,
-                      selectedSize === 'large' && styles.optionButtonTextActive
-                    ]}>
-                      Groß
-                    </Text>
-                  </TouchableOpacity>
                 </View>
               </View>
             </View>
@@ -407,15 +264,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   badgePreview: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 24,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
+    paddingVertical: 48,
+    paddingHorizontal: 24,
   },
   badgePreviewDark: {
-    backgroundColor: '#1F2937',
+    // Kein extra Styling mehr nötig
   },
   badge: {
     backgroundColor: '#FFFFFF',
@@ -426,12 +280,11 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 280,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
     shadowRadius: 16,
-    elevation: 6,
+    elevation: 12,
     position: 'relative',
-    overflow: 'hidden',
     alignItems: 'center',
   },
   badgeDark: {
