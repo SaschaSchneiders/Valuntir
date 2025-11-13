@@ -46,7 +46,7 @@ export default function MySubscriptionScreen({ navigation }) {
         { text: 'Unbegrenzt Anbieter ansehen', included: true },
         { text: 'Eigene Bewertungen abgeben', included: true, note: 'mit Banking-Verbindung' },
         { text: 'First-Mover-Status sichern', included: true },
-        { text: 'First-Mover-Provision erhalten', included: true },
+        { text: 'Passive First-Mover-Einnahmen', included: true },
         { text: 'Werbefrei', included: true },
         { text: 'Profil personalisieren', included: false },
         { text: 'Statistik- & Analyse-Tools', included: false },
@@ -134,6 +134,8 @@ export default function MySubscriptionScreen({ navigation }) {
             >
               <Ionicons name="chevron-back" size={28} color="#000" />
             </TouchableOpacity>
+            <Text style={styles.headerTitle}>Mein Abo</Text>
+            <View style={styles.headerSpacer} />
           </View>
 
           <ScrollView 
@@ -156,8 +158,8 @@ export default function MySubscriptionScreen({ navigation }) {
                     </View>
                   )}
                   {currentPackageData.id !== 'free' && (
-                    <View style={[styles.activeBadge, { backgroundColor: currentPackageData.color }]}>
-                      <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
+                    <View style={styles.activeBadge}>
+                      <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" />
                       <Text style={styles.activeBadgeText}>Aktiv</Text>
                     </View>
                   )}
@@ -168,10 +170,6 @@ export default function MySubscriptionScreen({ navigation }) {
                     <View style={styles.infoRow}>
                       <Ionicons name="calendar-outline" size={16} color="#666" />
                       <Text style={styles.infoText}>Nächste Abrechnung: 01.01.2025</Text>
-                    </View>
-                    <View style={styles.infoRow}>
-                      <Ionicons name="card-outline" size={16} color="#666" />
-                      <Text style={styles.infoText}>•••• 4242 (Visa)</Text>
                     </View>
                   </View>
                 )}
@@ -188,18 +186,26 @@ export default function MySubscriptionScreen({ navigation }) {
                   (isPro && pkg.id === 'pro') ||
                   (isBusiness && pkg.id === 'business');
 
+                // Dynamische Prominenz: Zeige das nächst-höhere Paket prominent
+                const isProminent = 
+                  (isFree && pkg.id === 'pro') ||  // Free User sieht Pro prominent
+                  (isPro && pkg.id === 'business');  // Pro User sieht Business prominent
+                
+                const prominentBadgeText = 
+                  (isFree && pkg.id === 'pro') ? 'Beliebt' : 'Empfohlen für dich';
+
                 return (
                   <View 
                     key={pkg.id}
                     style={[
                       styles.packageCard,
-                      pkg.popular && styles.packageCardPopular,
+                      isProminent && styles.packageCardPopular,
                       isCurrentPackage && styles.packageCardCurrent,
                     ]}
                   >
-                    {pkg.popular && (
+                    {isProminent && (
                       <View style={styles.popularBadge}>
-                        <Text style={styles.popularBadgeText}>Beliebt</Text>
+                        <Text style={styles.popularBadgeText}>{prominentBadgeText}</Text>
                       </View>
                     )}
 
@@ -244,23 +250,29 @@ export default function MySubscriptionScreen({ navigation }) {
                     {/* Action Button */}
                     {!isCurrentPackage && (
                       <TouchableOpacity 
-                        style={[styles.upgradeButton, { backgroundColor: pkg.color }]}
+                        style={[
+                          styles.upgradeButton, 
+                          { backgroundColor: (pkg.id === 'free' || (isBusiness && pkg.id === 'pro')) ? '#666' : '#3B82F6' }
+                        ]}
                         onPress={() => handleUpgrade(pkg.id)}
                       >
                         <Text style={styles.upgradeButtonText}>
-                          {pkg.id === 'free' ? 'Downgrade' : 'Jetzt upgraden'}
+                          {pkg.id === 'free' 
+                            ? 'Downgrade' 
+                            : (isBusiness && pkg.id === 'pro') 
+                              ? 'Zu Pro wechseln' 
+                              : 'Jetzt upgraden'
+                          }
                         </Text>
                         <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
                       </TouchableOpacity>
                     )}
 
                     {isCurrentPackage && pkg.id !== 'free' && (
-                      <TouchableOpacity 
-                        style={styles.manageButton}
-                        onPress={handleCancelSubscription}
-                      >
-                        <Text style={styles.manageButtonText}>Abo verwalten</Text>
-                      </TouchableOpacity>
+                      <View style={styles.currentBadgeContainer}>
+                        <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                        <Text style={styles.currentBadgeText}>Deine aktuelle Auswahl</Text>
+                      </View>
                     )}
                   </View>
                 );
@@ -279,35 +291,13 @@ export default function MySubscriptionScreen({ navigation }) {
               </View>
 
               <View style={styles.infoCard}>
-                <Ionicons name="refresh" size={24} color="#3B82F6" />
-                <Text style={styles.infoCardTitle}>30 Tage Geld-zurück-Garantie</Text>
-                <Text style={styles.infoCardText}>
-                  Teste Pro oder Business risikofrei. Wenn du nicht zufrieden bist, 
-                  erhältst du innerhalb von 30 Tagen den vollen Betrag zurück.
-                </Text>
-              </View>
-
-              <View style={styles.infoCard}>
-                <Ionicons name="card" size={24} color="#666" />
+                <Ionicons name="card" size={24} color="#10B981" />
                 <Text style={styles.infoCardTitle}>Sichere Zahlung</Text>
                 <Text style={styles.infoCardText}>
                   Alle Zahlungen laufen über Stripe. Wir speichern keine Zahlungsdaten. 
                   Akzeptiert werden Kreditkarten, SEPA und PayPal.
                 </Text>
               </View>
-            </View>
-
-            {/* Contact CTA */}
-            <View style={styles.contactCard}>
-              <Ionicons name="chatbubble-ellipses" size={28} color="#3B82F6" />
-              <Text style={styles.contactTitle}>Fragen zu den Paketen?</Text>
-              <Text style={styles.contactText}>
-                Unser Team berät dich gerne bei der Auswahl des passenden Pakets
-              </Text>
-              <TouchableOpacity style={styles.contactButton}>
-                <Text style={styles.contactButtonText}>Kontakt aufnehmen</Text>
-                <Ionicons name="arrow-forward" size={18} color="#3B82F6" />
-              </TouchableOpacity>
             </View>
 
             <View style={{ height: 40 }} />
@@ -332,11 +322,21 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   backButton: {
     padding: 4,
+    width: 36,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#000',
+  },
+  headerSpacer: {
+    width: 36,
   },
   content: {
     flex: 1,
@@ -352,18 +352,19 @@ const styles = StyleSheet.create({
   },
   currentPackageSection: {
     marginBottom: 32,
-    marginTop: 20,
+    marginTop: 4,
   },
   currentPackageCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
-    borderWidth: 2,
+    borderRadius: 24,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 12,
   },
   currentPackageHeader: {
     flexDirection: 'row',
@@ -386,7 +387,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 12,
+    borderRadius: 20,
   },
   freeBadgeText: {
     fontSize: 12,
@@ -397,9 +398,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
   },
   activeBadgeText: {
     fontSize: 12,
@@ -427,23 +429,25 @@ const styles = StyleSheet.create({
   },
   packageCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 24,
+    borderRadius: 24,
+    padding: 20,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#F0F0F0',
+    borderColor: 'rgba(0, 0, 0, 0.06)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 12,
     position: 'relative',
   },
   packageCardPopular: {
-    borderWidth: 2,
+    borderWidth: 0.5,
     borderColor: '#3B82F6',
     shadowColor: '#3B82F6',
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.5,
+    shadowRadius: 16,
+    elevation: 15,
   },
   packageCardCurrent: {
     backgroundColor: '#F8F9FA',
@@ -455,7 +459,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3B82F6',
     paddingHorizontal: 16,
     paddingVertical: 6,
-    borderRadius: 12,
+    borderRadius: 20,
     shadowColor: '#3B82F6',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -531,7 +535,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: 28,
     gap: 8,
   },
   upgradeButtonText: {
@@ -539,17 +543,21 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FFFFFF',
   },
-  manageButton: {
-    paddingVertical: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
+  currentBadgeContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    gap: 8,
+    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.2)',
   },
-  manageButtonText: {
-    fontSize: 16,
+  currentBadgeText: {
+    fontSize: 15,
     fontWeight: '700',
-    color: '#666',
+    color: '#10B981',
   },
   infoSection: {
     marginBottom: 24,
@@ -557,11 +565,16 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 24,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#F0F0F0',
+    borderColor: 'rgba(0, 0, 0, 0.06)',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 12,
   },
   infoCardTitle: {
     fontSize: 16,
@@ -577,47 +590,6 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     lineHeight: 22,
-  },
-  contactCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 28,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  contactTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000',
-    marginTop: 16,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  contactText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#666',
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 20,
-  },
-  contactButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-  },
-  contactButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#3B82F6',
   },
 });
 

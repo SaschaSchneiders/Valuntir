@@ -112,7 +112,7 @@ export default function MergeIBANScreen() {
             {/* Weitere verknüpfte IBANs */}
             {linkedIBANs.filter(iban => !iban.isPrimary).length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Weitere verknüpfte Konten</Text>
+                <Text style={styles.sectionTitle}>Bereits verknüpfte Konten</Text>
                 
                 {linkedIBANs.filter(iban => !iban.isPrimary).map(iban => (
                   <View key={iban.id} style={styles.ibanCard}>
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
   },
   stepRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   stepNumber: {
     fontSize: 14,
