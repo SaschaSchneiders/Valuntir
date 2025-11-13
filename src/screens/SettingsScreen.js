@@ -235,6 +235,40 @@ export default function SettingsScreen({ navigation: navProp }) {
             />
           </TouchableOpacity>
           
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={() => {
+              if (isBusiness) {
+                navigation.navigate('TrustBadge');
+              } else {
+                // TODO: Show upgrade prompt
+                console.log('Nur für Business-Mitglieder');
+              }
+            }}
+            disabled={!isBusiness}
+          >
+            <View style={styles.menuLeft}>
+              <Ionicons 
+                name="shield-checkmark-outline" 
+                size={22} 
+                color={isBusiness ? "#000" : "#CCC"} 
+              />
+              <Text style={[styles.menuText, !isBusiness && styles.menuTextDisabled]}>
+                Trust-Badge für Website
+              </Text>
+              {isBusiness && (
+                <View style={styles.businessBadge}>
+                  <Ionicons name="briefcase" size={10} color="#000" />
+                </View>
+              )}
+            </View>
+            <Ionicons 
+              name="chevron-forward" 
+              size={20} 
+              color={isBusiness ? "#999" : "#DDD"} 
+            />
+          </TouchableOpacity>
+          
               <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
                 <View style={styles.menuLeft}>
                   <Ionicons name="log-out-outline" size={22} color="#EF4444" />

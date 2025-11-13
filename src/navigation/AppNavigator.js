@@ -22,6 +22,7 @@ import SupportChatScreen from '../screens/SupportChatScreen';
 import MySubscriptionScreen from '../screens/MySubscriptionScreen';
 import ArchivedConnectionsScreen from '../screens/ArchivedConnectionsScreen';
 import MergeIBANScreen from '../screens/MergeIBANScreen';
+import TrustBadgeScreen from '../screens/TrustBadgeScreen';
 
 // Components
 import FloatingTabBar from '../components/FloatingTabBar';
@@ -103,6 +104,7 @@ export default function AppNavigator() {
           <Stack.Screen name="MySubscription" component={MySubscriptionScreen} />
           <Stack.Screen name="ArchivedConnections" component={ArchivedConnectionsScreen} />
           <Stack.Screen name="MergeIBAN" component={MergeIBANScreen} />
+          <Stack.Screen name="TrustBadge" component={TrustBadgeScreen} />
       </Stack.Navigator>
         <PackageBadge />
     </NavigationContainer>
