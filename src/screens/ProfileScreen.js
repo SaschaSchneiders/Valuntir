@@ -23,6 +23,7 @@ import ProfileDescription from '../shared/ProfileDescription';
 import QuickActionButtons from '../shared/QuickActionButtons';
 import ProjectComments from '../shared/ProjectComments';
 import ContactSection from '../shared/ContactSection';
+import SocialMediaSection from '../shared/SocialMediaSection';
 import DesktopLayout from '../components/DesktopLayout';
 import { useResponsive } from '../utils/responsive';
 import { usePackage } from '../context/PackageContext';
@@ -159,7 +160,6 @@ export default function ProfileScreen({ navigation: navProp }) {
   const [showEmail, setShowEmail] = useState(true);
   const [showPhone, setShowPhone] = useState(true);
   const [showWhatsApp, setShowWhatsApp] = useState(true);
-  const [showCalendar, setShowCalendar] = useState(true);
   const [showLinkedIn, setShowLinkedIn] = useState(true);
   const [showInstagram, setShowInstagram] = useState(true);
   
@@ -173,7 +173,6 @@ export default function ProfileScreen({ navigation: navProp }) {
   const [emailValue, setEmailValue] = useState('kontakt@beratungszentrum-nord.de');
   const [phoneValue, setPhoneValue] = useState('+49 40 123456789');
   const [whatsAppValue, setWhatsAppValue] = useState('+49 40 123456789');
-  const [calendarValue, setCalendarValue] = useState('https://calendly.com/beratungszentrum-nord');
   const [linkedInValue, setLinkedInValue] = useState('https://linkedin.com/company/beratungszentrum-nord');
   const [instagramValue, setInstagramValue] = useState('https://instagram.com/beratungszentrum.nord');
   const [changeRequestMessage, setChangeRequestMessage] = useState('');
@@ -305,9 +304,6 @@ export default function ProfileScreen({ navigation: navProp }) {
       case 'whatsapp':
         setWhatsAppValue(inputValue);
         break;
-      case 'calendar':
-        setCalendarValue(inputValue);
-        break;
       case 'linkedin':
         setLinkedInValue(inputValue);
         break;
@@ -376,10 +372,11 @@ export default function ProfileScreen({ navigation: navProp }) {
                   <ProfileDescription description={descriptionValue} />
                 )}
 
-                {/* Quick Action Tabs - Webseite & Termin */}
+                {/* Quick Action Tabs - Webseite & Teilen */}
                 <QuickActionButtons
                   websiteUrl={showWebsite ? websiteValue : null}
-                  calendarUrl={showCalendar ? calendarValue : null}
+                  onWebsitePress={() => console.log('Open Website:', websiteValue)}
+                  onSharePress={() => console.log('Share Profile')}
                 />
 
                 {/* Chart & Statistiken */}
@@ -414,11 +411,15 @@ export default function ProfileScreen({ navigation: navProp }) {
                 {/* Connection-Erfahrungen (Accordion) */}
                 <ProjectComments comments={connectionComments} />
 
-                {/* Kontakt & Social Media */}
+                {/* Kontakt */}
                 <ContactSection
                   email={showEmail ? emailValue : null}
                   phone={showPhone ? phoneValue : null}
                   whatsapp={showWhatsApp ? whatsAppValue : null}
+                />
+
+                {/* Social Media */}
+                <SocialMediaSection
                   linkedin={showLinkedIn ? linkedInValue : null}
                   instagram={showInstagram ? instagramValue : null}
                 />
@@ -554,7 +555,7 @@ export default function ProfileScreen({ navigation: navProp }) {
                 <View style={styles.menuCard}>
                   <Text style={styles.cardTitle}>Links</Text>
                   
-                  <View style={styles.toggleItem}>
+                  <View style={[styles.toggleItem, styles.toggleItemLast]}>
                     <View style={styles.menuLeft}>
                       <View style={styles.menuIconContainer}>
                         <Ionicons name="globe-outline" size={20} color="#000" />
@@ -567,25 +568,6 @@ export default function ProfileScreen({ navigation: navProp }) {
                     <Switch
                       value={showWebsite}
                       onValueChange={() => handleToggle('website', showWebsite, setShowWebsite, websiteValue)}
-                      trackColor={{ false: '#D1D5DB', true: '#000000' }}
-                      thumbColor="#FFFFFF"
-                      style={{ transform: [{ scale: 0.8 }] }}
-                    />
-                  </View>
-
-                  <View style={[styles.toggleItem, styles.toggleItemLast]}>
-                    <View style={styles.menuLeft}>
-                      <View style={styles.menuIconContainer}>
-                        <Ionicons name="calendar-outline" size={20} color="#000" />
-                      </View>
-                      <View style={styles.menuTextContainer}>
-                        <Text style={styles.menuText}>Kalender-Link</Text>
-                        {calendarValue ? <Text style={styles.menuSubtext}>{calendarValue}</Text> : null}
-                      </View>
-                    </View>
-                    <Switch
-                      value={showCalendar}
-                      onValueChange={() => handleToggle('calendar', showCalendar, setShowCalendar, calendarValue)}
                       trackColor={{ false: '#D1D5DB', true: '#000000' }}
                       thumbColor="#FFFFFF"
                       style={{ transform: [{ scale: 0.8 }] }}
@@ -736,7 +718,6 @@ export default function ProfileScreen({ navigation: navProp }) {
           activeModal === 'email' ? 'E-Mail' :
           activeModal === 'phone' ? 'Telefon' :
           activeModal === 'whatsapp' ? 'WhatsApp' :
-          activeModal === 'calendar' ? 'Kalender-Link' :
           activeModal === 'linkedin' ? 'LinkedIn' :
           activeModal === 'instagram' ? 'Instagram' :
           activeModal === 'changeRequest' ? 'Unternehmensdaten ändern' :
@@ -749,7 +730,6 @@ export default function ProfileScreen({ navigation: navProp }) {
           activeModal === 'email' ? 'info@firma.de' :
           activeModal === 'phone' ? '+49 ...' :
           activeModal === 'whatsapp' ? 'wa.me/...' :
-          activeModal === 'calendar' ? 'https://calendly.com/...' :
           activeModal === 'linkedin' ? 'https://linkedin.com/in/...' :
           activeModal === 'instagram' ? 'https://instagram.com/...' :
           activeModal === 'changeRequest' ? 'Beschreibe, welche Daten du ändern möchtest (Firmenname, Branche, Standort)...' :
