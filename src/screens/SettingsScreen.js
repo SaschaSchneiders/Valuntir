@@ -201,6 +201,40 @@ export default function SettingsScreen({ navigation: navProp }) {
                 <Ionicons name="chevron-forward" size={20} color="#999" />
           </TouchableOpacity>
           
+          <TouchableOpacity 
+            style={styles.menuItem}
+            onPress={() => {
+              if (isBusiness) {
+                navigation.navigate('MergeIBAN');
+              } else {
+                // TODO: Show upgrade prompt
+                console.log('Nur für Business-Mitglieder');
+              }
+            }}
+            disabled={!isBusiness}
+          >
+            <View style={styles.menuLeft}>
+              <Ionicons 
+                name="git-merge-outline" 
+                size={22} 
+                color={isBusiness ? "#000" : "#CCC"} 
+              />
+              <Text style={[styles.menuText, !isBusiness && styles.menuTextDisabled]}>
+                Weitere IBANs hinzufügen
+              </Text>
+              {isBusiness && (
+                <View style={styles.businessBadge}>
+                  <Ionicons name="briefcase" size={10} color="#000" />
+                </View>
+              )}
+            </View>
+            <Ionicons 
+              name="chevron-forward" 
+              size={20} 
+              color={isBusiness ? "#999" : "#DDD"} 
+            />
+          </TouchableOpacity>
+          
               <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]}>
                 <View style={styles.menuLeft}>
                   <Ionicons name="log-out-outline" size={22} color="#EF4444" />
@@ -438,6 +472,16 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     color: '#EF4444',
+  },
+  menuTextDisabled: {
+    color: '#CCC',
+  },
+  businessBadge: {
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    marginLeft: 8,
   },
   legalSection: {
     flexDirection: 'row',
