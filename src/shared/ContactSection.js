@@ -5,10 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default function ContactSection({ 
   email, 
   phone, 
-  whatsapp,
-  onEmailPress,
-  onPhonePress,
-  onWhatsAppPress
+  whatsapp
 }) {
   const hasContact = email || phone || whatsapp;
 
@@ -65,6 +62,3 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 });
-
-
-
