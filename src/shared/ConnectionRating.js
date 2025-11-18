@@ -19,8 +19,7 @@ import PrimaryButton from './PrimaryButton';
 
 export default function ConnectionRating({ visible, connection, onClose, onSubmit }) {
   // Schritt-Steuerung (0 für First Mover, dann 1, 2, 'reward', 3)
-  const initialStep = connection?.isFirstMover ? 0 : 1;
-  const [currentStep, setCurrentStep] = useState(initialStep);
+  const [currentStep, setCurrentStep] = useState(1);
   
   // First Mover: Zieltyp-Auswahl
   const [selectedTargetType, setSelectedTargetType] = useState(null);
@@ -48,34 +47,32 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     }))
   ).current;
   
-  // Bewertungen für die 4 Kernbereiche (1-10) - Schritt 3
+  // Bewertungen für die 4 Kernbereiche (1-10)
   const [communication, setCommunication] = useState(5);
   const [pricePerformance, setPricePerformance] = useState(5);
   const [deliveryQuality, setDeliveryQuality] = useState(5);
   const [reliability, setReliability] = useState(5);
   
-  // Bounce-Animationen für Slider in Schritt 3
+  // Bounce-Animationen für Slider
   const sliderBounceAnim1 = useRef(new Animated.Value(0)).current;
   const sliderBounceAnim2 = useRef(new Animated.Value(0)).current;
   const sliderBounceAnim3 = useRef(new Animated.Value(0)).current;
   const sliderBounceAnim4 = useRef(new Animated.Value(0)).current;
   const [sliderAnimationsStarted, setSliderAnimationsStarted] = useState(false);
   
-  // Drei Erfolgs-Fragen (0-100%) - Schritt 1
-  const [resultSatisfaction, setResultSatisfaction] = useState(50); // Zufriedenheit mit Ergebnis
-  const [wouldWorkAgain, setWouldWorkAgain] = useState(50); // Würdest du wieder arbeiten?
-  const [processSatisfaction, setProcessSatisfaction] = useState(50); // Zufriedenheit mit Ablauf
+  // Drei Erfolgs-Fragen (0-100%)
+  const [resultSatisfaction, setResultSatisfaction] = useState(50);
+  const [wouldWorkAgain, setWouldWorkAgain] = useState(50);
+  const [processSatisfaction, setProcessSatisfaction] = useState(50);
   
-  // Optionaler Freitext - Schritt 2
+  // Kommentar
   const [comment, setComment] = useState('');
   
-  // Erfolgsscore berechnen (Durchschnitt der drei Fragen)
+  // Erfolgsscore berechnen
   const successScore = Math.round((resultSatisfaction + wouldWorkAgain + processSatisfaction) / 3);
 
-  // Prüfen ob alle Fragen beantwortet wurden (nicht mehr bei 50%)
+  // Validierung
   const allQuestionsAnswered = resultSatisfaction !== 50 && wouldWorkAgain !== 50 && processSatisfaction !== 50;
-
-  // Prüfen ob alle Slider bewegt wurden (nicht mehr bei 5)
   const allSlidersAnswered = communication !== 5 && pricePerformance !== 5 && deliveryQuality !== 5 && reliability !== 5;
 
   // Reset currentStep wenn Modal geöffnet wird
@@ -88,15 +85,15 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
 
   // Zieltypen für First Mover (9 Kategorien)
   const targetTypes = [
-    { id: 'medical', label: 'Ärztliche / medizinische Behandlung', icon: 'medical' },
-    { id: 'handwerk', label: 'Handwerk', icon: 'construct' },
-    { id: 'service', label: 'Dienstleistung / Service', icon: 'briefcase' },
-    { id: 'consulting', label: 'Beratung / Coaching', icon: 'people' },
-    { id: 'tax', label: 'Steuer- & Finanzleistungen', icon: 'calculator' },
-    { id: 'product', label: 'Produktkauf', icon: 'cart' },
-    { id: 'gastro', label: 'Gastronomie / Hotellerie / Events', icon: 'restaurant' },
-    { id: 'government', label: 'Behörden / Verwaltung', icon: 'document-text' },
-    { id: 'other', label: 'Sonstiges', icon: 'ellipsis-horizontal' },
+    { id: 'medical', label: 'Ärztliche / medizinische Behandlung' },
+    { id: 'handwerk', label: 'Handwerk' },
+    { id: 'service', label: 'Dienstleistung / Service' },
+    { id: 'consulting', label: 'Beratung / Coaching' },
+    { id: 'tax', label: 'Steuer- & Finanzleistungen' },
+    { id: 'product', label: 'Produktkauf' },
+    { id: 'gastro', label: 'Gastronomie / Hotellerie / Events' },
+    { id: 'government', label: 'Behörden / Verwaltung' },
+    { id: 'other', label: 'Sonstiges' },
   ];
 
   // Kategorien-Definitionen
@@ -135,7 +132,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     },
   ];
 
-  // Animation für Kommentar-Overlay
+  // Kommentar-Overlay Animation
   useEffect(() => {
     if (isCommentFocused) {
       commentFadeAnim.setValue(0);
@@ -169,7 +166,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     }
   }, [isCommentFocused, commentFadeAnim, commentSlideAnim]);
 
-  // Bounce-Animation für Slider in Schritt 3 - nur beim ersten Betreten
+  // Slider Bounce-Animation beim ersten Betreten von Schritt 3
   useEffect(() => {
     if (currentStep === 3 && !sliderAnimationsStarted) {
       setSliderAnimationsStarted(true);
@@ -177,12 +174,14 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
       // Animation für jeden Slider starten
       const startBounce = (animValue) => {
         animValue.setValue(0);
-        const bounceSequence = Animated.sequence([
-          Animated.timing(animValue, { toValue: 5, duration: 400, useNativeDriver: true }),
-          Animated.timing(animValue, { toValue: 0, duration: 300, useNativeDriver: true }),
-          Animated.delay(800),
-        ]);
-        Animated.loop(bounceSequence, { iterations: 2 }).start();
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(animValue, { toValue: 5, duration: 400, useNativeDriver: true }),
+            Animated.timing(animValue, { toValue: 0, duration: 300, useNativeDriver: true }),
+            Animated.delay(800),
+          ]),
+          { iterations: 2 }
+        ).start();
       };
       
       startBounce(sliderBounceAnim1);
@@ -221,13 +220,12 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
         anim.translateY.setValue(30);
       });
       
-      // Kacheln nacheinander animieren mit progressiv längeren Delays
+      // Kacheln nacheinander mit progressiver Verzögerung
       firstMoverTileAnims.forEach((anim, index) => {
-        // Progressive Verzögerung mit steigendem Inkrement: 60ms, 72ms, 86ms, 102ms, 120ms, 140ms, 162ms, 186ms
         const baseDelay = 60;
         const delayIncrement = 12;
         const cumulativeDelay = Array.from({ length: index }, (_, i) => 
-          baseDelay + (i * delayIncrement) + (i * i * 1) // Quadratischer Faktor für stärkere Entzerrung
+          baseDelay + (i * delayIncrement) + (i * i * 1)
         ).reduce((sum, val) => sum + val, 0);
         
         setTimeout(() => {
@@ -249,31 +247,8 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     }
   }, [currentStep, firstMoverTileAnims]);
 
-  const handleSubmit = () => {
-    const rating = {
-      connectionId: connection?.id,
-      // Drei Hauptfragen
-      resultSatisfaction,
-      wouldWorkAgain,
-      processSatisfaction,
-      successScore,
-      comment: comment.trim(),
-      // Nur Kernbereiche einschließen wenn nicht übersprungen
-      ...(skippedCoreRatings ? {} : {
-        communication,
-        pricePerformance,
-        deliveryQuality,
-        reliability,
-      }),
-      timestamp: new Date().toISOString(),
-    };
-    
-    // Modal sofort schließen und Form resetten
-    onSubmit(rating);
-    resetForm();
-    onClose();
-    
-    // Zeige Thank You Animation NACH dem Schließen
+  // Thank You Animation anzeigen
+  const showThankYouAnimation = () => {
     setTimeout(() => {
       setShowThankYou(true);
       thankYouOpacity.setValue(0);
@@ -281,19 +256,17 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
       
       // Haptic Feedback
       if (Platform.OS === 'ios') {
-        Vibration.vibrate([0, 50]); // Success vibration
+        Vibration.vibrate([0, 50]);
       } else {
         Vibration.vibrate(50);
       }
       
       Animated.parallel([
-        // Fade in
         Animated.timing(thankYouOpacity, {
           toValue: 1,
           duration: 300,
           useNativeDriver: true,
         }),
-        // Bounce in (elastic)
         Animated.spring(thankYouScale, {
           toValue: 1,
           friction: 6,
@@ -301,7 +274,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
           useNativeDriver: true,
         }),
       ]).start(() => {
-        // Nach 1 Sekunde ausblenden
         setTimeout(() => {
           Animated.timing(thankYouOpacity, {
             toValue: 0,
@@ -315,9 +287,30 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     }, 100);
   };
 
+  const handleSubmit = () => {
+    const rating = {
+      connectionId: connection?.id,
+      resultSatisfaction,
+      wouldWorkAgain,
+      processSatisfaction,
+      successScore,
+      comment: comment.trim(),
+      ...(skippedCoreRatings ? {} : {
+        communication,
+        pricePerformance,
+        deliveryQuality,
+        reliability,
+      }),
+      timestamp: new Date().toISOString(),
+    };
+    
+    onSubmit(rating);
+    resetForm();
+    onClose();
+    showThankYouAnimation();
+  };
+
   const resetForm = () => {
-    const initialStep = connection?.isFirstMover ? 0 : 1;
-    setCurrentStep(initialStep);
     setSelectedTargetType(null);
     setSkippedCoreRatings(false);
     setCommunication(5);
@@ -329,7 +322,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     setProcessSatisfaction(50);
     setComment('');
     setSliderAnimationsStarted(false);
-    // showThankYou nicht hier zurücksetzen - wird nach Animation automatisch zurückgesetzt
   };
 
   const handleClose = () => {
@@ -376,32 +368,10 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
       timestamp: new Date().toISOString(),
     };
     
-    // Modal sofort schließen und Form resetten
     onSubmit(rating);
     resetForm();
     onClose();
-    
-    // Zeige Thank You Animation NACH dem Schließen
-    setTimeout(() => {
-      setShowThankYou(true);
-      thankYouOpacity.setValue(0);
-      
-      Animated.sequence([
-        Animated.timing(thankYouOpacity, {
-          toValue: 1,
-          duration: 400,
-          useNativeDriver: true,
-        }),
-        Animated.delay(800),
-        Animated.timing(thankYouOpacity, {
-          toValue: 0,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setShowThankYou(false);
-      });
-    }, 100);
+    showThankYouAnimation();
   };
 
   return (
@@ -428,12 +398,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                 <Text style={styles.subtitle}>{connection?.company}</Text>
                 <Text style={styles.category}>{connection?.category}</Text>
               </View>
-            ) : currentStep === 0 ? (
-              <View style={styles.rewardHeaderMinimal}>
-                <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-                  <Ionicons name="close" size={28} color="#666" />
-                </TouchableOpacity>
-              </View>
             ) : (
               <View style={styles.rewardHeaderMinimal}>
                 <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
@@ -442,10 +406,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               </View>
             )}
 
-            {/* Step 0: First Mover - Zieltyp-Auswahl */}
+            {/* First Mover - Kategorie-Auswahl */}
             {currentStep === 0 && (
               <View style={styles.stepContent}>
-                {/* Glückwunsch Text */}
                 <View style={styles.firstMoverHeader}>
                   <Text style={styles.firstMoverTitle}>
                     Glückwunsch!{'\n'}Du bist der Erste!
@@ -455,7 +418,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                   </Text>
                 </View>
 
-                {/* 3x3 Grid mit Zieltypen */}
                 <View style={styles.targetTypeGrid}>
                   {targetTypes.map((type, index) => (
                     <Animated.View
@@ -486,10 +448,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               </View>
             )}
 
-            {/* Step 1: Drei Erfolgs-Fragen */}
+            {/* Schritt 1: Drei Erfolgs-Fragen */}
             {currentStep === 1 && (
               <View style={styles.stepContent}>
-                {/* Frage 1: Zufriedenheit mit Ergebnis */}
                 <View style={styles.questionContainer}>
                   <Text style={styles.questionTitle}>Wie zufrieden warst du mit dem Ergebnis?</Text>
                   <RateScale
@@ -501,7 +462,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                   />
                 </View>
 
-                {/* Frage 2: Würdest du wieder arbeiten? */}
                 <View style={styles.questionContainer}>
                   <Text style={styles.questionTitle}>Würdest du wieder mit diesem Anbieter arbeiten?</Text>
                   <RateScale
@@ -513,7 +473,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                   />
                 </View>
 
-                {/* Frage 3: Zufriedenheit mit Ablauf */}
                 <View style={styles.questionContainer}>
                   <Text style={styles.questionTitle}>Wie zufrieden warst du mit dem Ablauf insgesamt?</Text>
                   <RateScale
@@ -527,7 +486,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               </View>
             )}
 
-            {/* Step 2: Erfolgsscore & Kommentar */}
+            {/* Schritt 2: Erfolgsscore & Kommentar */}
             {currentStep === 2 && (
               <View style={styles.stepContent}>
                 <Text style={styles.sectionTitle}>Erfolgsscore</Text>
@@ -535,7 +494,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                   Berechnet aus deinen drei Bewertungen
                 </Text>
                 
-                {/* RateScale */}
                 <View style={styles.scoreRateScale}>
                   <RateScale
                     rate={successScore}
@@ -544,7 +502,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                   />
                 </View>
 
-                {/* Kommentarfeld */}
                 <View style={styles.commentSection}>
                   <Text style={styles.commentSectionTitle}>
                     Beschreibe die Connection <Text style={styles.optionalTag}>(optional)</Text>
@@ -576,29 +533,24 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
             {/* Reward Screen */}
             {currentStep === 'reward' && (
               <View style={styles.rewardContent}>
-                {/* Checkmark Icon */}
                 <View style={styles.rewardIconContainer}>
                   <View style={styles.rewardIconCircle}>
                     <Ionicons name="checkmark" size={56} color="#4CAF50" />
                   </View>
                 </View>
 
-                {/* Headline */}
                 <Text style={styles.rewardHeadline}>Geschafft!</Text>
 
-                {/* Subline */}
                 <Text style={styles.rewardSubline}>
                   Damit bringst du mehr Wahrheit in die Wirtschaft.
                 </Text>
 
-                {/* Frage */}
                 <View style={styles.rewardQuestion}>
                   <Text style={styles.rewardQuestionText}>
                     Möchtest du noch etwas ergänzen für mehr Transparenz?
                   </Text>
                 </View>
 
-                {/* Buttons */}
                 <View style={styles.rewardButtons}>
                   <PrimaryButton
                     title="Nein, fertig"
@@ -616,7 +568,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               </View>
             )}
 
-            {/* Step 3: 4 Kernbereiche */}
+            {/* Schritt 3: Kernbereiche */}
             {currentStep === 3 && (
               <View style={styles.stepContent}>
                 {categories.map((cat, index) => {
@@ -650,7 +602,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               </View>
             )}
 
-            {/* Footer mit Buttons */}
+            {/* Footer */}
             {currentStep !== 'reward' && (
               <View style={styles.footer}>
                 {currentStep === 0 ? (
@@ -746,7 +698,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               }
             ]}
           >
-            {/* Header */}
             <View style={styles.commentOverlayHeader}>
               <View>
                 <Text style={styles.commentOverlayTitle}>Beschreibe die Connection</Text>
@@ -757,14 +708,12 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               </View>
             </View>
 
-            {/* Inspirations-Hint */}
             <View style={styles.commentOverlayInspiration}>
               <Text style={styles.commentOverlayInspirationText}>
                 💡 z.B. Projektdetails, besondere Stärken, Verbesserungspotenzial, ROI
               </Text>
             </View>
 
-            {/* TextInput */}
             <TextInput
               style={styles.commentOverlayInput}
               value={comment}
@@ -790,7 +739,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
       )}
       </Modal>
 
-      {/* Thank You Animation - außerhalb des Modals */}
+      {/* Thank You Animation */}
       {showThankYou && (
         <View style={styles.thankYouContainer}>
           <Animated.View 
