@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
@@ -20,6 +21,13 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   
   // Flag ob Kernbereiche übersprungen wurden
   const [skippedCoreRatings, setSkippedCoreRatings] = useState(false);
+  
+  // Kommentar-Overlay State
+  const [isCommentFocused, setIsCommentFocused] = useState(false);
+  
+  // Animation values für Kommentar-Overlay
+  const commentFadeAnim = useRef(new Animated.Value(0)).current;
+  const commentSlideAnim = useRef(new Animated.Value(50)).current;
   
   // Bewertungen für die 4 Kernbereiche (1-10) - Schritt 3
   const [communication, setCommunication] = useState(5);
@@ -73,6 +81,40 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
       setValue: setReliability,
     },
   ];
+
+  // Animation für Kommentar-Overlay
+  useEffect(() => {
+    if (isCommentFocused) {
+      commentFadeAnim.setValue(0);
+      commentSlideAnim.setValue(50);
+      
+      Animated.parallel([
+        Animated.timing(commentFadeAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(commentSlideAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(commentFadeAnim, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(commentSlideAnim, {
+          toValue: 50,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [isCommentFocused, commentFadeAnim, commentSlideAnim]);
 
   const handleSubmit = () => {
     const rating = {
@@ -219,21 +261,22 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                   
                   <View style={styles.inspirationBox}>
                     <Text style={styles.inspirationText}>
-                      💡 z.B. Projektdetails, besondere Stärken, Verbesserungspotenzial
+                      💡 z.B. Projektdetails, besondere Stärken, Verbesserungspotenzial, ROI
                     </Text>
                   </View>
                   
-                  <TextInput
-                    style={styles.commentInput}
-                    value={comment}
-                    onChangeText={setComment}
-                    placeholder="Was andere über diese Connection wissen sollten..."
-                    placeholderTextColor="#999"
-                    multiline
-                    numberOfLines={4}
-                    maxLength={200}
-                    textAlignVertical="top"
-                  />
+                  <TouchableOpacity 
+                    style={styles.commentInputTouchable}
+                    activeOpacity={1}
+                    onPress={() => setIsCommentFocused(true)}
+                  >
+                    <Text style={[
+                      styles.commentInputPlaceholder,
+                      comment && styles.commentInputText
+                    ]}>
+                      {comment || 'Was andere über diese Connection wissen sollten...'}
+                    </Text>
+                  </TouchableOpacity>
                   <Text style={styles.charCount}>{comment.length}/200</Text>
                 </View>
               </View>
@@ -310,6 +353,73 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
           </View>
         </KeyboardAvoidingView>
       </BlurView>
+
+      {/* Kommentar Overlay */}
+      {isCommentFocused && (
+        <View style={styles.commentOverlayFullscreen}>
+          <Animated.View 
+            style={[
+              styles.commentOverlayBackdrop,
+              { opacity: commentFadeAnim }
+            ]}
+          >
+            <TouchableOpacity 
+              style={StyleSheet.absoluteFill}
+              activeOpacity={1}
+              onPress={() => setIsCommentFocused(false)}
+            />
+          </Animated.View>
+          <Animated.View 
+            style={[
+              styles.commentOverlayContent,
+              {
+                opacity: commentFadeAnim,
+                transform: [{ translateY: commentSlideAnim }]
+              }
+            ]}
+          >
+            {/* Header */}
+            <View style={styles.commentOverlayHeader}>
+              <View>
+                <Text style={styles.commentOverlayTitle}>Beschreibe die Connection</Text>
+                <Text style={styles.commentOverlaySubtitle}>Was andere wissen sollten</Text>
+              </View>
+              <View style={styles.commentScoreBadge}>
+                <Text style={styles.commentScoreText}>{successScore}%</Text>
+              </View>
+            </View>
+
+            {/* Inspirations-Hint */}
+            <View style={styles.commentOverlayInspiration}>
+              <Text style={styles.commentOverlayInspirationText}>
+                💡 z.B. Projektdetails, besondere Stärken, Verbesserungspotenzial, ROI
+              </Text>
+            </View>
+
+            {/* TextInput */}
+            <TextInput
+              style={styles.commentOverlayInput}
+              value={comment}
+              onChangeText={setComment}
+              placeholder="Beschreibe deine Erfahrung..."
+              placeholderTextColor="#999"
+              multiline
+              maxLength={200}
+              textAlignVertical="top"
+              autoFocus={true}
+              returnKeyType="done"
+              blurOnSubmit={true}
+              onSubmitEditing={() => {
+                setIsCommentFocused(false);
+              }}
+              onBlur={() => {
+                setTimeout(() => setIsCommentFocused(false), 100);
+              }}
+            />
+            <Text style={styles.commentOverlayCharCount}>{comment.length}/200</Text>
+          </Animated.View>
+        </View>
+      )}
     </Modal>
   );
 }
@@ -470,14 +580,11 @@ const styles = StyleSheet.create({
     color: '#1565C0',
     lineHeight: 18,
   },
-  commentInput: {
+  commentInputTouchable: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 14,
-    fontSize: 14,
-    color: '#000',
     minHeight: 100,
-    textAlignVertical: 'top',
     borderWidth: 1,
     borderColor: '#E0E0E0',
     shadowColor: '#000',
@@ -485,11 +592,107 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 8,
     elevation: 4,
+    justifyContent: 'flex-start',
+  },
+  commentInputPlaceholder: {
+    fontSize: 14,
+    color: '#999',
+    lineHeight: 20,
+  },
+  commentInputText: {
+    color: '#000',
   },
   charCount: {
     fontSize: 11,
     color: '#999',
     marginTop: 6,
+    textAlign: 'right',
+  },
+  // Kommentar Overlay Styles
+  commentOverlayFullscreen: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 3000,
+  },
+  commentOverlayBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+  commentOverlayContent: {
+    position: 'absolute',
+    top: 140,
+    left: 20,
+    right: 20,
+  },
+  commentOverlayHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  commentOverlayTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  commentOverlaySubtitle: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.7)',
+  },
+  commentScoreBadge: {
+    backgroundColor: '#000',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  commentScoreText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFF',
+  },
+  commentOverlayInspiration: {
+    backgroundColor: 'rgba(66, 165, 245, 0.15)',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(66, 165, 245, 0.3)',
+  },
+  commentOverlayInspirationText: {
+    fontSize: 12,
+    color: '#90CAF9',
+    lineHeight: 18,
+  },
+  commentOverlayInput: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    fontSize: 16,
+    color: '#000',
+    minHeight: 150,
+    textAlignVertical: 'top',
+    borderWidth: 2,
+    borderColor: '#000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 30,
+    elevation: 20,
+  },
+  commentOverlayCharCount: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.7)',
+    marginTop: 8,
     textAlign: 'right',
   },
   footer: {
