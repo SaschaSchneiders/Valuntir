@@ -43,6 +43,7 @@ export default function HomeScreen({ navigation }) {
       date: new Date(today.getTime() - 8 * 24 * 60 * 60 * 1000), // vor 8 Tagen
       category: 'Steuerberatung',
       status: 'pending',
+      isFirstMover: true, // First Mover Flow für Demo
     },
     {
       id: 3,

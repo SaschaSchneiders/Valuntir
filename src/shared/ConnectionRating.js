@@ -18,8 +18,12 @@ import GradientSlider from './GradientSlider';
 import PrimaryButton from './PrimaryButton';
 
 export default function ConnectionRating({ visible, connection, onClose, onSubmit }) {
-  // Schritt-Steuerung (1, 2, 'reward', 3)
-  const [currentStep, setCurrentStep] = useState(1);
+  // Schritt-Steuerung (0 für First Mover, dann 1, 2, 'reward', 3)
+  const initialStep = connection?.isFirstMover ? 0 : 1;
+  const [currentStep, setCurrentStep] = useState(initialStep);
+  
+  // First Mover: Zieltyp-Auswahl
+  const [selectedTargetType, setSelectedTargetType] = useState(null);
   
   // Flag ob Kernbereiche übersprungen wurden
   const [skippedCoreRatings, setSkippedCoreRatings] = useState(false);
@@ -35,6 +39,14 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   const [showThankYou, setShowThankYou] = useState(false);
   const thankYouOpacity = useRef(new Animated.Value(0)).current;
   const thankYouScale = useRef(new Animated.Value(0)).current;
+  
+  // First Mover Tile Cascade Animation
+  const firstMoverTileAnims = useRef(
+    Array.from({ length: 9 }, () => ({
+      opacity: new Animated.Value(0),
+      translateY: new Animated.Value(30),
+    }))
+  ).current;
   
   // Bewertungen für die 4 Kernbereiche (1-10) - Schritt 3
   const [communication, setCommunication] = useState(5);
@@ -65,6 +77,27 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
 
   // Prüfen ob alle Slider bewegt wurden (nicht mehr bei 5)
   const allSlidersAnswered = communication !== 5 && pricePerformance !== 5 && deliveryQuality !== 5 && reliability !== 5;
+
+  // Reset currentStep wenn Modal geöffnet wird
+  useEffect(() => {
+    if (visible) {
+      const newInitialStep = connection?.isFirstMover ? 0 : 1;
+      setCurrentStep(newInitialStep);
+    }
+  }, [visible, connection]);
+
+  // Zieltypen für First Mover (9 Kategorien)
+  const targetTypes = [
+    { id: 'medical', label: 'Ärztliche / medizinische Behandlung', icon: 'medical' },
+    { id: 'handwerk', label: 'Handwerk', icon: 'construct' },
+    { id: 'service', label: 'Dienstleistung / Service', icon: 'briefcase' },
+    { id: 'consulting', label: 'Beratung / Coaching', icon: 'people' },
+    { id: 'tax', label: 'Steuer- & Finanzleistungen', icon: 'calculator' },
+    { id: 'product', label: 'Produktkauf', icon: 'cart' },
+    { id: 'gastro', label: 'Gastronomie / Hotellerie / Events', icon: 'restaurant' },
+    { id: 'government', label: 'Behörden / Verwaltung', icon: 'document-text' },
+    { id: 'other', label: 'Sonstiges', icon: 'ellipsis-horizontal' },
+  ];
 
   // Kategorien-Definitionen
   const categories = [
@@ -175,6 +208,46 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   useEffect(() => {
     if (reliability !== 5) sliderBounceAnim4.setValue(0);
   }, [reliability, sliderBounceAnim4]);
+  
+  // First Mover Tile Cascade Animation
+  useEffect(() => {
+    if (currentStep === 0) {
+      // Haptic Feedback
+      Vibration.vibrate([0, 50]);
+      
+      // Reset tile animations
+      firstMoverTileAnims.forEach(anim => {
+        anim.opacity.setValue(0);
+        anim.translateY.setValue(30);
+      });
+      
+      // Kacheln nacheinander animieren mit progressiv längeren Delays
+      firstMoverTileAnims.forEach((anim, index) => {
+        // Progressive Verzögerung mit steigendem Inkrement: 60ms, 72ms, 86ms, 102ms, 120ms, 140ms, 162ms, 186ms
+        const baseDelay = 60;
+        const delayIncrement = 12;
+        const cumulativeDelay = Array.from({ length: index }, (_, i) => 
+          baseDelay + (i * delayIncrement) + (i * i * 1) // Quadratischer Faktor für stärkere Entzerrung
+        ).reduce((sum, val) => sum + val, 0);
+        
+        setTimeout(() => {
+          Animated.parallel([
+            Animated.timing(anim.opacity, {
+              toValue: 1,
+              duration: 500,
+              useNativeDriver: true,
+            }),
+            Animated.spring(anim.translateY, {
+              toValue: 0,
+              friction: 9,
+              tension: 35,
+              useNativeDriver: true,
+            }),
+          ]).start();
+        }, cumulativeDelay);
+      });
+    }
+  }, [currentStep, firstMoverTileAnims]);
 
   const handleSubmit = () => {
     const rating = {
@@ -243,7 +316,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   };
 
   const resetForm = () => {
-    setCurrentStep(1);
+    const initialStep = connection?.isFirstMover ? 0 : 1;
+    setCurrentStep(initialStep);
+    setSelectedTargetType(null);
     setSkippedCoreRatings(false);
     setCommunication(5);
     setPricePerformance(5);
@@ -265,7 +340,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   };
 
   const handleNext = () => {
-    if (currentStep === 1) {
+    if (currentStep === 0) {
+      setCurrentStep(1);
+    } else if (currentStep === 1) {
       setCurrentStep(2);
     } else if (currentStep === 2) {
       setCurrentStep('reward');
@@ -275,7 +352,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   };
 
   const handleBack = () => {
-    if (currentStep === 2) {
+    if (currentStep === 1 && connection?.isFirstMover) {
+      setCurrentStep(0);
+    } else if (currentStep === 2) {
       setCurrentStep(1);
     } else if (currentStep === 'reward') {
       setCurrentStep(2);
@@ -335,11 +414,12 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
           >
           <View style={styles.modalContent}>
             {/* Header */}
-            {currentStep !== 'reward' ? (
+            {currentStep !== 'reward' && currentStep !== 0 ? (
               <View style={styles.header}>
                 <View style={styles.headerTop}>
                   <Text style={styles.title}>
-                    {currentStep === 3 ? 'Kernbereiche bewerten' : `Schritt ${currentStep} von 2`}
+                    {currentStep === 3 ? 'Kernbereiche bewerten' : 
+                     `Schritt ${currentStep} von 2`}
                   </Text>
                   <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                     <Ionicons name="close" size={28} color="#666" />
@@ -348,11 +428,61 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                 <Text style={styles.subtitle}>{connection?.company}</Text>
                 <Text style={styles.category}>{connection?.category}</Text>
               </View>
+            ) : currentStep === 0 ? (
+              <View style={styles.rewardHeaderMinimal}>
+                <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+                  <Ionicons name="close" size={28} color="#666" />
+                </TouchableOpacity>
+              </View>
             ) : (
               <View style={styles.rewardHeaderMinimal}>
                 <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                   <Ionicons name="close" size={28} color="#666" />
                 </TouchableOpacity>
+              </View>
+            )}
+
+            {/* Step 0: First Mover - Zieltyp-Auswahl */}
+            {currentStep === 0 && (
+              <View style={styles.stepContent}>
+                {/* Glückwunsch Text */}
+                <View style={styles.firstMoverHeader}>
+                  <Text style={styles.firstMoverTitle}>
+                    Glückwunsch!{'\n'}Du bist der Erste!
+                  </Text>
+                  <Text style={styles.firstMoverSubtitle}>
+                    Bitte wähle eine Kategorie aus, um als First Mover fortzufahren.
+                  </Text>
+                </View>
+
+                {/* 3x3 Grid mit Zieltypen */}
+                <View style={styles.targetTypeGrid}>
+                  {targetTypes.map((type, index) => (
+                    <Animated.View
+                      key={type.id}
+                      style={{
+                        opacity: firstMoverTileAnims[index].opacity,
+                        transform: [{ translateY: firstMoverTileAnims[index].translateY }]
+                      }}
+                    >
+                      <TouchableOpacity
+                        style={[
+                          styles.targetTypeTile,
+                          selectedTargetType === type.id && styles.targetTypeTileActive
+                        ]}
+                        onPress={() => setSelectedTargetType(type.id)}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={[
+                          styles.targetTypeTileText,
+                          selectedTargetType === type.id && styles.targetTypeTileTextActive
+                        ]}>
+                          {type.label}
+                        </Text>
+                      </TouchableOpacity>
+                    </Animated.View>
+                  ))}
+                </View>
               </View>
             )}
 
@@ -523,13 +653,38 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
             {/* Footer mit Buttons */}
             {currentStep !== 'reward' && (
               <View style={styles.footer}>
-                {currentStep === 1 ? (
+                {currentStep === 0 ? (
                   <PrimaryButton
                     title="Weiter"
                     icon="arrow-forward"
                     onPress={handleNext}
-                    disabled={!allQuestionsAnswered}
+                    disabled={!selectedTargetType}
                   />
+                ) : currentStep === 1 ? (
+                  connection?.isFirstMover ? (
+                    <View style={styles.footerRow}>
+                      <PrimaryButton
+                        title="Zurück"
+                        variant="secondary"
+                        onPress={handleBack}
+                        flex={1}
+                      />
+                      <PrimaryButton
+                        title="Weiter"
+                        icon="arrow-forward"
+                        onPress={handleNext}
+                        disabled={!allQuestionsAnswered}
+                        flex={2}
+                      />
+                    </View>
+                  ) : (
+                    <PrimaryButton
+                      title="Weiter"
+                      icon="arrow-forward"
+                      onPress={handleNext}
+                      disabled={!allQuestionsAnswered}
+                    />
+                  )
                 ) : currentStep === 2 ? (
                   <View style={styles.footerRow}>
                     <PrimaryButton
@@ -1024,6 +1179,69 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 8,
+  },
+  // First Mover Screen Styles
+  firstMoverHeader: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  firstMoverTitle: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#000',
+    textAlign: 'center',
+    letterSpacing: -0.5,
+    lineHeight: 32,
+    marginBottom: 12,
+  },
+  firstMoverSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: 20,
+    paddingHorizontal: 20,
+  },
+  targetTypeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    justifyContent: 'center',
+  },
+  targetTypeTile: {
+    width: 100,
+    height: 100,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.08)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  targetTypeTileActive: {
+    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    borderColor: '#10B981',
+    borderWidth: 1,
+    shadowColor: '#10B981',
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 10,
+  },
+  targetTypeTileText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: 14,
+  },
+  targetTypeTileTextActive: {
+    color: '#10B981',
+    fontWeight: '700',
   },
 });
 
