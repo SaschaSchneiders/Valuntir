@@ -12,8 +12,81 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import Slider from '@react-native-community/slider';
 import RateScale from './RateScale';
+
+// Gradient Slider mit Native Slider + Gradient Track
+function GradientSlider({ value, onValueChange, minimumValue = 1, maximumValue = 10, bounceAnim }) {
+  const percentage = ((value - minimumValue) / (maximumValue - minimumValue)) * 100;
+  
+  // Berechne Thumb-Farbe basierend auf Position im Gradient
+  const getThumbColor = (percentage) => {
+    // Interpoliere zwischen #10B981 (hell) und #059669 (dunkel)
+    const startColor = { r: 16, g: 185, b: 129 }; // #10B981
+    const endColor = { r: 5, g: 150, b: 105 };   // #059669
+    
+    const ratio = percentage / 100;
+    const r = Math.round(startColor.r + (endColor.r - startColor.r) * ratio);
+    const g = Math.round(startColor.g + (endColor.g - startColor.g) * ratio);
+    const b = Math.round(startColor.b + (endColor.b - startColor.b) * ratio);
+    
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+  
+  const thumbColor = getThumbColor(percentage);
+
+  return (
+    <View style={styles.gradientSliderContainer}>
+      {/* Gradient Track im Hintergrund */}
+      <View style={styles.gradientTrackContainer}>
+        <View style={styles.gradientTrackBackground}>
+          <LinearGradient
+            colors={['#10B981', '#059669']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.gradientTrackFill, { width: `${percentage}%` }]}
+          />
+        </View>
+      </View>
+      
+      {/* Bounce-Animation nur für den Thumb */}
+      <View style={styles.sliderWrapper}>
+        <Animated.View 
+          style={[
+            styles.sliderAnimatedThumb,
+            { transform: [{ translateX: bounceAnim || 0 }] }
+          ]}
+          pointerEvents="none"
+        >
+          <View 
+            style={[
+              styles.customThumb,
+              { 
+                backgroundColor: thumbColor,
+                left: `${percentage}%`,
+                marginLeft: -12,
+              }
+            ]} 
+          />
+        </Animated.View>
+        
+        {/* Nativer Slider darüber (unsichtbarer Thumb) */}
+        <Slider
+          style={styles.sliderOverlay}
+          minimumValue={minimumValue}
+          maximumValue={maximumValue}
+          step={1}
+          value={value}
+          onValueChange={onValueChange}
+          minimumTrackTintColor="transparent"
+          maximumTrackTintColor="transparent"
+          thumbTintColor="transparent"
+        />
+      </View>
+    </View>
+  );
+}
 
 export default function ConnectionRating({ visible, connection, onClose, onSubmit }) {
   // Schritt-Steuerung (1, 2, 'reward', 3)
@@ -423,19 +496,13 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                           <Text style={styles.ratingNumber}>{cat.value}/10</Text>
                         </View>
                       </View>
-                      <Animated.View style={{ transform: [{ translateX: bounceAnim }] }}>
-                        <Slider
-                          style={styles.slider}
-                          minimumValue={1}
-                          maximumValue={10}
-                          step={1}
-                          value={cat.value}
-                          onValueChange={cat.setValue}
-                          minimumTrackTintColor="#10B981"
-                          maximumTrackTintColor="#E0E0E0"
-                          thumbTintColor="#10B981"
-                        />
-                      </Animated.View>
+                      <GradientSlider
+                        value={cat.value}
+                        onValueChange={cat.setValue}
+                        minimumValue={1}
+                        maximumValue={10}
+                        bounceAnim={bounceAnim}
+                      />
                     </View>
                   );
                 })}
@@ -675,10 +742,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: '#000',
-  },
-  slider: {
-    width: '100%',
-    height: 32,
   },
   overallHint: {
     fontSize: 12,
@@ -1077,6 +1140,59 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  // Gradient Slider Styles
+  gradientSliderContainer: {
+    width: '100%',
+    height: 40,
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  gradientTrackContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 8,
+    justifyContent: 'center',
+    pointerEvents: 'none',
+  },
+  gradientTrackBackground: {
+    height: 8,
+    backgroundColor: '#F0F0F0',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  gradientTrackFill: {
+    height: '100%',
+    borderRadius: 4,
+  },
+  sliderWrapper: {
+    width: '100%',
+    height: 40,
+    position: 'relative',
+  },
+  sliderAnimatedThumb: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+  },
+  customThumb: {
+    position: 'absolute',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  sliderOverlay: {
+    width: '100%',
+    height: 40,
   },
 });
 
