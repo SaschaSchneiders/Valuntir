@@ -35,6 +35,13 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   const [deliveryQuality, setDeliveryQuality] = useState(5);
   const [reliability, setReliability] = useState(5);
   
+  // Bounce-Animationen für Slider in Schritt 3
+  const sliderBounceAnim1 = useRef(new Animated.Value(0)).current;
+  const sliderBounceAnim2 = useRef(new Animated.Value(0)).current;
+  const sliderBounceAnim3 = useRef(new Animated.Value(0)).current;
+  const sliderBounceAnim4 = useRef(new Animated.Value(0)).current;
+  const [sliderAnimationsStarted, setSliderAnimationsStarted] = useState(false);
+  
   // Drei Erfolgs-Fragen (0-100%) - Schritt 1
   const [resultSatisfaction, setResultSatisfaction] = useState(50); // Zufriedenheit mit Ergebnis
   const [wouldWorkAgain, setWouldWorkAgain] = useState(50); // Würdest du wieder arbeiten?
@@ -45,6 +52,12 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   
   // Erfolgsscore berechnen (Durchschnitt der drei Fragen)
   const successScore = Math.round((resultSatisfaction + wouldWorkAgain + processSatisfaction) / 3);
+
+  // Prüfen ob alle Fragen beantwortet wurden (nicht mehr bei 50%)
+  const allQuestionsAnswered = resultSatisfaction !== 50 && wouldWorkAgain !== 50 && processSatisfaction !== 50;
+
+  // Prüfen ob alle Slider bewegt wurden (nicht mehr bei 5)
+  const allSlidersAnswered = communication !== 5 && pricePerformance !== 5 && deliveryQuality !== 5 && reliability !== 5;
 
   // Kategorien-Definitionen
   const categories = [
@@ -116,6 +129,46 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     }
   }, [isCommentFocused, commentFadeAnim, commentSlideAnim]);
 
+  // Bounce-Animation für Slider in Schritt 3 - nur beim ersten Betreten
+  useEffect(() => {
+    if (currentStep === 3 && !sliderAnimationsStarted) {
+      setSliderAnimationsStarted(true);
+      
+      // Animation für jeden Slider starten
+      const startBounce = (animValue) => {
+        animValue.setValue(0);
+        const bounceSequence = Animated.sequence([
+          Animated.timing(animValue, { toValue: 5, duration: 400, useNativeDriver: true }),
+          Animated.timing(animValue, { toValue: 0, duration: 300, useNativeDriver: true }),
+          Animated.delay(800),
+        ]);
+        Animated.loop(bounceSequence, { iterations: 2 }).start();
+      };
+      
+      startBounce(sliderBounceAnim1);
+      startBounce(sliderBounceAnim2);
+      startBounce(sliderBounceAnim3);
+      startBounce(sliderBounceAnim4);
+    }
+  }, [currentStep, sliderAnimationsStarted, sliderBounceAnim1, sliderBounceAnim2, sliderBounceAnim3, sliderBounceAnim4]);
+  
+  // Stoppe individuelle Slider-Animationen wenn bewegt
+  useEffect(() => {
+    if (communication !== 5) sliderBounceAnim1.setValue(0);
+  }, [communication, sliderBounceAnim1]);
+  
+  useEffect(() => {
+    if (pricePerformance !== 5) sliderBounceAnim2.setValue(0);
+  }, [pricePerformance, sliderBounceAnim2]);
+  
+  useEffect(() => {
+    if (deliveryQuality !== 5) sliderBounceAnim3.setValue(0);
+  }, [deliveryQuality, sliderBounceAnim3]);
+  
+  useEffect(() => {
+    if (reliability !== 5) sliderBounceAnim4.setValue(0);
+  }, [reliability, sliderBounceAnim4]);
+
   const handleSubmit = () => {
     const rating = {
       connectionId: connection?.id,
@@ -149,6 +202,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     setWouldWorkAgain(50);
     setProcessSatisfaction(50);
     setComment('');
+    setSliderAnimationsStarted(false);
   };
 
   const handleClose = () => {
@@ -351,33 +405,40 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
             {currentStep === 3 && (
               <View style={styles.stepContent}>
                 <Text style={styles.sectionTitle}>Bewerte die 4 Kernbereiche</Text>
-                {categories.map((cat) => (
-                  <View key={cat.id} style={styles.ratingItem}>
-                    <View style={styles.ratingHeader}>
-                      <View style={styles.ratingIconContainer}>
-                        <Ionicons name={cat.icon} size={20} color="#000" />
+                {categories.map((cat, index) => {
+                  const bounceAnims = [sliderBounceAnim1, sliderBounceAnim2, sliderBounceAnim3, sliderBounceAnim4];
+                  const bounceAnim = bounceAnims[index];
+                  
+                  return (
+                    <View key={cat.id} style={styles.ratingItem}>
+                      <View style={styles.ratingHeader}>
+                        <View style={styles.ratingIconContainer}>
+                          <Ionicons name={cat.icon} size={20} color="#000" />
+                        </View>
+                        <View style={styles.ratingInfo}>
+                          <Text style={styles.ratingTitle}>{cat.title}</Text>
+                          <Text style={styles.ratingDescription}>{cat.description}</Text>
+                        </View>
+                        <View style={styles.ratingValue}>
+                          <Text style={styles.ratingNumber}>{cat.value}/10</Text>
+                        </View>
                       </View>
-                      <View style={styles.ratingInfo}>
-                        <Text style={styles.ratingTitle}>{cat.title}</Text>
-                        <Text style={styles.ratingDescription}>{cat.description}</Text>
-                      </View>
-                      <View style={styles.ratingValue}>
-                        <Text style={styles.ratingNumber}>{cat.value}/10</Text>
-                      </View>
+                      <Animated.View style={{ transform: [{ translateX: bounceAnim }] }}>
+                        <Slider
+                          style={styles.slider}
+                          minimumValue={1}
+                          maximumValue={10}
+                          step={1}
+                          value={cat.value}
+                          onValueChange={cat.setValue}
+                          minimumTrackTintColor="#10B981"
+                          maximumTrackTintColor="#E0E0E0"
+                          thumbTintColor="#10B981"
+                        />
+                      </Animated.View>
                     </View>
-                    <Slider
-                      style={styles.slider}
-                      minimumValue={1}
-                      maximumValue={10}
-                      step={1}
-                      value={cat.value}
-                      onValueChange={cat.setValue}
-                      minimumTrackTintColor="#000000"
-                      maximumTrackTintColor="#E0E0E0"
-                      thumbTintColor="#000000"
-                    />
-                  </View>
-                ))}
+                  );
+                })}
               </View>
             )}
 
@@ -385,7 +446,15 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
             {currentStep !== 'reward' && (
               <View style={styles.footer}>
                 {currentStep === 1 ? (
-                  <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+                  <TouchableOpacity 
+                    style={[
+                      styles.nextButton, 
+                      !allQuestionsAnswered && styles.nextButtonDisabled
+                    ]} 
+                    onPress={allQuestionsAnswered ? handleNext : null}
+                    disabled={!allQuestionsAnswered}
+                    activeOpacity={allQuestionsAnswered ? 0.7 : 1}
+                  >
                     <Text style={styles.nextButtonText}>Weiter</Text>
                     <Ionicons name="arrow-forward" size={20} color="#FFF" />
                   </TouchableOpacity>
@@ -405,7 +474,15 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                     <TouchableOpacity style={styles.backButtonFlex} onPress={handleClose}>
                       <Text style={styles.backButtonText}>Abbrechen</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.submitButtonFlex} onPress={handleSubmit}>
+                    <TouchableOpacity 
+                      style={[
+                        styles.submitButtonFlex,
+                        !allSlidersAnswered && styles.submitButtonDisabled
+                      ]}
+                      onPress={allSlidersAnswered ? handleSubmit : null}
+                      disabled={!allSlidersAnswered}
+                      activeOpacity={allSlidersAnswered ? 0.7 : 1}
+                    >
                       <Text style={styles.submitButtonText}>Absenden</Text>
                       <Ionicons name="checkmark" size={20} color="#FFF" />
                     </TouchableOpacity>
@@ -891,6 +968,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
   },
+  nextButtonDisabled: {
+    backgroundColor: '#CCCCCC',
+    opacity: 0.6,
+    shadowOpacity: 0,
+    elevation: 0,
+  },
   nextButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
@@ -956,6 +1039,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
+  },
+  submitButtonDisabled: {
+    backgroundColor: '#CCCCCC',
+    opacity: 0.6,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   backButtonFlex: {
     flex: 1.2,

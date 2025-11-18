@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, PanResponder, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, PanResponder, TouchableWithoutFeedback, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
 
@@ -27,56 +27,63 @@ export default function RateScale({
   // Sicherstellen, dass rate zwischen 0 und 100 liegt
   const normalizedRate = Math.min(Math.max(rate, 0), 100);
   
-  // Ref für die Position und Breite des Balkens
+  // Größen-Konfiguration
+  const sizeConfig = {
+    small: { barHeight: 32, rateSize: 16, labelSize: 10 },
+    medium: { barHeight: 48, rateSize: 22, labelSize: 12 },
+    large: { barHeight: 64, rateSize: 28, labelSize: 14 }
+  };
+  
+  const config = sizeConfig[size] || sizeConfig.medium;
+  const bubbleWidth = config.barHeight * 1.5;
+  const bubbleHeight = config.barHeight * 0.9;
+  
+  // Refs und State
   const barRef = useRef(null);
   const [barLayout, setBarLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  
-  // Lokaler State für Live-Dragging (zeigt die Position während des Ziehens)
   const [isDragging, setIsDragging] = useState(false);
   const [dragValue, setDragValue] = useState(normalizedRate);
+  const [hasInteracted, setHasInteracted] = useState(false);
   
-  // Synchronisiere dragValue mit normalizedRate wenn nicht gedragged wird
+  // Bounce-Animation (nur horizontal, startet bei 0)
+  const bounceAnim = useRef(new Animated.Value(0)).current;
+  
+  // Synchronisiere dragValue mit normalizedRate
   useEffect(() => {
     if (!isDragging) {
       setDragValue(normalizedRate);
     }
   }, [normalizedRate, isDragging]);
   
-  // Größen-Konfiguration
-  const sizeConfig = {
-    small: {
-      barHeight: 32,
-      rateSize: 16,
-      labelSize: 10,
-    },
-    medium: {
-      barHeight: 48,
-      rateSize: 22,
-      labelSize: 12,
-    },
-    large: {
-      barHeight: 64,
-      rateSize: 28,
-      labelSize: 14,
+  // Bounce-Animation bei 50% Startposition
+  useEffect(() => {
+    if (interactive && normalizedRate === 50 && !hasInteracted && !isDragging) {
+      bounceAnim.setValue(0);
+      
+      const bounceSequence = Animated.sequence([
+        Animated.timing(bounceAnim, { toValue: 8, duration: 400, useNativeDriver: true }),
+        Animated.timing(bounceAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+        Animated.delay(800),
+      ]);
+      
+      Animated.loop(bounceSequence, { iterations: 2 }).start();
+    } else {
+      bounceAnim.setValue(0);
     }
-  };
+  }, [interactive, normalizedRate, hasInteracted, isDragging, bounceAnim]);
   
-  const config = sizeConfig[size] || sizeConfig.medium;
-  
-  // Farbe basierend auf Rate berechnen
-  const getColorForRate = (rate) => {
-    if (rate >= 80) return '#00C853'; // Grün
-    if (rate >= 60) return '#76FF03'; // Hell-Grün
-    if (rate >= 40) return '#FFEB3B'; // Gelb
-    if (rate >= 20) return '#FF9800'; // Orange
-    return '#FF3D00'; // Rot
-  };
-  
-  // Während des Draggings den dragValue anzeigen, sonst den normalizedRate
+  // Display-Wert und Farbe
   const displayValue = isDragging ? dragValue : normalizedRate;
+  const getColorForRate = (rate) => {
+    if (rate >= 80) return '#00C853';
+    if (rate >= 60) return '#76FF03';
+    if (rate >= 40) return '#FFEB3B';
+    if (rate >= 20) return '#FF9800';
+    return '#FF3D00';
+  };
   const currentColor = getColorForRate(displayValue);
   
-  // Layout-Messung für Position und Breite
+  // Layout-Messung
   const onBarLayout = () => {
     if (barRef.current) {
       barRef.current.measureInWindow((x, y, width, height) => {
@@ -85,48 +92,34 @@ export default function RateScale({
     }
   };
   
-  // Touch-Handler für direktes Antippen
+  // Touch-Handler
   const handlePress = (event) => {
     if (!interactive || !onValueChange || barLayout.width === 0) return;
     
+    setHasInteracted(true);
     const touchX = event.nativeEvent.pageX;
     const relativeX = touchX - barLayout.x;
-    
-    // Prozentwert berechnen
-    let percentage = (relativeX / barLayout.width) * 100;
-    
-    // Auf 0-100 begrenzen
+    let percentage = Math.round((relativeX / barLayout.width) * 100);
     percentage = Math.min(Math.max(percentage, 0), 100);
     
-    // Auf ganze Zahlen runden
-    percentage = Math.round(percentage);
-    
-    // Sofort den dragValue aktualisieren für visuelles Feedback
     setDragValue(percentage);
-    
-    // Callback aufrufen
     onValueChange(percentage);
   };
   
-  // PanResponder für Drag-Interaktionen
+  // PanResponder
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => interactive && onValueChange !== null,
       onMoveShouldSetPanResponder: () => interactive && onValueChange !== null,
       onPanResponderGrant: (evt) => {
         if (!interactive || !onValueChange || barLayout.width === 0) return;
-        
-        // Dragging-Modus aktivieren
+        setHasInteracted(true);
         setIsDragging(true);
         
         const touchX = evt.nativeEvent.pageX;
         const relativeX = touchX - barLayout.x;
-        
-        let percentage = (relativeX / barLayout.width) * 100;
+        let percentage = Math.round((relativeX / barLayout.width) * 100);
         percentage = Math.min(Math.max(percentage, 0), 100);
-        percentage = Math.round(percentage);
-        
-        // NUR lokalen dragValue aktualisieren (kein Callback während des Draggings)
         setDragValue(percentage);
       },
       onPanResponderMove: (evt) => {
@@ -134,12 +127,8 @@ export default function RateScale({
         
         const touchX = evt.nativeEvent.pageX;
         const relativeX = touchX - barLayout.x;
-        
-        let percentage = (relativeX / barLayout.width) * 100;
+        let percentage = Math.round((relativeX / barLayout.width) * 100);
         percentage = Math.min(Math.max(percentage, 0), 100);
-        percentage = Math.round(percentage);
-        
-        // NUR lokalen dragValue aktualisieren (kein Callback während des Draggings)
         setDragValue(percentage);
       },
       onPanResponderRelease: (evt) => {
@@ -148,25 +137,16 @@ export default function RateScale({
           return;
         }
         
-        // Finalen Wert berechnen
         const touchX = evt.nativeEvent.pageX;
         const relativeX = touchX - barLayout.x;
-        
-        let percentage = (relativeX / barLayout.width) * 100;
+        let percentage = Math.round((relativeX / barLayout.width) * 100);
         percentage = Math.min(Math.max(percentage, 0), 100);
-        percentage = Math.round(percentage);
         
-        // Dragging-Modus beenden
         setIsDragging(false);
-        
-        // JETZT den Callback aufrufen mit dem finalen Wert
         onValueChange(percentage);
       },
       onPanResponderTerminate: () => {
-        // Dragging-Modus beenden (falls unterbrochen)
         setIsDragging(false);
-        
-        // Letzten dragValue als finalen Wert übernehmen
         if (onValueChange) {
           onValueChange(dragValue);
         }
@@ -176,7 +156,6 @@ export default function RateScale({
   
   return (
     <View style={styles.container}>
-      {/* Titel und Subtitle - wenn vorhanden */}
       {title && (
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title} </Text>
@@ -193,7 +172,6 @@ export default function RateScale({
       )}
       
       <View style={styles.scaleWrapper}>
-        {/* Äußerer Container mit Schatten für Tiefe */}
         <TouchableWithoutFeedback 
           onPress={interactive && onValueChange ? handlePress : undefined}
           disabled={!interactive || !onValueChange}
@@ -204,98 +182,64 @@ export default function RateScale({
             onLayout={onBarLayout}
             {...(interactive && onValueChange ? panResponder.panHandlers : {})}
           >
-            {/* Gradient-Balken mit Farbverlauf */}
             <LinearGradient
-            colors={[
-              '#FF3D00', // Rot (0%)
-              '#FF6E40', 
-              '#FF9800', // Orange (25%)
-              '#FFC107',
-              '#FFEB3B', // Gelb (50%)
-              '#CDDC39',
-              '#8BC34A', // Hell-Grün (75%)
-              '#4CAF50', // Grün (90%)
-              '#2E7D32', // Dunkel-Grün (100%)
-            ]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={[styles.gradientBar, { height: config.barHeight }]}
-          >
-            {/* Glanz-Overlay für 3D-Effekt */}
-            <LinearGradient
-              colors={['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0)', 'rgba(0, 0, 0, 0.1)']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              style={styles.glossOverlay}
-            />
-            
-            {/* Bubble-Indikator - INNERHALB der Skala */}
-            <View
-              style={[
-                styles.indicatorContainer,
-                {
-                  left: `${displayValue}%`,
-                }
+              colors={[
+                '#FF3D00', '#FF6E40', '#FF9800', '#FFC107', '#FFEB3B',
+                '#CDDC39', '#8BC34A', '#4CAF50', '#2E7D32',
               ]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={[styles.gradientBar, { height: config.barHeight }]}
             >
-              {/* Echter 3D-Effekt - Radialer Gradient */}
-              <View
+              <LinearGradient
+                colors={['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0)', 'rgba(0, 0, 0, 0.1)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.glossOverlay}
+              />
+              
+              {/* Bubble-Indikator */}
+              <Animated.View
                 style={[
-                  styles.bubble,
+                  styles.indicatorContainer,
                   {
-                    width: config.barHeight * 1.5,
-                    height: config.barHeight * 0.9,
+                    left: `${displayValue}%`,
+                    marginLeft: -bubbleWidth / 2,
+                    marginTop: -bubbleHeight / 2,
+                    transform: [{ translateX: bounceAnim }],
                   }
                 ]}
               >
-                <Svg
-                  width="100%"
-                  height="100%"
-                  style={StyleSheet.absoluteFillObject}
-                >
-                  <Defs>
-                    <RadialGradient
-                      id="bubbleGradient"
-                      cx="50%"
-                      cy="35%"
-                      r="80%"
-                      fx="50%"
-                      fy="35%"
-                    >
-                      <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.4" />
-                      <Stop offset="40%" stopColor={currentColor} stopOpacity="1" />
-                      <Stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
-                    </RadialGradient>
-                  </Defs>
-                  <Rect
-                    width="100%"
-                    height="100%"
-                    rx="16"
-                    ry="16"
-                    fill="url(#bubbleGradient)"
-                  />
-                </Svg>
-                
-                <View style={styles.bubbleTextContainer}>
-                  <Text style={[styles.bubbleText, { fontSize: config.rateSize }]}>
-                    {displayValue}%
-                  </Text>
+                <View style={[styles.bubble, { width: bubbleWidth, height: bubbleHeight }]}>
+                  <Svg width="100%" height="100%" style={StyleSheet.absoluteFillObject}>
+                    <Defs>
+                      <RadialGradient id="bubbleGradient" cx="50%" cy="35%" r="80%" fx="50%" fy="35%">
+                        <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.4" />
+                        <Stop offset="40%" stopColor={currentColor} stopOpacity="1" />
+                        <Stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
+                      </RadialGradient>
+                    </Defs>
+                    <Rect width="100%" height="100%" rx="16" ry="16" fill="url(#bubbleGradient)" />
+                  </Svg>
+                  
+                  <View style={styles.bubbleTextContainer}>
+                    <Text style={[styles.bubbleText, { fontSize: config.rateSize }]}>
+                      {displayValue}%
+                    </Text>
+                  </View>
                 </View>
-              </View>
+              </Animated.View>
+            </LinearGradient>
+            
+            {/* Markierungen */}
+            <View style={styles.markersContainer}>
+              {[0, 25, 50, 75, 100].map((mark) => (
+                <View key={mark} style={styles.marker}>
+                  <View style={styles.markerLine} />
+                  <Text style={[styles.markerText, { fontSize: config.labelSize }]}>{mark}</Text>
+                </View>
+              ))}
             </View>
-          </LinearGradient>
-          
-          {/* Prozent-Markierungen unter dem Balken */}
-          <View style={styles.markersContainer}>
-            {[0, 25, 50, 75, 100].map((mark) => (
-              <View key={mark} style={styles.marker}>
-                <View style={styles.markerLine} />
-                <Text style={[styles.markerText, { fontSize: config.labelSize }]}>
-                  {mark}
-                </Text>
-              </View>
-            ))}
-          </View>
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -304,41 +248,13 @@ export default function RateScale({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: 4,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#999999',
-  },
-  label: {
-    color: '#666666',
-    fontWeight: '600',
-    marginBottom: 12,
-    letterSpacing: -0.2,
-  },
-  scaleWrapper: {
-    width: '100%',
-    position: 'relative',
-    paddingTop: 4,
-    paddingBottom: 28,
-  },
-  barContainer: {
-    width: '100%',
-    position: 'relative',
-  },
+  container: { width: '100%' },
+  titleContainer: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 4 },
+  title: { fontSize: 20, fontWeight: '700', color: '#000000', letterSpacing: -0.5 },
+  subtitle: { fontSize: 14, fontWeight: '400', color: '#999999' },
+  label: { color: '#666666', fontWeight: '600', marginBottom: 12, letterSpacing: -0.2 },
+  scaleWrapper: { width: '100%', position: 'relative', paddingTop: 4, paddingBottom: 28 },
+  barContainer: { width: '100%', position: 'relative' },
   gradientBar: {
     width: '100%',
     borderRadius: 12,
@@ -352,14 +268,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
   },
-  glossOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: 12,
-  },
+  glossOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 12 },
   markersContainer: {
     position: 'absolute',
     bottom: -24,
@@ -369,32 +278,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 2,
   },
-  marker: {
-    alignItems: 'center',
-  },
-  markerLine: {
-    width: 2,
-    height: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.15)',
-    marginBottom: 4,
-    borderRadius: 1,
-  },
-  markerText: {
-    color: '#999999',
-    fontWeight: '600',
-    fontSize: 11,
-  },
-  indicatorContainer: {
-    position: 'absolute',
-    top: '50%',
-    alignItems: 'center',
-    zIndex: 10,
-    transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
-  },
+  marker: { alignItems: 'center' },
+  markerLine: { width: 2, height: 8, backgroundColor: 'rgba(0, 0, 0, 0.15)', marginBottom: 4, borderRadius: 1 },
+  markerText: { color: '#999999', fontWeight: '600', fontSize: 11 },
+  indicatorContainer: { position: 'absolute', top: '50%', zIndex: 10 },
   bubble: {
     borderRadius: 16,
     overflow: 'hidden',
-    // Eleganter Schwebeffekt
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -420,4 +310,3 @@ const styles = StyleSheet.create({
     textShadowRadius: 3,
   },
 });
-
