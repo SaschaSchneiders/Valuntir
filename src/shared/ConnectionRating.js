@@ -647,10 +647,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               }
             ]}
           >
-            <BlurView intensity={60} tint="light" style={styles.checkmarkBlur}>
-              <View style={styles.checkmarkGreenOverlay} />
-              <Ionicons name="checkmark" size={64} color="#10B981" />
-            </BlurView>
+            <Ionicons name="checkmark" size={64} color="#10B981" />
           </Animated.View>
         </View>
       )}
@@ -1017,27 +1014,16 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    backgroundColor: 'rgba(16, 185, 129, 0.12)',
     borderWidth: 2,
-    borderColor: 'rgba(16, 185, 129, 0.4)',
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  checkmarkBlur: {
-    width: '100%',
-    height: '100%',
+    borderColor: 'rgba(16, 185, 129, 0.35)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  checkmarkGreenOverlay: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8,
   },
 });
 
