@@ -21,21 +21,22 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   // Flag ob Kernbereiche übersprungen wurden
   const [skippedCoreRatings, setSkippedCoreRatings] = useState(false);
   
-  // Bewertungen für die 4 Kernbereiche (1-10) - Schritt 1
+  // Bewertungen für die 4 Kernbereiche (1-10) - Schritt 3
   const [communication, setCommunication] = useState(5);
   const [pricePerformance, setPricePerformance] = useState(5);
   const [deliveryQuality, setDeliveryQuality] = useState(5);
   const [reliability, setReliability] = useState(5);
   
-  // Zwei Erfolgs-Fragen (0-100%) - Schritt 2
-  const [goalAchieved, setGoalAchieved] = useState(50); // Ziel erreicht?
-  const [worthIt, setWorthIt] = useState(50); // Hat sich gelohnt?
+  // Drei Erfolgs-Fragen (0-100%) - Schritt 1
+  const [resultSatisfaction, setResultSatisfaction] = useState(50); // Zufriedenheit mit Ergebnis
+  const [wouldWorkAgain, setWouldWorkAgain] = useState(50); // Würdest du wieder arbeiten?
+  const [processSatisfaction, setProcessSatisfaction] = useState(50); // Zufriedenheit mit Ablauf
   
-  // Optionaler Freitext - Schritt 3
+  // Optionaler Freitext - Schritt 2
   const [comment, setComment] = useState('');
   
-  // Erfolgsscore berechnen (Durchschnitt der beiden Fragen)
-  const successScore = Math.round((goalAchieved + worthIt) / 2);
+  // Erfolgsscore berechnen (Durchschnitt der drei Fragen)
+  const successScore = Math.round((resultSatisfaction + wouldWorkAgain + processSatisfaction) / 3);
 
   // Kategorien-Definitionen
   const categories = [
@@ -76,6 +77,12 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   const handleSubmit = () => {
     const rating = {
       connectionId: connection?.id,
+      // Drei Hauptfragen
+      resultSatisfaction,
+      wouldWorkAgain,
+      processSatisfaction,
+      successScore,
+      comment: comment.trim(),
       // Nur Kernbereiche einschließen wenn nicht übersprungen
       ...(skippedCoreRatings ? {} : {
         communication,
@@ -83,10 +90,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
         deliveryQuality,
         reliability,
       }),
-      goalAchieved,
-      worthIt,
-      successScore,
-      comment: comment.trim(),
       timestamp: new Date().toISOString(),
     };
     onSubmit(rating);
@@ -100,8 +103,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     setPricePerformance(5);
     setDeliveryQuality(5);
     setReliability(5);
-    setGoalAchieved(50);
-    setWorthIt(50);
+    setResultSatisfaction(50);
+    setWouldWorkAgain(50);
+    setProcessSatisfaction(50);
     setComment('');
   };
 
@@ -124,7 +128,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
 
   const handleSkip = () => {
     setSkippedCoreRatings(true);
-    setCurrentStep(2);
+    handleSubmit();
   };
 
   return (
@@ -149,8 +153,94 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               <Text style={styles.category}>{connection?.category}</Text>
             </View>
 
-            {/* Step 1: 4 Kernbereiche */}
+            {/* Step 1: Drei Erfolgs-Fragen */}
             {currentStep === 1 && (
+              <View style={styles.stepContent}>
+                {/* Frage 1: Zufriedenheit mit Ergebnis */}
+                <View style={styles.questionContainer}>
+                  <Text style={styles.questionTitle}>Wie zufrieden warst du mit dem Ergebnis?</Text>
+                  <RateScale
+                    rate={resultSatisfaction}
+                    size="medium"
+                    showLabel={false}
+                    interactive={true}
+                    onValueChange={setResultSatisfaction}
+                  />
+                </View>
+
+                {/* Frage 2: Würdest du wieder arbeiten? */}
+                <View style={styles.questionContainer}>
+                  <Text style={styles.questionTitle}>Würdest du wieder mit diesem Anbieter arbeiten?</Text>
+                  <RateScale
+                    rate={wouldWorkAgain}
+                    size="medium"
+                    showLabel={false}
+                    interactive={true}
+                    onValueChange={setWouldWorkAgain}
+                  />
+                </View>
+
+                {/* Frage 3: Zufriedenheit mit Ablauf */}
+                <View style={styles.questionContainer}>
+                  <Text style={styles.questionTitle}>Wie zufrieden warst du mit dem Ablauf insgesamt?</Text>
+                  <RateScale
+                    rate={processSatisfaction}
+                    size="medium"
+                    showLabel={false}
+                    interactive={true}
+                    onValueChange={setProcessSatisfaction}
+                  />
+                </View>
+              </View>
+            )}
+
+            {/* Step 2: Erfolgsscore & Kommentar */}
+            {currentStep === 2 && (
+              <View style={styles.stepContent}>
+                <Text style={styles.sectionTitle}>Erfolgsscore</Text>
+                <Text style={styles.overallHint}>
+                  Berechnet aus deinen drei Bewertungen
+                </Text>
+                
+                {/* RateScale */}
+                <View style={styles.scoreRateScale}>
+                  <RateScale
+                    rate={successScore}
+                    size="medium"
+                    showLabel={false}
+                  />
+                </View>
+
+                {/* Kommentarfeld */}
+                <View style={styles.commentSection}>
+                  <Text style={styles.commentSectionTitle}>
+                    Beschreibe die Connection <Text style={styles.optionalTag}>(optional)</Text>
+                  </Text>
+                  
+                  <View style={styles.inspirationBox}>
+                    <Text style={styles.inspirationText}>
+                      💡 z.B. Projektdetails, besondere Stärken, Verbesserungspotenzial
+                    </Text>
+                  </View>
+                  
+                  <TextInput
+                    style={styles.commentInput}
+                    value={comment}
+                    onChangeText={setComment}
+                    placeholder="Was andere über diese Connection wissen sollten..."
+                    placeholderTextColor="#999"
+                    multiline
+                    numberOfLines={4}
+                    maxLength={200}
+                    textAlignVertical="top"
+                  />
+                  <Text style={styles.charCount}>{comment.length}/200</Text>
+                </View>
+              </View>
+            )}
+
+            {/* Step 3: 4 Kernbereiche */}
+            {currentStep === 3 && (
               <View style={styles.stepContent}>
                 <Text style={styles.sectionTitle}>Bewerte die 4 Kernbereiche</Text>
                 {categories.map((cat) => (
@@ -183,102 +273,13 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               </View>
             )}
 
-            {/* Step 2: Zwei Erfolgs-Fragen */}
-            {currentStep === 2 && (
-              <View style={styles.stepContent}>
-                {/* Frage 1: Ziel erreicht? */}
-                <View style={styles.questionContainer}>
-                  <Text style={styles.questionTitle}>Wurde das Ziel der Connection erreicht?</Text>
-                  <RateScale
-                    rate={goalAchieved}
-                    size="medium"
-                    showLabel={false}
-                  />
-                  <Slider
-                    style={styles.controlSlider}
-                    minimumValue={0}
-                    maximumValue={100}
-                    step={1}
-                    value={goalAchieved}
-                    onValueChange={setGoalAchieved}
-                    minimumTrackTintColor="#000000"
-                    maximumTrackTintColor="#E0E0E0"
-                    thumbTintColor="#000000"
-                  />
-                </View>
-
-                {/* Frage 2: Hat sich gelohnt? */}
-                <View style={styles.questionContainer}>
-                  <Text style={styles.questionTitle}>Hat sich die Connection für dich gelohnt?</Text>
-                  <RateScale
-                    rate={worthIt}
-                    size="medium"
-                    showLabel={false}
-                  />
-                  <Slider
-                    style={styles.controlSlider}
-                    minimumValue={0}
-                    maximumValue={100}
-                    step={1}
-                    value={worthIt}
-                    onValueChange={setWorthIt}
-                    minimumTrackTintColor="#000000"
-                    maximumTrackTintColor="#E0E0E0"
-                    thumbTintColor="#000000"
-                  />
-                </View>
-              </View>
-            )}
-
-            {/* Step 3: Erfolgsscore & Kommentar */}
-            {currentStep === 3 && (
-              <View style={styles.stepContent}>
-                <Text style={styles.sectionTitle}>Erfolgsscore</Text>
-                <Text style={styles.overallHint}>
-                  Berechnet aus deinen Angaben zum Connection-Erfolg
-                </Text>
-                
-                {/* RateScale */}
-                <View style={styles.scoreRateScale}>
-                  <RateScale
-                    rate={successScore}
-                    size="medium"
-                    showLabel={false}
-                  />
-                </View>
-
-                <View style={styles.commentSection}>
-                  <Text style={styles.sectionTitle}>Kommentar (optional)</Text>
-                  <Text style={styles.commentHint}>
-                    Z.B. Connection-Beschreibung: "Familienstiftung umgesetzt – steuerlich optimal."
-                  </Text>
-                  <TextInput
-                    style={styles.commentInput}
-                    value={comment}
-                    onChangeText={setComment}
-                    placeholder="Dein Kommentar zur Connection..."
-                    placeholderTextColor="#999"
-                    multiline
-                    numberOfLines={4}
-                    maxLength={200}
-                  />
-                  <Text style={styles.charCount}>{comment.length}/200</Text>
-                </View>
-              </View>
-            )}
-
             {/* Footer mit Buttons */}
             <View style={styles.footer}>
               {currentStep === 1 ? (
-                <View style={styles.footerRow}>
-                  <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-                    <Text style={styles.skipButtonText} numberOfLines={1}>Überspringen</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.nextButtonInRow} onPress={handleNext}>
-                    <Text style={styles.nextButtonText} numberOfLines={1}>Weiter</Text>
-                    <Ionicons name="arrow-forward" size={20} color="#FFF" />
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+                  <Text style={styles.nextButtonText}>Weiter</Text>
+                  <Ionicons name="arrow-forward" size={20} color="#FFF" />
+                </TouchableOpacity>
               ) : currentStep === 2 ? (
                 <View style={styles.footerRow}>
                   <TouchableOpacity style={styles.backButton} onPress={handleBack}>
@@ -295,6 +296,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                   <TouchableOpacity style={styles.backButton} onPress={handleBack}>
                     <Ionicons name="arrow-back" size={20} color="#000" />
                     <Text style={styles.backButtonText}>Zurück</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+                    <Text style={styles.skipButtonText} numberOfLines={1}>Überspringen</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                     <Text style={styles.submitButtonText}>Absenden</Text>
@@ -364,7 +368,7 @@ const styles = StyleSheet.create({
   },
   stepContent: {
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 12,
   },
   sectionTitle: {
     fontSize: 15,
@@ -427,18 +431,13 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   questionContainer: {
-    marginBottom: 32,
+    marginBottom: 24,
   },
   questionTitle: {
     fontSize: 15,
     fontWeight: '700',
     color: '#000',
     marginBottom: 16,
-  },
-  controlSlider: {
-    width: '100%',
-    height: 40,
-    marginTop: -10,
   },
   scoreRateScale: {
     marginTop: 0,
@@ -447,26 +446,45 @@ const styles = StyleSheet.create({
   commentSection: {
     marginTop: 4,
   },
-  commentHint: {
+  commentSectionTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 12,
+  },
+  optionalTag: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: '#999',
+  },
+  inspirationBox: {
+    backgroundColor: '#E3F2FD',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#90CAF9',
+  },
+  inspirationText: {
     fontSize: 12,
-    color: '#666',
-    marginBottom: 10,
+    color: '#1565C0',
+    lineHeight: 18,
   },
   commentInput: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 14,
     fontSize: 14,
     color: '#000',
-    minHeight: 90,
+    minHeight: 100,
     textAlignVertical: 'top',
     borderWidth: 1,
     borderColor: '#E0E0E0',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
   },
   charCount: {
     fontSize: 11,
@@ -545,7 +563,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   submitButton: {
-    flex: 2,
+    flex: 1.5,
     backgroundColor: '#000000',
     borderRadius: 14,
     paddingVertical: 14,
@@ -567,11 +585,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   skipButton: {
-    flex: 1.3,
+    flex: 1.2,
     backgroundColor: '#F5F5F5',
     borderRadius: 14,
     paddingVertical: 14,
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -586,7 +604,7 @@ const styles = StyleSheet.create({
   },
   skipButtonText: {
     color: '#666666',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
   },
 });

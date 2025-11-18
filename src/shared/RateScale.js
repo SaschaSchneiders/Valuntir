@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, Text, StyleSheet, PanResponder, TouchableWithoutFeedback } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
 
@@ -12,16 +12,35 @@ import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
  * @param {boolean} showLabel - Label anzeigen (default: true)
  * @param {string} title - Titel über der Skala (optional)
  * @param {number} totalRatings - Anzahl der Connections für Subtitle (optional)
+ * @param {function} onValueChange - Callback wenn der Wert durch Touch geändert wird (optional)
+ * @param {boolean} interactive - Ob die Skala interaktiv sein soll (default: false)
  */
 export default function RateScale({ 
   rate = 0, 
   size = 'medium', 
   showLabel = true,
   title = null,
-  totalRatings = null
+  totalRatings = null,
+  onValueChange = null,
+  interactive = false
 }) {
   // Sicherstellen, dass rate zwischen 0 und 100 liegt
   const normalizedRate = Math.min(Math.max(rate, 0), 100);
+  
+  // Ref für die Position und Breite des Balkens
+  const barRef = useRef(null);
+  const [barLayout, setBarLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  
+  // Lokaler State für Live-Dragging (zeigt die Position während des Ziehens)
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragValue, setDragValue] = useState(normalizedRate);
+  
+  // Synchronisiere dragValue mit normalizedRate wenn nicht gedragged wird
+  useEffect(() => {
+    if (!isDragging) {
+      setDragValue(normalizedRate);
+    }
+  }, [normalizedRate, isDragging]);
   
   // Größen-Konfiguration
   const sizeConfig = {
@@ -53,7 +72,107 @@ export default function RateScale({
     return '#FF3D00'; // Rot
   };
   
-  const currentColor = getColorForRate(normalizedRate);
+  // Während des Draggings den dragValue anzeigen, sonst den normalizedRate
+  const displayValue = isDragging ? dragValue : normalizedRate;
+  const currentColor = getColorForRate(displayValue);
+  
+  // Layout-Messung für Position und Breite
+  const onBarLayout = () => {
+    if (barRef.current) {
+      barRef.current.measureInWindow((x, y, width, height) => {
+        setBarLayout({ x, y, width, height });
+      });
+    }
+  };
+  
+  // Touch-Handler für direktes Antippen
+  const handlePress = (event) => {
+    if (!interactive || !onValueChange || barLayout.width === 0) return;
+    
+    const touchX = event.nativeEvent.pageX;
+    const relativeX = touchX - barLayout.x;
+    
+    // Prozentwert berechnen
+    let percentage = (relativeX / barLayout.width) * 100;
+    
+    // Auf 0-100 begrenzen
+    percentage = Math.min(Math.max(percentage, 0), 100);
+    
+    // Auf ganze Zahlen runden
+    percentage = Math.round(percentage);
+    
+    // Sofort den dragValue aktualisieren für visuelles Feedback
+    setDragValue(percentage);
+    
+    // Callback aufrufen
+    onValueChange(percentage);
+  };
+  
+  // PanResponder für Drag-Interaktionen
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => interactive && onValueChange !== null,
+      onMoveShouldSetPanResponder: () => interactive && onValueChange !== null,
+      onPanResponderGrant: (evt) => {
+        if (!interactive || !onValueChange || barLayout.width === 0) return;
+        
+        // Dragging-Modus aktivieren
+        setIsDragging(true);
+        
+        const touchX = evt.nativeEvent.pageX;
+        const relativeX = touchX - barLayout.x;
+        
+        let percentage = (relativeX / barLayout.width) * 100;
+        percentage = Math.min(Math.max(percentage, 0), 100);
+        percentage = Math.round(percentage);
+        
+        // NUR lokalen dragValue aktualisieren (kein Callback während des Draggings)
+        setDragValue(percentage);
+      },
+      onPanResponderMove: (evt) => {
+        if (!interactive || !onValueChange || barLayout.width === 0) return;
+        
+        const touchX = evt.nativeEvent.pageX;
+        const relativeX = touchX - barLayout.x;
+        
+        let percentage = (relativeX / barLayout.width) * 100;
+        percentage = Math.min(Math.max(percentage, 0), 100);
+        percentage = Math.round(percentage);
+        
+        // NUR lokalen dragValue aktualisieren (kein Callback während des Draggings)
+        setDragValue(percentage);
+      },
+      onPanResponderRelease: (evt) => {
+        if (!interactive || !onValueChange || barLayout.width === 0) {
+          setIsDragging(false);
+          return;
+        }
+        
+        // Finalen Wert berechnen
+        const touchX = evt.nativeEvent.pageX;
+        const relativeX = touchX - barLayout.x;
+        
+        let percentage = (relativeX / barLayout.width) * 100;
+        percentage = Math.min(Math.max(percentage, 0), 100);
+        percentage = Math.round(percentage);
+        
+        // Dragging-Modus beenden
+        setIsDragging(false);
+        
+        // JETZT den Callback aufrufen mit dem finalen Wert
+        onValueChange(percentage);
+      },
+      onPanResponderTerminate: () => {
+        // Dragging-Modus beenden (falls unterbrochen)
+        setIsDragging(false);
+        
+        // Letzten dragValue als finalen Wert übernehmen
+        if (onValueChange) {
+          onValueChange(dragValue);
+        }
+      },
+    })
+  ).current;
   
   return (
     <View style={styles.container}>
@@ -75,9 +194,18 @@ export default function RateScale({
       
       <View style={styles.scaleWrapper}>
         {/* Äußerer Container mit Schatten für Tiefe */}
-        <View style={styles.barContainer}>
-          {/* Gradient-Balken mit Farbverlauf */}
-          <LinearGradient
+        <TouchableWithoutFeedback 
+          onPress={interactive && onValueChange ? handlePress : undefined}
+          disabled={!interactive || !onValueChange}
+        >
+          <View 
+            style={styles.barContainer}
+            ref={barRef}
+            onLayout={onBarLayout}
+            {...(interactive && onValueChange ? panResponder.panHandlers : {})}
+          >
+            {/* Gradient-Balken mit Farbverlauf */}
+            <LinearGradient
             colors={[
               '#FF3D00', // Rot (0%)
               '#FF6E40', 
@@ -106,7 +234,7 @@ export default function RateScale({
               style={[
                 styles.indicatorContainer,
                 {
-                  left: `${normalizedRate}%`,
+                  left: `${displayValue}%`,
                 }
               ]}
             >
@@ -150,7 +278,7 @@ export default function RateScale({
                 
                 <View style={styles.bubbleTextContainer}>
                   <Text style={[styles.bubbleText, { fontSize: config.rateSize }]}>
-                    {normalizedRate}%
+                    {displayValue}%
                   </Text>
                 </View>
               </View>
@@ -168,7 +296,8 @@ export default function RateScale({
               </View>
             ))}
           </View>
-        </View>
+          </View>
+        </TouchableWithoutFeedback>
       </View>
     </View>
   );
