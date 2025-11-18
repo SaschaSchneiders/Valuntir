@@ -9,84 +9,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   Animated,
+  Vibration,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import Slider from '@react-native-community/slider';
 import RateScale from './RateScale';
-
-// Gradient Slider mit Native Slider + Gradient Track
-function GradientSlider({ value, onValueChange, minimumValue = 1, maximumValue = 10, bounceAnim }) {
-  const percentage = ((value - minimumValue) / (maximumValue - minimumValue)) * 100;
-  
-  // Berechne Thumb-Farbe basierend auf Position im Gradient
-  const getThumbColor = (percentage) => {
-    // Interpoliere zwischen #10B981 (hell) und #059669 (dunkel)
-    const startColor = { r: 16, g: 185, b: 129 }; // #10B981
-    const endColor = { r: 5, g: 150, b: 105 };   // #059669
-    
-    const ratio = percentage / 100;
-    const r = Math.round(startColor.r + (endColor.r - startColor.r) * ratio);
-    const g = Math.round(startColor.g + (endColor.g - startColor.g) * ratio);
-    const b = Math.round(startColor.b + (endColor.b - startColor.b) * ratio);
-    
-    return `rgb(${r}, ${g}, ${b})`;
-  };
-  
-  const thumbColor = getThumbColor(percentage);
-
-  return (
-    <View style={styles.gradientSliderContainer}>
-      {/* Gradient Track im Hintergrund */}
-      <View style={styles.gradientTrackContainer}>
-        <View style={styles.gradientTrackBackground}>
-          <LinearGradient
-            colors={['#10B981', '#059669']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={[styles.gradientTrackFill, { width: `${percentage}%` }]}
-          />
-        </View>
-      </View>
-      
-      {/* Bounce-Animation nur für den Thumb */}
-      <View style={styles.sliderWrapper}>
-        <Animated.View 
-          style={[
-            styles.sliderAnimatedThumb,
-            { transform: [{ translateX: bounceAnim || 0 }] }
-          ]}
-          pointerEvents="none"
-        >
-          <View 
-            style={[
-              styles.customThumb,
-              { 
-                backgroundColor: thumbColor,
-                left: `${percentage}%`,
-                marginLeft: -12,
-              }
-            ]} 
-          />
-        </Animated.View>
-        
-        {/* Nativer Slider darüber (unsichtbarer Thumb) */}
-        <Slider
-          style={styles.sliderOverlay}
-          minimumValue={minimumValue}
-          maximumValue={maximumValue}
-          step={1}
-          value={value}
-          onValueChange={onValueChange}
-          minimumTrackTintColor="transparent"
-          maximumTrackTintColor="transparent"
-          thumbTintColor="transparent"
-        />
-      </View>
-    </View>
-  );
-}
+import GradientSlider from './GradientSlider';
+import PrimaryButton from './PrimaryButton';
 
 export default function ConnectionRating({ visible, connection, onClose, onSubmit }) {
   // Schritt-Steuerung (1, 2, 'reward', 3)
@@ -101,6 +30,11 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   // Animation values für Kommentar-Overlay
   const commentFadeAnim = useRef(new Animated.Value(0)).current;
   const commentSlideAnim = useRef(new Animated.Value(50)).current;
+  
+  // Thank You Animation
+  const [showThankYou, setShowThankYou] = useState(false);
+  const thankYouOpacity = useRef(new Animated.Value(0)).current;
+  const thankYouScale = useRef(new Animated.Value(0)).current;
   
   // Bewertungen für die 4 Kernbereiche (1-10) - Schritt 3
   const [communication, setCommunication] = useState(5);
@@ -260,8 +194,52 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
       }),
       timestamp: new Date().toISOString(),
     };
+    
+    // Modal sofort schließen und Form resetten
     onSubmit(rating);
     resetForm();
+    onClose();
+    
+    // Zeige Thank You Animation NACH dem Schließen
+    setTimeout(() => {
+      setShowThankYou(true);
+      thankYouOpacity.setValue(0);
+      thankYouScale.setValue(0);
+      
+      // Haptic Feedback
+      if (Platform.OS === 'ios') {
+        Vibration.vibrate([0, 50]); // Success vibration
+      } else {
+        Vibration.vibrate(50);
+      }
+      
+      Animated.parallel([
+        // Fade in
+        Animated.timing(thankYouOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        // Bounce in (elastic)
+        Animated.spring(thankYouScale, {
+          toValue: 1,
+          friction: 6,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        // Nach 1 Sekunde ausblenden
+        setTimeout(() => {
+          Animated.timing(thankYouOpacity, {
+            toValue: 0,
+            duration: 400,
+            useNativeDriver: true,
+          }).start(() => {
+            setShowThankYou(false);
+          });
+        }, 1000);
+      });
+    }, 100);
   };
 
   const resetForm = () => {
@@ -276,10 +254,13 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     setProcessSatisfaction(50);
     setComment('');
     setSliderAnimationsStarted(false);
+    // showThankYou nicht hier zurücksetzen - wird nach Animation automatisch zurückgesetzt
   };
 
   const handleClose = () => {
     resetForm();
+    setShowThankYou(false);
+    thankYouOpacity.setValue(0);
     onClose();
   };
 
@@ -303,30 +284,62 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     }
   };
 
-  const handleSkip = () => {
-    setSkippedCoreRatings(true);
-    handleSubmit();
-  };
-
   const handleFinishWithoutCoreRatings = () => {
     setSkippedCoreRatings(true);
-    handleSubmit();
+    
+    const rating = {
+      connectionId: connection?.id,
+      resultSatisfaction,
+      wouldWorkAgain,
+      processSatisfaction,
+      successScore,
+      comment: comment.trim(),
+      timestamp: new Date().toISOString(),
+    };
+    
+    // Modal sofort schließen und Form resetten
+    onSubmit(rating);
+    resetForm();
+    onClose();
+    
+    // Zeige Thank You Animation NACH dem Schließen
+    setTimeout(() => {
+      setShowThankYou(true);
+      thankYouOpacity.setValue(0);
+      
+      Animated.sequence([
+        Animated.timing(thankYouOpacity, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+        Animated.delay(800),
+        Animated.timing(thankYouOpacity, {
+          toValue: 0,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setShowThankYou(false);
+      });
+    }, 100);
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
-      <BlurView intensity={20} tint="dark" style={styles.modalOverlay}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalContainer}
-        >
+    <>
+      <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
+        <BlurView intensity={20} tint="dark" style={styles.modalOverlay}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.modalContainer}
+          >
           <View style={styles.modalContent}>
             {/* Header */}
             {currentStep !== 'reward' ? (
               <View style={styles.header}>
                 <View style={styles.headerTop}>
                   <Text style={styles.title}>
-                    Schritt {currentStep === 3 ? 3 : currentStep} von 3
+                    {currentStep === 3 ? 'Kernbereiche bewerten' : `Schritt ${currentStep} von 2`}
                   </Text>
                   <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                     <Ionicons name="close" size={28} color="#666" />
@@ -457,19 +470,18 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
 
                 {/* Buttons */}
                 <View style={styles.rewardButtons}>
-                  <TouchableOpacity 
-                    style={styles.rewardButtonSecondary}
+                  <PrimaryButton
+                    title="Nein, fertig"
+                    variant="secondary"
                     onPress={handleFinishWithoutCoreRatings}
-                  >
-                    <Text style={styles.rewardButtonSecondaryText}>Nein, fertig</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity 
-                    style={styles.rewardButtonPrimary}
+                    flex={1}
+                  />
+                  <PrimaryButton
+                    title="Ja, gerne"
+                    icon="arrow-forward"
                     onPress={handleNext}
-                  >
-                    <Text style={styles.rewardButtonPrimaryText}>Ja, gerne</Text>
-                    <Ionicons name="arrow-forward" size={20} color="#FFF" />
-                  </TouchableOpacity>
+                    flex={1}
+                  />
                 </View>
               </View>
             )}
@@ -477,7 +489,6 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
             {/* Step 3: 4 Kernbereiche */}
             {currentStep === 3 && (
               <View style={styles.stepContent}>
-                <Text style={styles.sectionTitle}>Bewerte die 4 Kernbereiche</Text>
                 {categories.map((cat, index) => {
                   const bounceAnims = [sliderBounceAnim1, sliderBounceAnim2, sliderBounceAnim3, sliderBounceAnim4];
                   const bounceAnim = bounceAnims[index];
@@ -513,46 +524,41 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
             {currentStep !== 'reward' && (
               <View style={styles.footer}>
                 {currentStep === 1 ? (
-                  <TouchableOpacity 
-                    style={[
-                      styles.nextButton, 
-                      !allQuestionsAnswered && styles.nextButtonDisabled
-                    ]} 
-                    onPress={allQuestionsAnswered ? handleNext : null}
+                  <PrimaryButton
+                    title="Weiter"
+                    icon="arrow-forward"
+                    onPress={handleNext}
                     disabled={!allQuestionsAnswered}
-                    activeOpacity={allQuestionsAnswered ? 0.7 : 1}
-                  >
-                    <Text style={styles.nextButtonText}>Weiter</Text>
-                    <Ionicons name="arrow-forward" size={20} color="#FFF" />
-                  </TouchableOpacity>
+                  />
                 ) : currentStep === 2 ? (
                   <View style={styles.footerRow}>
-                    <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-                      <Ionicons name="arrow-back" size={20} color="#000" />
-                      <Text style={styles.backButtonText}>Zurück</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.nextButtonInRow} onPress={handleNext}>
-                      <Text style={styles.nextButtonText}>Abschließen</Text>
-                      <Ionicons name="checkmark" size={20} color="#FFF" />
-                    </TouchableOpacity>
+                    <PrimaryButton
+                      title="Zurück"
+                      variant="secondary"
+                      onPress={handleBack}
+                      flex={1}
+                    />
+                    <PrimaryButton
+                      title="Abschließen"
+                      icon="checkmark"
+                      onPress={handleNext}
+                      flex={2}
+                    />
                   </View>
                 ) : (
                   <View style={styles.footerRow}>
-                    <TouchableOpacity style={styles.backButtonFlex} onPress={handleClose}>
-                      <Text style={styles.backButtonText}>Abbrechen</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                      style={[
-                        styles.submitButtonFlex,
-                        !allSlidersAnswered && styles.submitButtonDisabled
-                      ]}
-                      onPress={allSlidersAnswered ? handleSubmit : null}
+                    <PrimaryButton
+                      title="Abbrechen"
+                      variant="secondary"
+                      onPress={handleClose}
+                    />
+                    <PrimaryButton
+                      title="Absenden"
+                      icon="checkmark"
+                      onPress={handleSubmit}
                       disabled={!allSlidersAnswered}
-                      activeOpacity={allSlidersAnswered ? 0.7 : 1}
-                    >
-                      <Text style={styles.submitButtonText}>Absenden</Text>
-                      <Ionicons name="checkmark" size={20} color="#FFF" />
-                    </TouchableOpacity>
+                      flex={1}
+                    />
                   </View>
                 )}
               </View>
@@ -627,7 +633,28 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
           </Animated.View>
         </View>
       )}
-    </Modal>
+      </Modal>
+
+      {/* Thank You Animation - außerhalb des Modals */}
+      {showThankYou && (
+        <View style={styles.thankYouContainer}>
+          <Animated.View 
+            style={[
+              styles.checkmarkCircle,
+              { 
+                opacity: thankYouOpacity,
+                transform: [{ scale: thankYouScale }]
+              }
+            ]}
+          >
+            <BlurView intensity={60} tint="light" style={styles.checkmarkBlur}>
+              <View style={styles.checkmarkGreenOverlay} />
+              <Ionicons name="checkmark" size={64} color="#10B981" />
+            </BlurView>
+          </Animated.View>
+        </View>
+      )}
+    </>
   );
 }
 
@@ -963,48 +990,6 @@ const styles = StyleSheet.create({
     gap: 12,
     width: '100%',
   },
-  rewardButtonSecondary: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 14,
-    paddingVertical: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  rewardButtonSecondaryText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#666',
-  },
-  rewardButtonPrimary: {
-    flex: 1,
-    backgroundColor: '#000000',
-    borderRadius: 14,
-    paddingVertical: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  rewardButtonPrimaryText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
   footer: {
     padding: 20,
     paddingTop: 14,
@@ -1015,184 +1000,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
-  nextButton: {
-    backgroundColor: '#000000',
-    borderRadius: 14,
-    paddingVertical: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  nextButtonDisabled: {
-    backgroundColor: '#CCCCCC',
-    opacity: 0.6,
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  nextButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  nextButtonInRow: {
-    flex: 2,
-    backgroundColor: '#000000',
-    borderRadius: 14,
-    paddingVertical: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  backButton: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 14,
-    paddingVertical: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  backButtonText: {
-    color: '#000000',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  submitButton: {
-    flex: 1.5,
-    backgroundColor: '#000000',
-    borderRadius: 14,
-    paddingVertical: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  submitButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  submitButtonDisabled: {
-    backgroundColor: '#CCCCCC',
-    opacity: 0.6,
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  backButtonFlex: {
-    flex: 1.2,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 14,
-    paddingVertical: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  submitButtonFlex: {
-    flex: 2,
-    backgroundColor: '#000000',
-    borderRadius: 14,
-    paddingVertical: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  // Gradient Slider Styles
-  gradientSliderContainer: {
-    width: '100%',
-    height: 40,
-    position: 'relative',
-    justifyContent: 'center',
-  },
-  gradientTrackContainer: {
+  // Thank You Animation Styles
+  thankYouContainer: {
     position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 8,
-    justifyContent: 'center',
-    pointerEvents: 'none',
-  },
-  gradientTrackBackground: {
-    height: 8,
-    backgroundColor: '#F0F0F0',
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  gradientTrackFill: {
-    height: '100%',
-    borderRadius: 4,
-  },
-  sliderWrapper: {
-    width: '100%',
-    height: 40,
-    position: 'relative',
-  },
-  sliderAnimatedThumb: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
     top: 0,
+    left: 0,
+    right: 0,
     bottom: 0,
     justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10000,
+    pointerEvents: 'none',
+    backgroundColor: 'transparent',
   },
-  customThumb: {
-    position: 'absolute',
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+  checkmarkCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    borderWidth: 2,
+    borderColor: 'rgba(16, 185, 129, 0.4)',
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
-  sliderOverlay: {
+  checkmarkBlur: {
     width: '100%',
-    height: 40,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkmarkGreenOverlay: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(16, 185, 129, 0.08)',
   },
 });
 

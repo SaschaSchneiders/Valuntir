@@ -9,12 +9,12 @@ import {
   Animated,
   StatusBar,
 } from 'react-native';
-import Slider from '@react-native-community/slider';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import ProviderCard from '../shared/ProviderCard';
+import GradientSlider from '../shared/GradientSlider';
 import DesktopLayout from '../components/DesktopLayout';
 import { useResponsive } from '../utils/responsive';
 
@@ -476,16 +476,12 @@ export default function SearchScreen({ navigation: navProp }) {
                     <Text style={styles.radiusLabel}>Umkreis</Text>
                     <Text style={styles.radiusValue}>{searchRadius} km</Text>
                   </View>
-                  <Slider
-                    style={styles.slider}
-                    minimumValue={5}
-                    maximumValue={200}
-                    step={5}
+                  <GradientSlider
                     value={searchRadius}
                     onValueChange={setSearchRadius}
-                    minimumTrackTintColor="#000000"
-                    maximumTrackTintColor="rgba(0, 0, 0, 0.1)"
-                    thumbTintColor="#000000"
+                    minimumValue={5}
+                    maximumValue={200}
+                    colorScheme="black"
                   />
                 </View>
               )}

@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import ProfileImageFallback from './ProfileImageFallback';
+import PrimaryButton from './PrimaryButton';
 
 export default function ConnectionCard({ connection, onPress, onSetReminder, onArchive, isReminderMode = false }) {
   const [showReminderModal, setShowReminderModal] = useState(false);
@@ -132,19 +133,13 @@ export default function ConnectionCard({ connection, onPress, onSetReminder, onA
 
       {connection.status === 'pending' && (
         <View style={styles.actionRow}>
-          <View style={styles.rateButtonContainer}>
-            <LinearGradient
-              colors={['#3A3A3A', '#0F0F0F', '#3A3A3A']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0.8 }}
-              style={styles.rateButtonGradient}
-            >
-              <TouchableOpacity style={styles.rateButton} onPress={onPress} activeOpacity={0.85}>
-                <Text style={styles.rateButtonText}>Jetzt bewerten</Text>
-                <Ionicons name="arrow-forward" size={16} color="#FFF" />
-              </TouchableOpacity>
-            </LinearGradient>
-          </View>
+          <PrimaryButton
+            title="Jetzt bewerten"
+            icon="arrow-forward"
+            size="compact"
+            onPress={onPress}
+            style={{ flex: 1 }}
+          />
           
           <TouchableOpacity 
             style={styles.reminderButton}
@@ -157,19 +152,13 @@ export default function ConnectionCard({ connection, onPress, onSetReminder, onA
       
       {connection.status === 'reminder' && (
         <View style={styles.actionRow}>
-          <View style={styles.rateButtonContainer}>
-            <LinearGradient
-              colors={['#3A3A3A', '#0F0F0F', '#3A3A3A']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0.8 }}
-              style={styles.rateButtonGradient}
-            >
-              <TouchableOpacity style={styles.rateButton} onPress={onPress} activeOpacity={0.85}>
-                <Text style={styles.rateButtonText}>Jetzt bewerten</Text>
-                <Ionicons name="arrow-forward" size={16} color="#FFF" />
-              </TouchableOpacity>
-            </LinearGradient>
-          </View>
+          <PrimaryButton
+            title="Jetzt bewerten"
+            icon="arrow-forward"
+            size="compact"
+            onPress={onPress}
+            style={{ flex: 1 }}
+          />
         </View>
       )}
 
@@ -307,33 +296,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-  },
-  rateButtonContainer: {
-    flex: 1,
-    borderRadius: 32,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  rateButtonGradient: {
-    borderRadius: 32,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  rateButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  rateButtonText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '700',
   },
   reminderButton: {
     width: 44,
