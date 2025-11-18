@@ -16,7 +16,7 @@ import Slider from '@react-native-community/slider';
 import RateScale from './RateScale';
 
 export default function ConnectionRating({ visible, connection, onClose, onSubmit }) {
-  // Schritt-Steuerung (1, 2 oder 3)
+  // Schritt-Steuerung (1, 2, 'reward', 3)
   const [currentStep, setCurrentStep] = useState(1);
   
   // Flag ob Kernbereiche übersprungen wurden
@@ -157,18 +157,31 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   };
 
   const handleNext = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
+    if (currentStep === 1) {
+      setCurrentStep(2);
+    } else if (currentStep === 2) {
+      setCurrentStep('reward');
+    } else if (currentStep === 'reward') {
+      setCurrentStep(3);
     }
   };
 
   const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+    if (currentStep === 2) {
+      setCurrentStep(1);
+    } else if (currentStep === 'reward') {
+      setCurrentStep(2);
+    } else if (currentStep === 3) {
+      setCurrentStep('reward');
     }
   };
 
   const handleSkip = () => {
+    setSkippedCoreRatings(true);
+    handleSubmit();
+  };
+
+  const handleFinishWithoutCoreRatings = () => {
     setSkippedCoreRatings(true);
     handleSubmit();
   };
@@ -182,18 +195,26 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
         >
           <View style={styles.modalContent}>
             {/* Header */}
-            <View style={styles.header}>
-              <View style={styles.headerTop}>
-                <Text style={styles.title}>
-                  Schritt {currentStep} von 3
-                </Text>
+            {currentStep !== 'reward' ? (
+              <View style={styles.header}>
+                <View style={styles.headerTop}>
+                  <Text style={styles.title}>
+                    Schritt {currentStep === 3 ? 3 : currentStep} von 3
+                  </Text>
+                  <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+                    <Ionicons name="close" size={28} color="#666" />
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.subtitle}>{connection?.company}</Text>
+                <Text style={styles.category}>{connection?.category}</Text>
+              </View>
+            ) : (
+              <View style={styles.rewardHeaderMinimal}>
                 <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                   <Ionicons name="close" size={28} color="#666" />
                 </TouchableOpacity>
               </View>
-              <Text style={styles.subtitle}>{connection?.company}</Text>
-              <Text style={styles.category}>{connection?.category}</Text>
-            </View>
+            )}
 
             {/* Step 1: Drei Erfolgs-Fragen */}
             {currentStep === 1 && (
@@ -282,6 +303,50 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
               </View>
             )}
 
+            {/* Reward Screen */}
+            {currentStep === 'reward' && (
+              <View style={styles.rewardContent}>
+                {/* Checkmark Icon */}
+                <View style={styles.rewardIconContainer}>
+                  <View style={styles.rewardIconCircle}>
+                    <Ionicons name="checkmark" size={56} color="#4CAF50" />
+                  </View>
+                </View>
+
+                {/* Headline */}
+                <Text style={styles.rewardHeadline}>Geschafft!</Text>
+
+                {/* Subline */}
+                <Text style={styles.rewardSubline}>
+                  Damit bringst du mehr Wahrheit in die Wirtschaft.
+                </Text>
+
+                {/* Frage */}
+                <View style={styles.rewardQuestion}>
+                  <Text style={styles.rewardQuestionText}>
+                    Möchtest du noch etwas ergänzen für mehr Transparenz?
+                  </Text>
+                </View>
+
+                {/* Buttons */}
+                <View style={styles.rewardButtons}>
+                  <TouchableOpacity 
+                    style={styles.rewardButtonSecondary}
+                    onPress={handleFinishWithoutCoreRatings}
+                  >
+                    <Text style={styles.rewardButtonSecondaryText}>Nein, fertig</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={styles.rewardButtonPrimary}
+                    onPress={handleNext}
+                  >
+                    <Text style={styles.rewardButtonPrimaryText}>Ja, gerne</Text>
+                    <Ionicons name="arrow-forward" size={20} color="#FFF" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
             {/* Step 3: 4 Kernbereiche */}
             {currentStep === 3 && (
               <View style={styles.stepContent}>
@@ -317,39 +382,37 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
             )}
 
             {/* Footer mit Buttons */}
-            <View style={styles.footer}>
-              {currentStep === 1 ? (
-                <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-                  <Text style={styles.nextButtonText}>Weiter</Text>
-                  <Ionicons name="arrow-forward" size={20} color="#FFF" />
-                </TouchableOpacity>
-              ) : currentStep === 2 ? (
-                <View style={styles.footerRow}>
-                  <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-                    <Ionicons name="arrow-back" size={20} color="#000" />
-                    <Text style={styles.backButtonText}>Zurück</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.nextButtonInRow} onPress={handleNext}>
+            {currentStep !== 'reward' && (
+              <View style={styles.footer}>
+                {currentStep === 1 ? (
+                  <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
                     <Text style={styles.nextButtonText}>Weiter</Text>
                     <Ionicons name="arrow-forward" size={20} color="#FFF" />
                   </TouchableOpacity>
-                </View>
-              ) : (
-                <View style={styles.footerRow}>
-                  <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-                    <Ionicons name="arrow-back" size={20} color="#000" />
-                    <Text style={styles.backButtonText}>Zurück</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-                    <Text style={styles.skipButtonText} numberOfLines={1}>Überspringen</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                    <Text style={styles.submitButtonText}>Absenden</Text>
-                    <Ionicons name="checkmark" size={20} color="#FFF" />
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
+                ) : currentStep === 2 ? (
+                  <View style={styles.footerRow}>
+                    <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                      <Ionicons name="arrow-back" size={20} color="#000" />
+                      <Text style={styles.backButtonText}>Zurück</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.nextButtonInRow} onPress={handleNext}>
+                      <Text style={styles.nextButtonText}>Abschließen</Text>
+                      <Ionicons name="checkmark" size={20} color="#FFF" />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={styles.footerRow}>
+                    <TouchableOpacity style={styles.backButtonFlex} onPress={handleClose}>
+                      <Text style={styles.backButtonText}>Abbrechen</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.submitButtonFlex} onPress={handleSubmit}>
+                      <Text style={styles.submitButtonText}>Absenden</Text>
+                      <Ionicons name="checkmark" size={20} color="#FFF" />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            )}
           </View>
         </KeyboardAvoidingView>
       </BlurView>
@@ -433,7 +496,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '90%',
-    maxHeight: '80%',
+    maxHeight: '85%',
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
@@ -444,12 +507,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 16,
     elevation: 8,
+    minHeight: 500,
   },
   header: {
     padding: 20,
     paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
+  },
+  rewardHeaderMinimal: {
+    padding: 20,
+    paddingBottom: 0,
+    alignItems: 'flex-end',
   },
   headerTop: {
     flexDirection: 'row',
@@ -695,6 +764,107 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: 'right',
   },
+  // Reward Screen Styles
+  rewardContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 40,
+    paddingBottom: 20,
+    alignItems: 'center',
+  },
+  rewardIconContainer: {
+    marginBottom: 20,
+  },
+  rewardIconCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#E8F5E9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#4CAF50',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  rewardHeadline: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#000',
+    marginBottom: 8,
+    letterSpacing: -0.5,
+  },
+  rewardSubline: {
+    fontSize: 15,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 32,
+    lineHeight: 22,
+    paddingHorizontal: 10,
+  },
+  rewardQuestion: {
+    backgroundColor: '#F8F9FA',
+    borderRadius: 16,
+    padding: 18,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  rewardQuestionText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  rewardButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  rewardButtonSecondary: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  rewardButtonSecondaryText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#666',
+  },
+  rewardButtonPrimary: {
+    flex: 1,
+    backgroundColor: '#000000',
+    borderRadius: 14,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  rewardButtonPrimaryText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
   footer: {
     padding: 20,
     paddingTop: 14,
@@ -787,16 +957,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
-  skipButton: {
+  backButtonFlex: {
     flex: 1.2,
     backgroundColor: '#F5F5F5',
     borderRadius: 14,
     paddingVertical: 14,
-    paddingHorizontal: 8,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
     borderWidth: 1,
     borderColor: '#E0E0E0',
     shadowColor: '#000',
@@ -805,10 +972,22 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  skipButtonText: {
-    color: '#666666',
-    fontSize: 15,
-    fontWeight: '600',
+  submitButtonFlex: {
+    flex: 2,
+    backgroundColor: '#000000',
+    borderRadius: 14,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
 });
 
