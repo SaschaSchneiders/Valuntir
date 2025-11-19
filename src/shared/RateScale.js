@@ -39,8 +39,7 @@ export default function RateScale({
   const bubbleHeight = config.barHeight * 0.9;
   
   // Refs und State
-  const barRef = useRef(null);
-  const [barLayout, setBarLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [barWidth, setBarWidth] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragValue, setDragValue] = useState(normalizedRate);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -83,73 +82,71 @@ export default function RateScale({
   };
   const currentColor = getColorForRate(displayValue);
   
-  // Layout-Messung
-  const onBarLayout = () => {
-    if (barRef.current) {
-      barRef.current.measureInWindow((x, y, width, height) => {
-        setBarLayout({ x, y, width, height });
-      });
-    }
-  };
-  
-  // Touch-Handler
-  const handlePress = (event) => {
-    if (!interactive || !onValueChange || barLayout.width === 0) return;
-    
-    setHasInteracted(true);
-    const touchX = event.nativeEvent.pageX;
-    const relativeX = touchX - barLayout.x;
-    let percentage = Math.round((relativeX / barLayout.width) * 100);
-    percentage = Math.min(Math.max(percentage, 0), 100);
-    
-    setDragValue(percentage);
-    onValueChange(percentage);
+  // Refs für PanResponder-Zugriff (verhindert Stale Closures)
+  const barWidthRef = useRef(0);
+  const interactiveRef = useRef(interactive);
+  const onValueChangeRef = useRef(onValueChange);
+
+  // State aktualisieren
+  useEffect(() => { interactiveRef.current = interactive; }, [interactive]);
+  useEffect(() => { onValueChangeRef.current = onValueChange; }, [onValueChange]);
+
+  // Layout-Messung - Nur Breite speichern
+  const onBarLayout = (event) => {
+    const width = event.nativeEvent.layout.width;
+    setBarWidth(width);
+    barWidthRef.current = width;
   };
   
   // PanResponder
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => interactive && onValueChange !== null,
-      onMoveShouldSetPanResponder: () => interactive && onValueChange !== null,
+      // Sofortiges Greifen der Geste, auch in ScrollViews
+      onStartShouldSetPanResponder: () => interactiveRef.current && onValueChangeRef.current !== null,
+      onStartShouldSetPanResponderCapture: () => interactiveRef.current && onValueChangeRef.current !== null,
+      onMoveShouldSetPanResponder: () => interactiveRef.current && onValueChangeRef.current !== null,
+      onMoveShouldSetPanResponderCapture: () => interactiveRef.current && onValueChangeRef.current !== null,
+      
+      // Verhindern, dass Parent-Views (wie ScrollView) die Geste klauen
+      onPanResponderTerminationRequest: () => false,
+      
       onPanResponderGrant: (evt) => {
-        if (!interactive || !onValueChange || barLayout.width === 0) return;
+        const width = barWidthRef.current;
+        if (!interactiveRef.current || !onValueChangeRef.current || width === 0) return;
+        
         setHasInteracted(true);
         setIsDragging(true);
         
-        const touchX = evt.nativeEvent.pageX;
-        const relativeX = touchX - barLayout.x;
-        let percentage = Math.round((relativeX / barLayout.width) * 100);
+        const touchX = evt.nativeEvent.locationX;
+        let percentage = Math.round((touchX / width) * 100);
         percentage = Math.min(Math.max(percentage, 0), 100);
+        
         setDragValue(percentage);
+        onValueChangeRef.current(percentage);
       },
       onPanResponderMove: (evt) => {
-        if (!interactive || !onValueChange || barLayout.width === 0) return;
+        const width = barWidthRef.current;
+        if (!interactiveRef.current || !onValueChangeRef.current || width === 0) return;
         
-        const touchX = evt.nativeEvent.pageX;
-        const relativeX = touchX - barLayout.x;
-        let percentage = Math.round((relativeX / barLayout.width) * 100);
+        const touchX = evt.nativeEvent.locationX;
+        let percentage = Math.round((touchX / width) * 100);
         percentage = Math.min(Math.max(percentage, 0), 100);
+        
         setDragValue(percentage);
+        onValueChangeRef.current(percentage);
       },
       onPanResponderRelease: (evt) => {
-        if (!interactive || !onValueChange || barLayout.width === 0) {
-          setIsDragging(false);
-          return;
-        }
-        
-        const touchX = evt.nativeEvent.pageX;
-        const relativeX = touchX - barLayout.x;
-        let percentage = Math.round((relativeX / barLayout.width) * 100);
-        percentage = Math.min(Math.max(percentage, 0), 100);
-        
         setIsDragging(false);
-        onValueChange(percentage);
+        const width = barWidthRef.current;
+        if (interactiveRef.current && onValueChangeRef.current && width > 0) {
+           const touchX = evt.nativeEvent.locationX;
+           let percentage = Math.round((touchX / width) * 100);
+           percentage = Math.min(Math.max(percentage, 0), 100);
+           onValueChangeRef.current(percentage);
+        }
       },
       onPanResponderTerminate: () => {
         setIsDragging(false);
-        if (onValueChange) {
-          onValueChange(dragValue);
-        }
       },
     })
   ).current;
@@ -172,21 +169,15 @@ export default function RateScale({
       )}
       
       <View style={styles.scaleWrapper}>
-        <TouchableWithoutFeedback 
-          onPress={interactive && onValueChange ? handlePress : undefined}
-          disabled={!interactive || !onValueChange}
+        <View 
+          style={styles.barContainer}
+          onLayout={onBarLayout}
         >
-          <View 
-            style={styles.barContainer}
-            ref={barRef}
-            onLayout={onBarLayout}
-            {...(interactive && onValueChange ? panResponder.panHandlers : {})}
-          >
-            <LinearGradient
-              colors={[
-                '#FF3D00', '#FF6E40', '#FF9800', '#FFC107', '#FFEB3B',
-                '#CDDC39', '#8BC34A', '#4CAF50', '#2E7D32',
-              ]}
+          <LinearGradient
+            colors={[
+              '#FF3D00', '#FF6E40', '#FF9800', '#FFC107', '#FFEB3B',
+              '#CDDC39', '#8BC34A', '#4CAF50', '#2E7D32',
+            ]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={[styles.gradientBar, { height: config.barHeight }]}
@@ -197,39 +188,41 @@ export default function RateScale({
                 end={{ x: 0, y: 1 }}
                 style={styles.glossOverlay}
               />
-              
-              {/* Bubble-Indikator */}
-              <Animated.View
-                style={[
-                  styles.indicatorContainer,
-                  {
-                    left: `${displayValue}%`,
-                    marginLeft: -bubbleWidth / 2,
-                    marginTop: -bubbleHeight / 2,
-                    transform: [{ translateX: bounceAnim }],
-                  }
-                ]}
-              >
-                <View style={[styles.bubble, { width: bubbleWidth, height: bubbleHeight }]}>
-                  <Svg width="100%" height="100%" style={StyleSheet.absoluteFillObject}>
-                    <Defs>
-                      <RadialGradient id="bubbleGradient" cx="50%" cy="35%" r="80%" fx="50%" fy="35%">
-                        <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.4" />
-                        <Stop offset="40%" stopColor={currentColor} stopOpacity="1" />
-                        <Stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
-                      </RadialGradient>
-                    </Defs>
-                    <Rect width="100%" height="100%" rx="16" ry="16" fill="url(#bubbleGradient)" />
-                  </Svg>
-                  
-                  <View style={styles.bubbleTextContainer}>
-                    <Text style={[styles.bubbleText, { fontSize: config.rateSize }]}>
-                      {displayValue}%
-                    </Text>
-                  </View>
-                </View>
-              </Animated.View>
             </LinearGradient>
+              
+            {/* Bubble-Indikator - Außerhalb des GradientBars damit er nicht abgeschnitten wird */}
+            <Animated.View
+              style={[
+                styles.indicatorContainer,
+                {
+                  left: barWidth > 0 
+                    ? (displayValue / 100) * (barWidth - bubbleWidth) 
+                    : `${displayValue}%`, // Fallback bis Layout gemessen ist
+                  marginLeft: 0, // Kein negativer Margin mehr nötig
+                  marginTop: -bubbleHeight / 2,
+                  transform: [{ translateX: bounceAnim }],
+                }
+              ]}
+            >
+              <View style={[styles.bubble, { width: bubbleWidth, height: bubbleHeight }]}>
+                <Svg width="100%" height="100%" style={StyleSheet.absoluteFillObject}>
+                  <Defs>
+                    <RadialGradient id="bubbleGradient" cx="50%" cy="35%" r="80%" fx="50%" fy="35%">
+                      <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.4" />
+                      <Stop offset="40%" stopColor={currentColor} stopOpacity="1" />
+                      <Stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
+                    </RadialGradient>
+                  </Defs>
+                  <Rect width="100%" height="100%" rx="16" ry="16" fill="url(#bubbleGradient)" />
+                </Svg>
+                
+                <View style={styles.bubbleTextContainer}>
+                  <Text style={[styles.bubbleText, { fontSize: config.rateSize }]}>
+                    {displayValue}%
+                  </Text>
+                </View>
+              </View>
+            </Animated.View>
             
             {/* Markierungen */}
             <View style={styles.markersContainer}>
@@ -240,8 +233,15 @@ export default function RateScale({
                 </View>
               ))}
             </View>
+
+            {/* Touch Overlay - fängt alle Events */}
+            {interactive && (
+              <View 
+                style={styles.touchOverlay}
+                {...panResponder.panHandlers}
+              />
+            )}
           </View>
-        </TouchableWithoutFeedback>
       </View>
     </View>
   );
@@ -308,5 +308,13 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.4)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
+  },
+  touchOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100,
   },
 });
