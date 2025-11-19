@@ -14,6 +14,7 @@ import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
  * @param {number} totalRatings - Anzahl der Connections für Subtitle (optional)
  * @param {function} onValueChange - Callback wenn der Wert durch Touch geändert wird (optional)
  * @param {boolean} interactive - Ob die Skala interaktiv sein soll (default: false)
+ * @param {number} bounceDelay - Optionaler Delay für die Intro-Bounce-Animation (ms)
  */
 export default function RateScale({ 
   rate = 0, 
@@ -22,7 +23,8 @@ export default function RateScale({
   title = null,
   totalRatings = null,
   onValueChange = null,
-  interactive = false
+  interactive = false,
+  bounceDelay = 0,
 }) {
   // Sicherstellen, dass rate zwischen 0 und 100 liegt
   const normalizedRate = Math.min(Math.max(rate, 0), 100);
@@ -54,22 +56,26 @@ export default function RateScale({
     }
   }, [normalizedRate, isDragging]);
   
-  // Bounce-Animation bei 50% Startposition
+  // Bounce-Animation bei 50% Startposition (Intro-Hinweis)
   useEffect(() => {
-    if (interactive && normalizedRate === 50 && !hasInteracted && !isDragging) {
+    if (interactive && normalizedRate === 50 && !hasInteracted && !isDragging && barWidth > 0) {
       bounceAnim.setValue(0);
-      
-      const bounceSequence = Animated.sequence([
-        Animated.timing(bounceAnim, { toValue: 8, duration: 400, useNativeDriver: true }),
-        Animated.timing(bounceAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
-        Animated.delay(800),
-      ]);
-      
-      Animated.loop(bounceSequence, { iterations: 2 }).start();
-    } else {
-      bounceAnim.setValue(0);
+
+      Animated.sequence([
+        Animated.delay(bounceDelay),
+        Animated.timing(bounceAnim, {
+          toValue: 8,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+        Animated.timing(bounceAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
     }
-  }, [interactive, normalizedRate, hasInteracted, isDragging, bounceAnim]);
+  }, [interactive, normalizedRate, hasInteracted, isDragging, barWidth, bounceDelay, bounceAnim]);
   
   // Display-Wert und Farbe
   const displayValue = isDragging ? dragValue : normalizedRate;

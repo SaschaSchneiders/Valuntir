@@ -171,23 +171,20 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
     if (currentStep === 3 && !sliderAnimationsStarted) {
       setSliderAnimationsStarted(true);
       
-      // Animation für jeden Slider starten
-      const startBounce = (animValue) => {
+      // Animation für jeden Slider nacheinander starten (von oben nach unten, jeweils einmal)
+      const startBounce = (animValue, delay) => {
         animValue.setValue(0);
-        Animated.loop(
-          Animated.sequence([
-            Animated.timing(animValue, { toValue: 5, duration: 400, useNativeDriver: true }),
-            Animated.timing(animValue, { toValue: 0, duration: 300, useNativeDriver: true }),
-            Animated.delay(800),
-          ]),
-          { iterations: 2 }
-        ).start();
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.timing(animValue, { toValue: 5, duration: 400, useNativeDriver: true }),
+          Animated.timing(animValue, { toValue: 0, duration: 300, useNativeDriver: true }),
+        ]).start();
       };
       
-      startBounce(sliderBounceAnim1);
-      startBounce(sliderBounceAnim2);
-      startBounce(sliderBounceAnim3);
-      startBounce(sliderBounceAnim4);
+      startBounce(sliderBounceAnim1, 0);
+      startBounce(sliderBounceAnim2, 700);
+      startBounce(sliderBounceAnim3, 1400);
+      startBounce(sliderBounceAnim4, 2100);
     }
   }, [currentStep, sliderAnimationsStarted, sliderBounceAnim1, sliderBounceAnim2, sliderBounceAnim3, sliderBounceAnim4]);
   
@@ -458,6 +455,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                     size="medium"
                     showLabel={false}
                     interactive={true}
+                    bounceDelay={0}
                     onValueChange={setResultSatisfaction}
                   />
                 </View>
@@ -469,6 +467,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                     size="medium"
                     showLabel={false}
                     interactive={true}
+                    bounceDelay={700}
                     onValueChange={setWouldWorkAgain}
                   />
                 </View>
@@ -480,6 +479,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                     size="medium"
                     showLabel={false}
                     interactive={true}
+                    bounceDelay={1400}
                     onValueChange={setProcessSatisfaction}
                   />
                 </View>
