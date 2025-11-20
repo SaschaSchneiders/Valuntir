@@ -21,7 +21,6 @@ export default function SettingsScreen({ navigation: navProp }) {
   const { isDesktop } = useResponsive();
   const { switchPackage, isFree, isPro, isBusiness } = usePackage();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
 
   const tabs = [
     { name: 'Home', icon: 'home-outline' },
@@ -164,18 +163,16 @@ export default function SettingsScreen({ navigation: navProp }) {
         </View>
               </TouchableOpacity>
               
-              <View style={[styles.menuItem, styles.menuItemLast]}>
+              <TouchableOpacity 
+                style={[styles.menuItem, styles.menuItemLast]}
+                onPress={() => navigation.navigate('Feedback')}
+              >
                 <View style={styles.menuLeft}>
-                  <Ionicons name="moon-outline" size={22} color="#000" />
-                  <Text style={styles.menuText}>Dark Mode</Text>
+                  <Ionicons name="chatbox-ellipses-outline" size={22} color="#000" />
+                  <Text style={styles.menuText}>Feedback geben</Text>
                 </View>
-            <Switch
-              value={darkModeEnabled}
-              onValueChange={setDarkModeEnabled}
-                  trackColor={{ false: '#D1D5DB', true: '#000000' }}
-                  thumbColor="#FFFFFF"
-            />
-          </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
         </View>
         
             {/* Konto Section */}

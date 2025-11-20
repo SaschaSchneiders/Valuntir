@@ -51,4 +51,4 @@
 | Erfolgsquote pausieren (öffentliche Sichtbarkeit verweigern) | ❌                           | ❌                                  | ✅                                  |
 | Statistik- und Analyse-Tools                              | ❌                               | ❌                                  | ✅                                  |
 | Trust-Badge für Website / Mails                          | ❌                               | ❌                                  | ✅                                  |
-| Kontaktoption aktivieren (Lead-Modul)                    | ❌                               | ❌                                  | ✅                                  |
+| Kontaktoption aktivieren (Lead-Modul)                    | ❌                               | ❌                                  | ✅                                  | ne
