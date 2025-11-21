@@ -3,8 +3,11 @@ import { View, Text, StyleSheet, ScrollView, Animated, TextInput, TouchableOpaci
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
-export default function BusinessPlanPromoScreen({ onRequestAccess }) {
+export default function BusinessPlanPromoScreen({ route, onRequestAccess }) {
+  const navigation = useNavigation();
+  const showBackButton = route?.params?.showBackButton || false;
   const scrollY = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -145,6 +148,16 @@ export default function BusinessPlanPromoScreen({ onRequestAccess }) {
         end={{ x: 0, y: 1 }}
       >
         <SafeAreaView style={styles.safeArea} edges={['top']}>
+          {/* Back Button - nur wenn von locked Profile kommend */}
+          {showBackButton && (
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name="chevron-back" size={28} color="#000" />
+            </TouchableOpacity>
+          )}
+
           <ScrollView 
             ref={scrollViewRef}
             style={styles.scrollView}
@@ -405,6 +418,23 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 70,
+    left: 20,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
   scrollView: {
     flex: 1,

@@ -10,6 +10,7 @@ import SearchScreen from '../screens/SearchScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import PublicProfileScreen from '../screens/PublicProfileScreen';
+import LockedProfileScreen from '../screens/LockedProfileScreen';
 import ReminderScreen from '../screens/ReminderScreen';
 import LogoUploadScreen from '../screens/LogoUploadScreen';
 import CoverImageUploadScreen from '../screens/CoverImageUploadScreen';
@@ -24,6 +25,7 @@ import ArchivedConnectionsScreen from '../screens/ArchivedConnectionsScreen';
 import MergeIBANScreen from '../screens/MergeIBANScreen';
 import TrustBadgeScreen from '../screens/TrustBadgeScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';
+import BusinessPlanPromoScreen from '../screens/BusinessPlanPromoScreen';
 
 // Components
 import FloatingTabBar from '../components/FloatingTabBar';
@@ -93,6 +95,7 @@ export default function AppNavigator() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Main" component={TabNavigator} />
           <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
+          <Stack.Screen name="LockedProfile" component={LockedProfileScreen} />
           <Stack.Screen name="Reminders" component={ReminderScreen} />
           <Stack.Screen name="LogoUpload" component={LogoUploadScreen} />
           <Stack.Screen name="CoverImageUpload" component={CoverImageUploadScreen} />
@@ -107,6 +110,7 @@ export default function AppNavigator() {
           <Stack.Screen name="MergeIBAN" component={MergeIBANScreen} />
           <Stack.Screen name="TrustBadge" component={TrustBadgeScreen} />
           <Stack.Screen name="Feedback" component={FeedbackScreen} />
+          <Stack.Screen name="BusinessPlanPromo" component={BusinessPlanPromoScreen} />
       </Stack.Navigator>
         <PackageBadge />
     </NavigationContainer>

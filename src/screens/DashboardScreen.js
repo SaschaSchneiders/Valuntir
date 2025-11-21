@@ -19,6 +19,7 @@ import ConnectionMetrics from '../shared/ConnectionMetrics';
 import FirstMoverMetrics from '../shared/FirstMoverMetrics';
 import VolumeMetrics from '../shared/VolumeMetrics';
 import LiveMetrics from '../shared/LiveMetrics';
+import UpgradeTeaser from '../shared/UpgradeTeaser';
 import DesktopLayout from '../components/DesktopLayout';
 import { useResponsive } from '../utils/responsive';
 import { usePackage } from '../context/PackageContext';
@@ -299,29 +300,12 @@ export default function DashboardScreen({ navigation }) {
 
         {/* Business Teaser für Pro User */}
         {!isBusiness && isPro && (
-          <TouchableOpacity 
-            style={styles.businessTeaser}
+          <UpgradeTeaser
+            title="Business Features freischalten"
+            subtitle="Zeige deine Erfolgsquote öffentlich und erhalte Leads direkt über dein Profil."
+            icon="stats-chart"
             onPress={() => navigation.navigate('MySubscription')}
-          >
-            <LinearGradient
-              colors={['#10B981', '#059669']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.businessTeaserGradient}
-            >
-              <View style={styles.businessTeaserContent}>
-                <View>
-                  <Text style={styles.businessTeaserTitle}>Business Features freischalten</Text>
-                  <Text style={styles.businessTeaserSubtitle}>
-                    Zeige deine Erfolgsquote öffentlich und erhalte Leads direkt über dein Profil.
-                  </Text>
-                </View>
-                <View style={styles.businessTeaserIcon}>
-                  <Ionicons name="stats-chart" size={24} color="#FFFFFF" />
-                </View>
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
+          />
         )}
 
         {/* Recent Activity - Business Only */}
@@ -487,46 +471,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#999999',
     fontWeight: '500',
-  },
-  businessTeaser: {
-    marginBottom: 24,
-    borderRadius: 20,
-    overflow: 'hidden',
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  businessTeaserGradient: {
-    padding: 20,
-  },
-  businessTeaserContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  businessTeaserTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    marginBottom: 6,
-  },
-  businessTeaserSubtitle: {
-    fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.9)',
-    maxWidth: '80%',
-    lineHeight: 18,
-    fontWeight: '500',
-  },
-  businessTeaserIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
 });

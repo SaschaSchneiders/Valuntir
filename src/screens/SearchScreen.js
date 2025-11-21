@@ -135,13 +135,14 @@ export default function SearchScreen({ navigation: navProp }) {
     },
     {
       id: 3,
+      providerId: 'it_consulting_pro',
       name: 'IT-Consulting Pro',
       username: '@it_consulting_pro',
       category: 'IT-Beratung',
       location: 'München',
       successRate: 91,
       reviewCount: 18,
-      hasActivePlan: true,
+      hasActivePlan: false,
     },
     {
       id: 4,
@@ -291,7 +292,7 @@ export default function SearchScreen({ navigation: navProp }) {
                     key={provider.id} 
                     provider={provider}
                     onPress={() => {
-                      if (provider.hasActivePlan && provider.providerId) {
+                      if (provider.providerId) {
                         navigation.navigate('PublicProfile', { providerId: provider.providerId });
                       }
                     }}

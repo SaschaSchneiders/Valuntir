@@ -16,6 +16,7 @@ import SocialMediaSection from '../shared/SocialMediaSection';
 import ProfileFAB from '../shared/ProfileFAB';
 import ConnectionMetrics from '../shared/ConnectionMetrics';
 import VolumeMetrics from '../shared/VolumeMetrics';
+import UpgradeTeaser from '../shared/UpgradeTeaser';
 
 export default function PublicProfileScreen({ route }) {
   const navigation = useNavigation();
@@ -130,6 +131,60 @@ export default function PublicProfileScreen({ route }) {
           },
         ],
       },
+      'it_consulting_pro': {
+        companyName: 'IT-Consulting Pro',
+        branch: 'IT-Beratung',
+        location: 'München',
+        coverImage: null, // Fallback wird verwendet
+        description: null, // LOCKED: Kein Business-Abo
+        websiteUrl: null, // LOCKED
+        calendarUrl: null, // LOCKED
+        successRate: 91,
+        totalRatings: 18,
+        communication: 89,
+        pricePerformance: 93,
+        deliveryQuality: 92,
+        reliability: 90,
+        email: null, // LOCKED
+        phone: null, // LOCKED
+        whatsapp: null, // LOCKED
+        linkedin: null, // LOCKED
+        instagram: null, // LOCKED
+        favoriteContact: null, // LOCKED
+        hasActivePlan: false, // WICHTIG: Kein Business-Abo
+        // Connection Metrics - sichtbar auch ohne Abo
+        isConnectionMetricsPublic: true,
+        connectionsSent: 28,
+        connectionsPending: 4,
+        connectionsRated: 24,
+        totalVolumeRated: 76800,
+        // Volume Metrics - sichtbar auch ohne Abo
+        isVolumeMetricsPublic: true,
+        averageProjectValue: 3200, // 76800 / 24
+        largestProject: 12000,
+        returningCustomers: 9,
+        returningCustomersPercent: 38, // 9 von 24
+        comments: [
+          {
+            id: 1,
+            comment: "Cloud-Migration unserer Infrastruktur. Technisch versiert und strukturiertes Vorgehen.",
+            rating: 9.2,
+            date: "2024-08-25"
+          },
+          {
+            id: 2,
+            comment: "IT-Sicherheitsaudit durchgeführt. Gründliche Analyse mit klaren Handlungsempfehlungen.",
+            rating: 9.0,
+            date: "2024-07-10"
+          },
+          {
+            id: 3,
+            comment: "Software-Entwicklung für CRM-System. Agile Umsetzung und gute Kommunikation.",
+            rating: 8.8,
+            date: "2024-06-05"
+          },
+        ],
+      },
     };
 
     return providers[id] || providers['steuerberater_schmidt'];
@@ -211,12 +266,14 @@ export default function PublicProfileScreen({ route }) {
               showControls={false}
             />
 
-            {/* Kurzbeschreibung */}
-            <ProfileDescription description={provider.description} />
+            {/* Kurzbeschreibung - nur mit Business-Abo */}
+            {provider.hasActivePlan !== false && provider.description && (
+              <ProfileDescription description={provider.description} />
+            )}
 
             {/* Quick Action Buttons */}
             <QuickActionButtons
-              websiteUrl={provider.websiteUrl}
+              websiteUrl={provider.hasActivePlan !== false ? provider.websiteUrl : null}
               onWebsitePress={() => console.log('Open Website:', provider.websiteUrl)}
               onSharePress={() => console.log('Share Profile')}
             />
@@ -270,8 +327,8 @@ export default function PublicProfileScreen({ route }) {
             {/* Connection-Erfahrungen */}
             <ProjectComments comments={provider.comments} />
 
-            {/* Connection Metrics - nur wenn öffentlich */}
-            {provider.isConnectionMetricsPublic && (
+            {/* Connection Metrics - nur bei aktivem Business-Abo */}
+            {provider.hasActivePlan !== false && provider.isConnectionMetricsPublic && (
               <View style={{ marginBottom: 32 }}>
                 <ConnectionMetrics
                   sent={provider.connectionsSent}
@@ -286,15 +343,28 @@ export default function PublicProfileScreen({ route }) {
               </View>
             )}
 
-            {/* Kontakt */}
-            <ContactSection
-              email={provider.email}
-              phone={provider.phone}
-              whatsapp={provider.whatsapp}
-            />
+            {/* Claim Profile Teaser - nur für Profile OHNE Business-Abo */}
+            {provider.hasActivePlan === false && (
+              <UpgradeTeaser
+                title="Ist das dein Profil?"
+                subtitle="Schalte es jetzt frei und erhalte qualifizierte Leads direkt über Valuntir!"
+                icon="business"
+                gradientColors={['#3B82F6', '#2563EB']}
+                onPress={() => navigation.navigate('BusinessPlanPromo', { showBackButton: true })}
+              />
+            )}
 
-            {/* Book Appointment Button */}
-            {provider.calendarUrl && (
+            {/* Kontakt - nur mit Business-Abo */}
+            {provider.hasActivePlan !== false && (
+              <ContactSection
+                email={provider.email}
+                phone={provider.phone}
+                whatsapp={provider.whatsapp}
+              />
+            )}
+
+            {/* Book Appointment Button - nur mit Business-Abo */}
+            {provider.hasActivePlan !== false && provider.calendarUrl && (
               <View style={{ marginBottom: 32 }}>
                 <TouchableOpacity
                   style={styles.bookAppointmentButton}
@@ -306,11 +376,13 @@ export default function PublicProfileScreen({ route }) {
               </View>
             )}
 
-            {/* Social Media */}
-            <SocialMediaSection
-              linkedin={provider.linkedin}
-              instagram={provider.instagram}
-            />
+            {/* Social Media - nur mit Business-Abo */}
+            {provider.hasActivePlan !== false && (
+              <SocialMediaSection
+                linkedin={provider.linkedin}
+                instagram={provider.instagram}
+              />
+            )}
 
             {/* Platz für TabBar */}
             <View style={{ height: 100 }} />
@@ -318,20 +390,22 @@ export default function PublicProfileScreen({ route }) {
         </SafeAreaView>
       </LinearGradient>
 
-      {/* Floating Action Button */}
-      <ProfileFAB
-        favoriteContact={provider.favoriteContact}
-        bottom={30}
-        onPress={() => {
-          if (provider.favoriteContact === 'whatsapp') {
-            console.log('WhatsApp:', provider.whatsapp);
-          } else if (provider.favoriteContact === 'phone') {
-            console.log('Telefon:', provider.phone);
-          } else if (provider.favoriteContact === 'email') {
-            console.log('Email:', provider.email);
-          }
-        }}
-      />
+      {/* Floating Action Button - nur mit Business-Abo */}
+      {provider.hasActivePlan !== false && (
+        <ProfileFAB
+          favoriteContact={provider.favoriteContact}
+          bottom={30}
+          onPress={() => {
+            if (provider.favoriteContact === 'whatsapp') {
+              console.log('WhatsApp:', provider.whatsapp);
+            } else if (provider.favoriteContact === 'phone') {
+              console.log('Telefon:', provider.phone);
+            } else if (provider.favoriteContact === 'email') {
+              console.log('Email:', provider.email);
+            }
+          }}
+        />
+      )}
     </View>
   );
 }
