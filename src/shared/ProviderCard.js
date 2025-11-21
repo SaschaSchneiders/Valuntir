@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(245, 245, 245, 0.9)',
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.06)',
   },

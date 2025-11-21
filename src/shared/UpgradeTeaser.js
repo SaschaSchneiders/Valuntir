@@ -50,7 +50,7 @@ export default function UpgradeTeaser({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 24,
-    borderRadius: 20,
+    borderRadius: 24,
     overflow: 'hidden',
     shadowColor: '#3B82F6',
     shadowOffset: { width: 0, height: 8 },

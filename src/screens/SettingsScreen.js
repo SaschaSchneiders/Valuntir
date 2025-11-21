@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
   },
   businessBadge: {
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    borderRadius: 10,
+    borderRadius: 8,
     paddingHorizontal: 6,
     paddingVertical: 3,
     marginLeft: 8,
