@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   StatusBar,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,6 +21,7 @@ import FirstMoverMetrics from '../shared/FirstMoverMetrics';
 import VolumeMetrics from '../shared/VolumeMetrics';
 import LiveMetrics from '../shared/LiveMetrics';
 import UpgradeTeaser from '../shared/UpgradeTeaser';
+import { BlurView } from 'expo-blur';
 import DesktopLayout from '../components/DesktopLayout';
 import { useResponsive } from '../utils/responsive';
 import { usePackage } from '../context/PackageContext';
@@ -28,6 +30,7 @@ import ProPlanPromoScreen from './ProPlanPromoScreen';
 export default function DashboardScreen({ navigation }) {
   const { isDesktop } = useResponsive();
   const { isBusiness, isPro, isFree } = usePackage();
+  const [showLiveMetricsPopup, setShowLiveMetricsPopup] = useState(false);
   const [isConnectionMetricsPublic, setIsConnectionMetricsPublic] = useState(false);
   const [isVolumeMetricsPublic, setIsVolumeMetricsPublic] = useState(false);
 
@@ -186,8 +189,18 @@ export default function DashboardScreen({ navigation }) {
                 style={styles.stickyHeader}
               >
                 <View style={styles.header}>
-                  <Text style={styles.headerTitle}>Valuntir</Text>
-                  <Text style={styles.headerSubtitle}>Deine Performance im Überblick</Text>
+                  <View style={styles.headerLeft}>
+                    <Text style={styles.headerTitle}>Valuntir</Text>
+                    <Text style={styles.headerSubtitle}>Deine Performance im Überblick</Text>
+                  </View>
+                  {isBusiness && (
+                    <TouchableOpacity 
+                      style={styles.iconButton}
+                      onPress={() => setShowLiveMetricsPopup(true)}
+                    >
+                      <Ionicons name="pulse" size={24} color="#000" />
+                    </TouchableOpacity>
+                  )}
                 </View>
               </LinearGradient>
             )}
@@ -198,8 +211,8 @@ export default function DashboardScreen({ navigation }) {
               contentContainerStyle={styles.content}
               showsVerticalScrollIndicator={false}
             >
-              {/* Live Metrics - Globaler Plattform-Puls */}
-              <LiveMetrics style={{ marginBottom: 32 }} />
+              {/* Live Metrics - Nur für ProMode sichtbar */}
+              {!isBusiness && <LiveMetrics style={{ marginBottom: 32 }} />}
 
               {/* Business-Only: Charts, Statistiken, Profilmetrics */}
               {isBusiness && (
@@ -338,6 +351,33 @@ export default function DashboardScreen({ navigation }) {
           </View>
         </SafeAreaView>
       </LinearGradient>
+
+      {/* Live Metrics Popup - Nur für BusinessMode */}
+      {showLiveMetricsPopup && (
+        <Modal
+          visible={showLiveMetricsPopup}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowLiveMetricsPopup(false)}
+        >
+          <BlurView intensity={15} tint="dark" style={styles.popupOverlay}>
+            <TouchableOpacity 
+              style={StyleSheet.absoluteFill}
+              activeOpacity={1}
+              onPress={() => setShowLiveMetricsPopup(false)}
+            />
+            <View style={styles.popupContent} onStartShouldSetResponder={() => true}>
+              <TouchableOpacity 
+                style={styles.popupClose}
+                onPress={() => setShowLiveMetricsPopup(false)}
+              >
+                <Ionicons name="close" size={24} color="#666" />
+              </TouchableOpacity>
+              <LiveMetrics popup={true} />
+            </View>
+          </BlurView>
+        </Modal>
+      )}
     </View>
   );
 
@@ -401,7 +441,26 @@ const styles = StyleSheet.create({
     overflow: 'visible',
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     marginBottom: 4,
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
   },
   headerTitle: {
     fontSize: 34,
@@ -471,5 +530,36 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#999999',
     fontWeight: '500',
+  },
+  popupOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  popupContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 24,
+    width: '100%',
+    maxWidth: 380,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 30,
+    elevation: 20,
+  },
+  popupClose: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    zIndex: 10,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F5F5F5',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

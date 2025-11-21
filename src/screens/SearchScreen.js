@@ -405,10 +405,6 @@ export default function SearchScreen({ navigation: navProp }) {
                 autoCorrect={false}
                 returnKeyType="done"
                 autoFocus={true}
-                onBlur={() => {
-                  // Verzögerung damit Klicks auf Suchen noch funktionieren
-                  setTimeout(() => setIsSearchFocused(false), 100);
-                }}
               />
               {searchQuery.length > 0 && (
                 <TouchableOpacity onPress={() => setSearchQuery('')}>

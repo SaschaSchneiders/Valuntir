@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function LiveMetrics({ style, compact = false }) {
+export default function LiveMetrics({ style, compact = false, popup = false }) {
   return (
-    <View style={[styles.container, compact && styles.containerCompact, style]}>
+    <View style={[styles.container, compact && styles.containerCompact, popup && styles.containerPopup, style]}>
       {/* Header */}
       <View style={styles.metricsHeader}>
         <Ionicons name="pulse" size={16} color="#10B981" />
@@ -59,6 +59,10 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     marginBottom: 36,
   },
+  containerPopup: {
+    marginBottom: 0,
+    paddingVertical: 0,
+  },
   metricsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -91,11 +95,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E5E5',
   },
   metricNumber: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '900',
     color: '#000000',
     marginBottom: 4,
-    letterSpacing: -1,
+    letterSpacing: -0.5,
   },
   metricLabel: {
     fontSize: 13,

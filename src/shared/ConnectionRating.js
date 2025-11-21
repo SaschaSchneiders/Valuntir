@@ -378,6 +378,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.modalContainer}
+          enabled={!isCommentFocused}
         >
           <View style={styles.modalContent}>
             {/* Header */}
@@ -1020,11 +1021,11 @@ const styles = StyleSheet.create({
     color: '#000',
     minHeight: 150,
     textAlignVertical: 'top',
-    borderWidth: 2,
-    borderColor: '#000',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.12)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.25,
     shadowRadius: 30,
     elevation: 20,
   },
