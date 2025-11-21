@@ -373,28 +373,28 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
 
   return (
     <>
-      <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
-        <BlurView intensity={20} tint="dark" style={styles.modalOverlay}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.modalContainer}
-          >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
+      <BlurView intensity={20} tint="dark" style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalContainer}
+        >
           <View style={styles.modalContent}>
             {/* Header */}
             {currentStep !== 'reward' && currentStep !== 0 ? (
-              <View style={styles.header}>
-                <View style={styles.headerTop}>
-                  <Text style={styles.title}>
+            <View style={styles.header}>
+              <View style={styles.headerTop}>
+                <Text style={styles.title}>
                     {currentStep === 3 ? 'Kernbereiche bewerten' : 
                      `Schritt ${currentStep} von 2`}
-                  </Text>
-                  <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-                    <Ionicons name="close" size={28} color="#666" />
-                  </TouchableOpacity>
-                </View>
-                <Text style={styles.subtitle}>{connection?.company}</Text>
-                <Text style={styles.category}>{connection?.category}</Text>
+                </Text>
+                <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+                  <Ionicons name="close" size={28} color="#666" />
+                </TouchableOpacity>
               </View>
+              <Text style={styles.subtitle}>{connection?.company}</Text>
+              <Text style={styles.category}>{connection?.category}</Text>
+            </View>
             ) : (
               <View style={styles.rewardHeaderMinimal}>
                 <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
@@ -413,7 +413,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                   <Text style={styles.firstMoverSubtitle}>
                     Bitte wähle eine Kategorie aus, um als First Mover fortzufahren.
                   </Text>
-                </View>
+                      </View>
 
                 <View style={styles.targetTypeGrid}>
                   {targetTypes.map((type, index) => (
@@ -440,7 +440,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                         </Text>
                       </TouchableOpacity>
                     </Animated.View>
-                  ))}
+                ))}
                 </View>
               </View>
             )}
@@ -604,7 +604,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
 
             {/* Footer */}
             {currentStep !== 'reward' && (
-              <View style={styles.footer}>
+            <View style={styles.footer}>
                 {currentStep === 0 ? (
                   <PrimaryButton
                     title="Weiter"
@@ -614,7 +614,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                   />
                 ) : currentStep === 1 ? (
                   connection?.isFirstMover ? (
-                    <View style={styles.footerRow}>
+                <View style={styles.footerRow}>
                       <PrimaryButton
                         title="Zurück"
                         variant="secondary"
@@ -628,7 +628,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                         disabled={!allQuestionsAnswered}
                         flex={2}
                       />
-                    </View>
+                </View>
                   ) : (
                     <PrimaryButton
                       title="Weiter"
@@ -637,8 +637,8 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                       disabled={!allQuestionsAnswered}
                     />
                   )
-                ) : currentStep === 2 ? (
-                  <View style={styles.footerRow}>
+              ) : currentStep === 2 ? (
+                <View style={styles.footerRow}>
                     <PrimaryButton
                       title="Zurück"
                       variant="secondary"
@@ -651,9 +651,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                       onPress={handleNext}
                       flex={2}
                     />
-                  </View>
-                ) : (
-                  <View style={styles.footerRow}>
+                </View>
+              ) : (
+                <View style={styles.footerRow}>
                     <PrimaryButton
                       title="Abbrechen"
                       variant="secondary"
@@ -666,9 +666,9 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
                       disabled={!allSlidersAnswered}
                       flex={1}
                     />
-                  </View>
-                )}
-              </View>
+                </View>
+              )}
+            </View>
             )}
           </View>
         </KeyboardAvoidingView>
@@ -737,7 +737,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
           </Animated.View>
         </View>
       )}
-      </Modal>
+    </Modal>
 
       {/* Thank You Animation */}
       {showThankYou && (

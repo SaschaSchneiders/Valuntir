@@ -184,18 +184,18 @@ export default function RateScale({
               '#FF3D00', '#FF6E40', '#FF9800', '#FFC107', '#FFEB3B',
               '#CDDC39', '#8BC34A', '#4CAF50', '#2E7D32',
             ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.gradientBar, { height: config.barHeight }]}
+          >
+            <LinearGradient
+              colors={['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0)', 'rgba(0, 0, 0, 0.1)']}
               start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={[styles.gradientBar, { height: config.barHeight }]}
-            >
-              <LinearGradient
-                colors={['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0)', 'rgba(0, 0, 0, 0.1)']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={styles.glossOverlay}
-              />
+              end={{ x: 0, y: 1 }}
+              style={styles.glossOverlay}
+            />
             </LinearGradient>
-              
+            
             {/* Bubble-Indikator - Außerhalb des GradientBars damit er nicht abgeschnitten wird */}
             <Animated.View
               style={[
@@ -229,16 +229,16 @@ export default function RateScale({
                 </View>
               </View>
             </Animated.View>
-            
+          
             {/* Markierungen */}
-            <View style={styles.markersContainer}>
-              {[0, 25, 50, 75, 100].map((mark) => (
-                <View key={mark} style={styles.marker}>
-                  <View style={styles.markerLine} />
+          <View style={styles.markersContainer}>
+            {[0, 25, 50, 75, 100].map((mark) => (
+              <View key={mark} style={styles.marker}>
+                <View style={styles.markerLine} />
                   <Text style={[styles.markerText, { fontSize: config.labelSize }]}>{mark}</Text>
-                </View>
-              ))}
-            </View>
+              </View>
+            ))}
+          </View>
 
             {/* Touch Overlay - fängt alle Events */}
             {interactive && (
@@ -247,7 +247,7 @@ export default function RateScale({
                 {...panResponder.panHandlers}
               />
             )}
-          </View>
+        </View>
       </View>
     </View>
   );

@@ -81,7 +81,7 @@ export default function FreeHomeScreen() {
                 </View>
 
                 {/* Platform Activity Metrics */}
-                <LiveMetrics style={styles.platformMetrics} />
+                <LiveMetrics compact={true} />
 
                 {/* Quick Links / Features - Simple Carousel */}
                 <View style={styles.carouselFullWidth}>
@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
+    paddingBottom: 120,
   },
   carouselFullWidth: {
     marginHorizontal: -20,
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
   hero: {
     alignItems: 'center',
     paddingTop: 40,
-    paddingBottom: 48,
+    paddingBottom: 32,
   },
   badge: {
     flexDirection: 'row',
