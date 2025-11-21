@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import { BlurView } from 'expo-blur';
 import PrimaryButton from '../shared/PrimaryButton';
 
 export default function FeedbackScreen() {
@@ -183,18 +184,20 @@ export default function FeedbackScreen() {
       {/* Input Modal Overlay */}
       {isInputModalVisible && (
         <View style={styles.modalOverlayFullscreen}>
-          <Animated.View 
-            style={[
-              styles.modalBackdrop,
-              { opacity: fadeAnim }
-            ]}
-          >
-            <TouchableOpacity 
-              style={StyleSheet.absoluteFill}
-              activeOpacity={1}
-              onPress={() => setIsInputModalVisible(false)}
-            />
-          </Animated.View>
+          <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill}>
+            <Animated.View 
+              style={[
+                styles.modalBackdrop,
+                { opacity: fadeAnim }
+              ]}
+            >
+              <TouchableOpacity 
+                style={StyleSheet.absoluteFill}
+                activeOpacity={1}
+                onPress={() => setIsInputModalVisible(false)}
+              />
+            </Animated.View>
+          </BlurView>
           
           <Animated.View 
             style={[
@@ -375,7 +378,7 @@ const styles = StyleSheet.create({
   },
   modalBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     marginHorizontal: 16,

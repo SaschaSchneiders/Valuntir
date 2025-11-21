@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import ProviderCard from '../shared/ProviderCard';
 import GradientSlider from '../shared/GradientSlider';
 import DesktopLayout from '../components/DesktopLayout';
@@ -366,20 +367,22 @@ export default function SearchScreen({ navigation: navProp }) {
       {/* Search Overlay */}
       {isSearchFocused && (
         <View style={styles.searchOverlayFullscreen}>
-          <Animated.View 
-            style={[
-              styles.searchOverlayBackdrop,
-              { opacity: fadeAnim }
-            ]}
-          >
-            <TouchableOpacity 
-              style={StyleSheet.absoluteFill}
-              activeOpacity={1}
-              onPress={() => {
-                setIsSearchFocused(false);
-              }}
-            />
-          </Animated.View>
+          <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill}>
+            <Animated.View 
+              style={[
+                styles.searchOverlayBackdrop,
+                { opacity: fadeAnim }
+              ]}
+            >
+              <TouchableOpacity 
+                style={StyleSheet.absoluteFill}
+                activeOpacity={1}
+                onPress={() => {
+                  setIsSearchFocused(false);
+                }}
+              />
+            </Animated.View>
+          </BlurView>
           <Animated.View 
             style={[
               styles.searchOverlayContent,
@@ -427,6 +430,7 @@ export default function SearchScreen({ navigation: navProp }) {
                     style={styles.popularSearchItem}
                     onPress={() => {
                       setSearchQuery(search.text);
+                      setIsSearchFocused(false);
                     }}
                   >
                     <Ionicons name="trending-up" size={16} color="rgba(255, 255, 255, 0.8)" style={styles.popularSearchIcon} />
@@ -442,18 +446,20 @@ export default function SearchScreen({ navigation: navProp }) {
       {/* Filter Overlay */}
       {showFilters && (
         <View style={styles.filterOverlayFullscreen}>
-          <Animated.View 
-            style={[
-              styles.filterOverlayBackdrop,
-              { opacity: filterFadeAnim }
-            ]}
-          >
-            <TouchableOpacity 
-              style={StyleSheet.absoluteFill}
-              activeOpacity={1}
-              onPress={() => setShowFilters(false)}
-            />
-          </Animated.View>
+          <BlurView intensity={15} tint="dark" style={StyleSheet.absoluteFill}>
+            <Animated.View 
+              style={[
+                styles.filterOverlayBackdrop,
+                { opacity: filterFadeAnim }
+              ]}
+            >
+              <TouchableOpacity 
+                style={StyleSheet.absoluteFill}
+                activeOpacity={1}
+                onPress={() => setShowFilters(false)}
+              />
+            </Animated.View>
+          </BlurView>
           <Animated.View 
             style={[
               styles.filterOverlayContent,
@@ -799,11 +805,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   searchOverlayContent: {
     position: 'absolute',
-    top: 180,
+    top: 140,
     left: 20,
     right: 20,
   },
@@ -814,13 +820,13 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     paddingHorizontal: 20,
     paddingVertical: 16,
-    borderWidth: 2,
-    borderColor: '#000000',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.08)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.25,
-    shadowRadius: 30,
-    elevation: 20,
+    shadowOffset: { width: 0, height: 24 },
+    shadowOpacity: 0.35,
+    shadowRadius: 48,
+    elevation: 30,
   },
   searchOverlayInput: {
     flex: 1,
@@ -874,7 +880,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
   filterOverlayContent: {
     position: 'absolute',

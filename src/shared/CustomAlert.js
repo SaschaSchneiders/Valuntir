@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
 export default function CustomAlert({
   visible,
@@ -22,7 +23,7 @@ export default function CustomAlert({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
+      <BlurView intensity={15} tint="dark" style={styles.overlay}>
         <View style={styles.alertContainer}>
           {/* Icon */}
           <View style={styles.iconContainer}>
@@ -59,7 +60,7 @@ export default function CustomAlert({
             ))}
           </View>
         </View>
-      </View>
+      </BlurView>
     </Modal>
   );
 }

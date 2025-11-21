@@ -10,6 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
 export default function InfoPopup({
   visible,
@@ -35,11 +36,12 @@ export default function InfoPopup({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <TouchableOpacity 
-        style={styles.modalOverlay} 
-        activeOpacity={1}
-        onPress={onClose}
-      >
+      <BlurView intensity={15} tint="dark" style={styles.modalOverlay}>
+        <TouchableOpacity 
+          style={StyleSheet.absoluteFill}
+          activeOpacity={1}
+          onPress={onClose}
+        />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.modalAvoidingView}
@@ -101,7 +103,7 @@ export default function InfoPopup({
             </TouchableOpacity>
           </TouchableOpacity>
         </KeyboardAvoidingView>
-      </TouchableOpacity>
+      </BlurView>
     </Modal>
   );
 }
@@ -109,7 +111,7 @@ export default function InfoPopup({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     paddingBottom: 280,
   },

@@ -374,7 +374,7 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
   return (
     <>
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
-      <BlurView intensity={20} tint="dark" style={styles.modalOverlay}>
+      <BlurView intensity={15} tint="dark" style={styles.modalOverlay}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.modalContainer}
@@ -677,18 +677,20 @@ export default function ConnectionRating({ visible, connection, onClose, onSubmi
       {/* Kommentar Overlay */}
       {isCommentFocused && (
         <View style={styles.commentOverlayFullscreen}>
-          <Animated.View 
-            style={[
-              styles.commentOverlayBackdrop,
-              { opacity: commentFadeAnim }
-            ]}
-          >
-            <TouchableOpacity 
-              style={StyleSheet.absoluteFill}
-              activeOpacity={1}
-              onPress={() => setIsCommentFocused(false)}
-            />
-          </Animated.View>
+          <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill}>
+            <Animated.View 
+              style={[
+                styles.commentOverlayBackdrop,
+                { opacity: commentFadeAnim }
+              ]}
+            >
+              <TouchableOpacity 
+                style={StyleSheet.absoluteFill}
+                activeOpacity={1}
+                onPress={() => setIsCommentFocused(false)}
+              />
+            </Animated.View>
+          </BlurView>
           <Animated.View 
             style={[
               styles.commentOverlayContent,
@@ -764,7 +766,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
   modalContainer: {
     width: '90%',
@@ -960,7 +962,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   commentOverlayContent: {
     position: 'absolute',
