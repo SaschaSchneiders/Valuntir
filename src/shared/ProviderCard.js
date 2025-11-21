@@ -5,10 +5,19 @@ import ProfileImageFallback from './ProfileImageFallback';
 
 export default function ProviderCard({ provider, onPress }) {
   const getSuccessRateColor = (rate) => {
-    if (!rate) return '#999999';
-    if (rate >= 90) return '#10B981';
-    if (rate >= 80) return '#F59E0B';
-    return '#EF4444';
+    if (!rate || rate === 0) return '#9CA3AF'; // 0%: Grau
+    
+    // Subtiler Grün-Gradient durchgehend (kaum wahrnehmbar, nicht wertend)
+    if (rate >= 90) return '#10B981'; // 90-100%: Primärgrün
+    if (rate >= 80) return '#14B885'; // 80-89%: Minimal dunkler
+    if (rate >= 70) return '#18B789'; // 70-79%: Etwas dunkler
+    if (rate >= 60) return '#1FB68D'; // 60-69%: 
+    if (rate >= 50) return '#26B591'; // 50-59%: 
+    if (rate >= 40) return '#2DB495'; // 40-49%: 
+    if (rate >= 30) return '#34B399'; // 30-39%: 
+    if (rate >= 20) return '#3BB29D'; // 20-29%: 
+    if (rate >= 10) return '#42B1A1'; // 10-19%: 
+    return '#49B0A5'; // 1-9%: Immer noch grün
   };
 
   return (
@@ -52,24 +61,17 @@ export default function ProviderCard({ provider, onPress }) {
         
         <View style={styles.stat}>
           <Text style={styles.statLabel}>Erfolgsquote</Text>
-          {provider.hasActivePlan ? (
-            <Text 
-              style={[
-                styles.successRate,
-                { 
-                  color: getSuccessRateColor(provider.successRate),
-                  textShadowColor: 'rgba(0, 0, 0, 0.08)',
-                }
-              ]}
-            >
-              {provider.successRate}%
-            </Text>
-          ) : (
-            <View style={styles.lockedContainer}>
-              <Ionicons name="lock-closed" size={11} color="#999" />
-              <Text style={styles.lockedText}>Nicht aktiviert</Text>
-            </View>
-          )}
+          <Text 
+            style={[
+              styles.successRate,
+              { 
+                color: getSuccessRateColor(provider.successRate),
+                textShadowColor: 'rgba(0, 0, 0, 0.08)',
+              }
+            ]}
+          >
+            {provider.successRate}%
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
