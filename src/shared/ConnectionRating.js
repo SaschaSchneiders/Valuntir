@@ -775,7 +775,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
@@ -841,7 +841,7 @@ const styles = StyleSheet.create({
   ratingIconContainer: {
     width: 36,
     height: 36,
-    borderRadius: 10,
+    borderRadius: 16,
     backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
@@ -909,7 +909,7 @@ const styles = StyleSheet.create({
   },
   inspirationBox: {
     backgroundColor: '#E3F2FD',
-    borderRadius: 8,
+    borderRadius: 16,
     padding: 10,
     marginBottom: 12,
     borderWidth: 1,
@@ -922,7 +922,7 @@ const styles = StyleSheet.create({
   },
   commentInputTouchable: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 14,
     minHeight: 100,
     borderWidth: 1,
@@ -989,7 +989,7 @@ const styles = StyleSheet.create({
   },
   commentScoreBadge: {
     backgroundColor: '#000',
-    borderRadius: 12,
+    borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderWidth: 2,
@@ -1002,7 +1002,7 @@ const styles = StyleSheet.create({
   },
   commentOverlayInspiration: {
     backgroundColor: 'rgba(66, 165, 245, 0.15)',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 12,
     marginBottom: 16,
     borderWidth: 1,

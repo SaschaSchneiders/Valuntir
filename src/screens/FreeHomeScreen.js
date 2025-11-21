@@ -72,11 +72,11 @@ export default function FreeHomeScreen() {
                   </View>
                   
                   <Text style={styles.headline}>
-                    Die besten Partner{'\n'}aus jeder Branche
+                    Mehr Wahrheit{'\n'}in der Wirtschaft
                   </Text>
 
                   <Text style={styles.subheadline}>
-                    Valuntirs verifizierte Erfolgsraten zeigen dir{'\n'}schwarz auf weiß, wer wirklich liefert.
+                    Valuntirs verifizierte Erfolgsquoten machen{'\n'}gute und schlechte Anbieter sichtbar.
                   </Text>
                 </View>
 

@@ -43,7 +43,7 @@ export default function LiveMetrics({ style, compact = false, popup = false }) {
       <View style={styles.metricsFooter}>
         <View style={styles.footerItem}>
           <Ionicons name="checkmark-circle" size={14} color="#3B82F6" />
-          <Text style={styles.footerText}>500+ öffentliche Erfolgsraten</Text>
+          <Text style={styles.footerText}>500+ öffentliche Erfolgsquoten</Text>
         </View>
       </View>
     </View>

@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   barContainer: { width: '100%', position: 'relative' },
   gradientBar: {
     width: '100%',
-    borderRadius: 12,
+    borderRadius: 16,
     position: 'relative',
     overflow: 'hidden',
     shadowColor: '#000',
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
   },
-  glossOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 12 },
+  glossOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 16 },
   markersContainer: {
     position: 'absolute',
     bottom: -24,
