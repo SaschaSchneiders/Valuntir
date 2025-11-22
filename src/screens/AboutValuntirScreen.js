@@ -9,12 +9,20 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import UpgradeTeaser from '../shared/UpgradeTeaser';
+import { usePackage } from '../context/PackageContext';
 
 export default function AboutValuntirScreen({ navigation }) {
+  const { isFree } = usePackage();
+
+  const handleUpgrade = () => {
+    navigation.navigate('Main', { screen: 'Dashboard' });
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#F8F9FA', '#FFFFFF']}
+        colors={['#F8F9FA', '#FFFFFF', '#F8F9FA']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
@@ -40,21 +48,18 @@ export default function AboutValuntirScreen({ navigation }) {
             {/* Hero */}
             <View style={styles.heroSection}>
               <Text style={styles.heroHeadline}>VALUNTIR</Text>
-              <Text style={styles.heroSubheadline}>Fakten schaffen</Text>
+              <Text style={styles.heroSubheadline}>Die Erfolgsquoten-Plattform</Text>
             </View>
 
             {/* Ziel */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Unser Ziel</Text>
+              <Text style={styles.sectionTitle}>Warum gibt es Valuntir?</Text>
               <Text style={styles.sectionText}>
-                Gefakte Bewertungen. Geschönte Referenzen. Undurchsichtige Versprechen. 
-                Jedes Jahr verbrennen Unternehmen Millionen mit den falschen Partnern.
+                Kennen Sie den Satz: "Es bringt nichts gut zu sein, wenn andere sich besser verkaufen."
                 {'\n\n'}
-                Valuntir glaubt an Transparenz. An echte Erfolgsquoten statt Marketing-Versprechen. 
-                An gute Geschäftsbeziehungen, die auf Leistung basieren – nicht auf schönen Worten.
+                Wir hassen diesen Satz. Und für uns ist klar: Für alle ehrlichen Geschäftsleute ist es besser, wenn sich Qualität gegen gewiefte Verkäufer durchsetzt.
                 {'\n\n'}
-                Wir schaffen einen Ort, an dem die Besten sichtbar werden und schlechte Anbieter 
-                keinen Platz mehr haben.
+                Deshalb haben wir eine unfälschbare Erfolgsquote geschaffen. Sie zeigt neutral und glasklar, welche Anbieter nur im Marketing & Verkauf glänzen und welche ihre Versprechen halten und nachhaltige Qualität liefern.
               </Text>
             </View>
 
@@ -66,35 +71,42 @@ export default function AboutValuntirScreen({ navigation }) {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
               >
-                <Text style={styles.highlightTitle}>Unsere Philosophie</Text>
+                <Text style={styles.highlightTitle}>Wie funktioniert das?</Text>
                 <Text style={styles.highlightText}>
-                  Leistung sollte zählen. Nicht Marketingbudget. Nicht aufgeblähte PR. 
-                  Nicht gekaufte 5-Sterne-Bewertungen.
+                  Ganz einfach: Jedes Mal wenn du etwas bezahlst, kannst du den Empfänger (den Anbieter) bewerten.
                   {'\n\n'}
-                  Ein Handwerker, der großartige Arbeit leistet, sollte die gleichen Chancen haben 
-                  wie ein Konzern mit Millionen-Budget. Eine Steuerberaterin, die ihre Mandanten 
-                  zum Erfolg führt, sollte gesehen werden.
+                  Aber nicht mit Sternen oder Kommentaren. Sondern mit harten Fakten: Wurde das Projekt erfolgreich? Würden Sie wieder mit diesem Anbieter arbeiten?
                   {'\n\n'}
-                  Bei Valuntir entscheiden Fakten: Projekterfolg. Kundenzufriedenheit. Stammkundenanteil. 
-                  Messbar. Nachweisbar. Transparent.
+                  Aus all diesen Bewertungen errechnen wir eine unfälschbare Erfolgsquote. Dabei setzen wir auf einen intelligenten Algorithmus und verzichten auf Meinungen und Gefühle.
+                  {'\n\n'}
+                  Und das Beste: Wir verifizieren jede Bewertung durch echte Zahlungsströme. Wer nicht wirklich bezahlt hat, kann nicht bewerten.
                 </Text>
               </LinearGradient>
             </View>
 
             {/* Community */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Unsere Community</Text>
+              <Text style={styles.sectionTitle}>Wer profitiert davon?</Text>
               <Text style={styles.sectionText}>
-                Valuntir lebt von Ehrlichkeit. Wir bauen eine Community auf, die von Vertrauen, 
-                Ehrlichkeit und Wertschätzung geprägt ist.
+                Alle ehrlichen und guten Geschäftsleute. Und alle, die keine Lust mehr haben auf leere Marketing-Versprechen.
                 {'\n\n'}
-                Je mehr Menschen ihre Geschäftsbeziehungen ehrlich bewerten, desto klarer wird das Bild. 
-                Desto mehr profitiert jeder Einzelne. Die Guten steigen auf. Die Schlechten fallen zurück 
-                oder verbessern sich.
+                Je mehr Menschen ihre positiven sowie negativen Erfahrungen teilen, desto klarer wird das Bild. Die Guten werden sichtbar. Die Schlechten müssen sich verbessern oder verschwinden.
                 {'\n\n'}
-                So entsteht ein Markt, in dem Qualität gewinnt – und alle davon profitieren.
+                So entsteht ein Markt, in dem nicht das größte Werbebudget gewinnt. Sondern die beste Leistung.
               </Text>
             </View>
+
+            {/* Upgrade Teaser (nur für FREE User) */}
+            {isFree && (
+              <UpgradeTeaser
+                title="Bereit loszulegen?"
+                subtitle="Erzähle von deinen Erfahrungen und bring auch du mehr Wahrheit in die Wirtschaft."
+                icon="diamond"
+                gradientColors={['#3B82F6', '#2563EB']}
+                shadowColor="#3B82F6"
+                onPress={handleUpgrade}
+              />
+            )}
 
             <View style={{ height: 40 }} />
           </ScrollView>

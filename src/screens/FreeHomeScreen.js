@@ -20,32 +20,26 @@ export default function FreeHomeScreen() {
   const quickLinks = [
     {
       icon: 'information-circle',
-      title: 'Über Valuntir',
-      description: '100% verifizierte Erfolgsquoten für fundierte Entscheidungen',
+      title: 'Was ist Valuntir?',
+      description: 'Finde die besten Anbieter durch 100% verifizierte Erfolgsquoten',
       screen: 'AboutValuntir',
     },
     {
       icon: 'shield-checkmark',
-      title: 'Valuntir Security-System',
-      description: 'Bank-Level-Verschlüsselung & vollständiger Betrugsschutz',
+      title: 'Sicherheit & Vertrauen',
+      description: 'Wie wir deine Daten schützen und volle Transparenz garantieren',
       screen: 'TrustAndSafety',
     },
     {
       icon: 'rocket',
-      title: 'First Mover Programm',
-      description: 'Verdiene passiv durch alltägliche Zahlungen die du sowieso machst',
+      title: 'Passiv Geld verdienen?',
+      description: 'Bewerte als First Mover und erhalte dauerhaftes passives Einkommen',
       screen: 'FirstMoverSystem',
     },
     {
-      icon: 'people',
-      title: 'Freunde einladen',
-      description: 'Teile Valuntir & profitiere gemeinsam mit deinen Freunden',
-      screen: 'InviteFriends',
-    },
-    {
       icon: 'chatbubble-ellipses',
-      title: 'Support & FAQ',
-      description: 'Schnelle Hilfe per Chat oder häufige Fragen durchstöbern',
+      title: 'Fragen & Antworten',
+      description: 'KI-Chat mit sofortigen Antworten oder direkter Kontakt zum Team',
       screen: 'SupportChat',
     },
   ];

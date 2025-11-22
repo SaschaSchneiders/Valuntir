@@ -65,11 +65,11 @@ export default function ProPlanPromoScreen({ onUpgrade }) {
               </View>
               
               <Text style={styles.headline}>
-                Entscheide klug.{'\n'}Spare Geld und Nerven.
+                Finde und erzähle{'\n'}die Wahrheit
               </Text>
               
               <Text style={styles.subheadline}>
-                Vergleiche unbegrenzt Erfolgsraten und finde{'\n'}zuverlässig den besten Anbieter für dich.
+                Vergleiche unbegrenzt Erfolgsquoten und{'\n'}zeig welche Anbieter wirklich liefern.
               </Text>
             </View>
 

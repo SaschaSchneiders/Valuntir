@@ -9,8 +9,15 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { usePackage } from '../context/PackageContext';
+import UpgradeTeaser from '../shared/UpgradeTeaser';
 
 export default function TrustAndSafetyScreen({ navigation }) {
+  const { isFree } = usePackage();
+
+  const handleUpgrade = () => {
+    navigation.navigate('ProPlanPromo');
+  };
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -121,6 +128,18 @@ export default function TrustAndSafetyScreen({ navigation }) {
                 </View>
               </View>
             </View>
+
+            {/* Upgrade Teaser (nur für FREE User) */}
+            {isFree && (
+              <UpgradeTeaser
+                title="Bereit loszulegen?"
+                subtitle="Nutze jetzt 100% verifizierte Erfolgsquoten und finde garantiert die besten Partner"
+                icon="shield-checkmark"
+                gradientColors={['#3B82F6', '#2563EB']}
+                shadowColor="#3B82F6"
+                onPress={handleUpgrade}
+              />
+            )}
 
             <View style={{ height: 40 }} />
           </ScrollView>
