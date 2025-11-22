@@ -477,6 +477,21 @@ export default function ProfileScreen({ navigation: navProp }) {
             </View>
           </View>
 
+                  {/* Rechtsform - nur in nicht-öffentlicher Ansicht */}
+                  {!isPublicView && (
+                    <View style={styles.infoItem}>
+                      <View style={styles.menuLeft}>
+                        <View style={styles.menuIconContainer}>
+                          <Ionicons name="document-outline" size={20} color="#000" />
+                        </View>
+                        <View>
+                          <Text style={styles.infoLabel}>Rechtsform</Text>
+                          <Text style={styles.infoValue}>GmbH</Text>
+                        </View>
+                      </View>
+                    </View>
+                  )}
+
                   {/* Editierbare Felder */}
                   <View style={styles.toggleItem}>
                     <View style={styles.menuLeft}>
