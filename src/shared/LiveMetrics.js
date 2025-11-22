@@ -15,7 +15,7 @@ export default function LiveMetrics({ style, compact = false, popup = false }) {
       <View style={styles.metricsGrid}>
         {/* Metric 1: Verifizierte Bewertungen */}
         <View style={styles.metricItem}>
-          <Text style={styles.metricNumber}>12.589</Text>
+          <Text style={[styles.metricNumber, popup && styles.metricNumberPopup]}>12.589</Text>
           <Text style={styles.metricLabel}>Verifizierte Bewertungen</Text>
           <View style={styles.metricGrowth}>
             <Ionicons name="trending-up" size={12} color="#10B981" />
@@ -30,7 +30,7 @@ export default function LiveMetrics({ style, compact = false, popup = false }) {
 
         {/* Metric 2: Bewertetes Volumen */}
         <View style={styles.metricItem}>
-          <Text style={styles.metricNumber}>683.479€</Text>
+          <Text style={[styles.metricNumber, popup && styles.metricNumberPopup]}>683.479€</Text>
           <Text style={styles.metricLabel}>Bewertetes Volumen</Text>
           <View style={styles.metricGrowth}>
             <Ionicons name="trending-up" size={12} color="#10B981" />
@@ -95,10 +95,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E5E5',
   },
   metricNumber: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: '900',
     color: '#000000',
     marginBottom: 4,
+    letterSpacing: -1,
+  },
+  metricNumberPopup: {
+    fontSize: 24,
     letterSpacing: -0.5,
   },
   metricLabel: {

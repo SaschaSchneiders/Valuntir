@@ -268,7 +268,7 @@ export default function PublicProfileScreen({ route }) {
 
             {/* Kurzbeschreibung - nur mit Business-Abo */}
             {provider.hasActivePlan !== false && provider.description && (
-              <ProfileDescription description={provider.description} />
+            <ProfileDescription description={provider.description} />
             )}
 
             {/* Quick Action Buttons */}
@@ -356,11 +356,11 @@ export default function PublicProfileScreen({ route }) {
 
             {/* Kontakt - nur mit Business-Abo */}
             {provider.hasActivePlan !== false && (
-              <ContactSection
-                email={provider.email}
-                phone={provider.phone}
-                whatsapp={provider.whatsapp}
-              />
+            <ContactSection
+              email={provider.email}
+              phone={provider.phone}
+              whatsapp={provider.whatsapp}
+            />
             )}
 
             {/* Book Appointment Button - nur mit Business-Abo */}
@@ -378,10 +378,10 @@ export default function PublicProfileScreen({ route }) {
 
             {/* Social Media - nur mit Business-Abo */}
             {provider.hasActivePlan !== false && (
-              <SocialMediaSection
-                linkedin={provider.linkedin}
-                instagram={provider.instagram}
-              />
+            <SocialMediaSection
+              linkedin={provider.linkedin}
+              instagram={provider.instagram}
+            />
             )}
 
             {/* Platz für TabBar */}
@@ -392,19 +392,19 @@ export default function PublicProfileScreen({ route }) {
 
       {/* Floating Action Button - nur mit Business-Abo */}
       {provider.hasActivePlan !== false && (
-        <ProfileFAB
-          favoriteContact={provider.favoriteContact}
-          bottom={30}
-          onPress={() => {
-            if (provider.favoriteContact === 'whatsapp') {
-              console.log('WhatsApp:', provider.whatsapp);
-            } else if (provider.favoriteContact === 'phone') {
-              console.log('Telefon:', provider.phone);
-            } else if (provider.favoriteContact === 'email') {
-              console.log('Email:', provider.email);
-            }
-          }}
-        />
+      <ProfileFAB
+        favoriteContact={provider.favoriteContact}
+        bottom={30}
+        onPress={() => {
+          if (provider.favoriteContact === 'whatsapp') {
+            console.log('WhatsApp:', provider.whatsapp);
+          } else if (provider.favoriteContact === 'phone') {
+            console.log('Telefon:', provider.phone);
+          } else if (provider.favoriteContact === 'email') {
+            console.log('Email:', provider.email);
+          }
+        }}
+      />
       )}
     </View>
   );

@@ -368,20 +368,20 @@ export default function SearchScreen({ navigation: navProp }) {
       {isSearchFocused && (
         <View style={styles.searchOverlayFullscreen}>
           <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill}>
-            <Animated.View 
-              style={[
-                styles.searchOverlayBackdrop,
-                { opacity: fadeAnim }
-              ]}
-            >
-              <TouchableOpacity 
-                style={StyleSheet.absoluteFill}
-                activeOpacity={1}
-                onPress={() => {
-                  setIsSearchFocused(false);
-                }}
-              />
-            </Animated.View>
+          <Animated.View 
+            style={[
+              styles.searchOverlayBackdrop,
+              { opacity: fadeAnim }
+            ]}
+          >
+            <TouchableOpacity 
+              style={StyleSheet.absoluteFill}
+              activeOpacity={1}
+              onPress={() => {
+                setIsSearchFocused(false);
+              }}
+            />
+          </Animated.View>
           </BlurView>
           <Animated.View 
             style={[
@@ -443,18 +443,18 @@ export default function SearchScreen({ navigation: navProp }) {
       {showFilters && (
         <View style={styles.filterOverlayFullscreen}>
           <BlurView intensity={15} tint="dark" style={StyleSheet.absoluteFill}>
-            <Animated.View 
-              style={[
-                styles.filterOverlayBackdrop,
-                { opacity: filterFadeAnim }
-              ]}
-            >
-              <TouchableOpacity 
-                style={StyleSheet.absoluteFill}
-                activeOpacity={1}
-                onPress={() => setShowFilters(false)}
-              />
-            </Animated.View>
+          <Animated.View 
+            style={[
+              styles.filterOverlayBackdrop,
+              { opacity: filterFadeAnim }
+            ]}
+          >
+            <TouchableOpacity 
+              style={StyleSheet.absoluteFill}
+              activeOpacity={1}
+              onPress={() => setShowFilters(false)}
+            />
+          </Animated.View>
           </BlurView>
           <Animated.View 
             style={[

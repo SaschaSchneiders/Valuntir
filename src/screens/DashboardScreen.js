@@ -190,8 +190,8 @@ export default function DashboardScreen({ navigation }) {
               >
                 <View style={styles.header}>
                   <View style={styles.headerLeft}>
-                    <Text style={styles.headerTitle}>Valuntir</Text>
-                    <Text style={styles.headerSubtitle}>Deine Performance im Überblick</Text>
+                  <Text style={styles.headerTitle}>Valuntir</Text>
+                  <Text style={styles.headerSubtitle}>Deine Performance im Überblick</Text>
                   </View>
                   {isBusiness && (
                     <TouchableOpacity 
@@ -215,7 +215,7 @@ export default function DashboardScreen({ navigation }) {
               {!isBusiness && <LiveMetrics style={{ marginBottom: 32 }} />}
 
               {/* Business-Only: Charts, Statistiken, Profilmetrics */}
-              {isBusiness && (
+        {isBusiness && (
           <>
             {/* Chart Card - Wiederverwendbare Komponente */}
             <ChartCard
